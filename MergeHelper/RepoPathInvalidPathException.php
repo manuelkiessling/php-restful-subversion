@@ -32,7 +32,7 @@
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
- * @subpackage Repository
+ * @subpackage Exception
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,51 +40,15 @@
  */
 
 /**
- * Class representing the path to an object in a SVN repository
+ * Exception for errors in MergeHelper_RepoPath
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
- * @subpackage Repository
+ * @subpackage Exception
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Base
- * @uses       MergeHelper_RepoPathInvalidPathException
+ * @uses       MergeHelper_Exception
  */
-class MergeHelper_RepoPath extends MergeHelper_Base {
-
-	/**
-	 * Internal string representation of the path
-	 */
-	private $sPath = NULL;
-
-	/**
-	 * Creates the path object based on a given string
-	 *
-	 * @param string $sPath Path to create the object for
-	 * @return void
-	 * @throws MergeHelper_RepoPathInvalidPathException if the given string doesn't have the correct format
-	 */
-	public function __construct($sPath) {
-
-		parent::__preConstruct();
-		if (mb_substr($sPath, -1) === '/') throw new MergeHelper_RepoPathInvalidPathException();
-		if ($sPath[0] !== '/') throw new MergeHelper_RepoPathInvalidPathException();
-		if (mb_substr($sPath, -1) === '.') throw new MergeHelper_RepoPathInvalidPathException();
-		if (mb_substr($sPath, -5) === '/.svn') throw new MergeHelper_RepoPathInvalidPathException();
-		if (mb_strstr($sPath, '..')) throw new MergeHelper_RepoPathInvalidPathException();
-		$this->sPath = $sPath;
-		parent::__construct();
-
-	}
-
-	public function sGetAsString() {
-		return $this->sPath;
-	}
-	
-	public function __toString() {
-		return $this->sGetAsString();
-	}
-
-}
+class MergeHelper_RepoPathInvalidPathException extends MergeHelper_Exception {};

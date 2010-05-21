@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @todo Flexible solution for the repo cache filenames needed
+ */
 class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 
 	public function setUp() {
@@ -46,17 +49,17 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 
 		$asCommandlines = $oLogCommand->asGetCommandlines();
 		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/MergeHelper.svncache.85fea2b672885627f28d477af65ffc2221292ecb'), $asCommandlines[0]);
+		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/MergeHelper.svncache.300b8d25873d3a25c651dc0825703bc08e48d754'), $asCommandlines[0]);
 
 		$oLogCommand->enableVerbose();
 		$asCommandlines = $oLogCommand->asGetCommandlines();
 		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/MergeHelper.svncache.85fea2b672885627f28d477af65ffc2221292ecb.v'), $asCommandlines[0]);
+		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/MergeHelper.svncache.300b8d25873d3a25c651dc0825703bc08e48d754.v'), $asCommandlines[0]);
 
 		$oLogCommand->enableXml();
 		$asCommandlines = $oLogCommand->asGetCommandlines();
 		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/MergeHelper.svncache.85fea2b672885627f28d477af65ffc2221292ecb.v.x'), $asCommandlines[0]);
+		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/MergeHelper.svncache.300b8d25873d3a25c651dc0825703bc08e48d754.v.x'), $asCommandlines[0]);
 
 	}
 
