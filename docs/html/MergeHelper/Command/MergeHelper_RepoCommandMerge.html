@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class MergeHelper_RepoCommandMerge</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class MergeHelper_RepoCommandMerge</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+						
+			</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+		<p class="notes">
+			Located in <a class="field" href="_RepoCommandMerge.php.html">/RepoCommandMerge.php</a> (line <span class="field">8</span>)
+		</p>
+		
+				
+		<pre><a href="../../MergeHelper/Core/MergeHelper_Base.html">MergeHelper_Base</a>
+   |
+   --MergeHelper_RepoCommandMerge</pre>
+	
+			</div>
+</div>
+
+
+	<a name="sec-const-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constant Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Constants</span> (<a href="#sec-consts">details</a>)
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<div class="const-summary">
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#SVN_CMD_MERGE" title="details" class="const-name">SVN_CMD_MERGE</a> = 					<span class="var-type"> 'svn merge'</span>
+
+				</div>
+							</div>
+		</div>
+	</div>
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+									<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																						
+				<div class="method-definition">
+											<span class="method-result">MergeHelper_RepoCommandMerge</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type"><a href="../../MergeHelper/Repository/MergeHelper_Repo.html">MergeHelper_Repo</a></span>&nbsp;<span class="var-name">$oRepo</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#addRevisionWithBasedirPath" title="details" class="method-name">addRevisionWithBasedirPath</a>
+											(<span class="var-type"><a href="../../MergeHelper/Repository/MergeHelper_Revision.html">MergeHelper_Revision</a></span>&nbsp;<span class="var-name">$oRevision</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$sBasedirPath</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#asGetCommandlines" title="details" class="method-name">asGetCommandlines</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#enableDryrun" title="details" class="method-name">enableDryrun</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setWorkingcopyPath" title="details" class="method-name">setWorkingcopyPath</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$sPath</span>)
+									</div>
+											</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">18</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">MergeHelper_RepoCommandMerge</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type"><a href="../../MergeHelper/Repository/MergeHelper_Repo.html">MergeHelper_Repo</a></span>&nbsp;<span class="var-name">$oRepo</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../MergeHelper/Repository/MergeHelper_Repo.html">MergeHelper_Repo</a></span>
+				<span class="var-name">$oRepo</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../MergeHelper/Core/MergeHelper_Base.html#method__construct">MergeHelper_Base::__construct()</a></dt>
+					</dl>
+			
+	</div>
+<a name="methodaddRevisionWithBasedirPath" id="addRevisionWithBasedirPath"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">addRevisionWithBasedirPath</span> (line <span class="line-number">26</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addRevisionWithBasedirPath
+		</span>
+					(<span class="var-type"><a href="../../MergeHelper/Repository/MergeHelper_Revision.html">MergeHelper_Revision</a></span>&nbsp;<span class="var-name">$oRevision</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$sBasedirPath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../MergeHelper/Repository/MergeHelper_Revision.html">MergeHelper_Revision</a></span>
+				<span class="var-name">$oRevision</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sBasedirPath</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodasGetCommandlines" id="asGetCommandlines"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">asGetCommandlines</span> (line <span class="line-number">39</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			asGetCommandlines
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodenableDryrun" id="enableDryrun"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">enableDryrun</span> (line <span class="line-number">31</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			enableDryrun
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetWorkingcopyPath" id="setWorkingcopyPath"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setWorkingcopyPath</span> (line <span class="line-number">35</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setWorkingcopyPath
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sPath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sPath</span>			</li>
+				</ul>
+		
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../../MergeHelper/Core/MergeHelper_Base.html">MergeHelper_Base</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../MergeHelper/Core/MergeHelper_Base.html#method__construct">MergeHelper_Base::__construct()</a></span><br>
+													<span class="method-name"><a href="../../MergeHelper/Core/MergeHelper_Base.html#method__preConstruct">MergeHelper_Base::__preConstruct()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="constSVN_CMD_MERGE" id="SVN_CMD_MERGE"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">SVN_CMD_MERGE</span>
+			 = <span class="const-default"> 'svn merge'</span>
+			(line <span class="line-number">10</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+						
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Mon, 26 Apr 2010 09:55:16 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>
