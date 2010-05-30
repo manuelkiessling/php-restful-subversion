@@ -74,7 +74,7 @@ class MergeHelper_Repohandler extends MergeHelper_Base {
 
 		$aoSourcePaths = $oRepo->aoGetSourcePaths();
 		$aoSourcePaths[] = $oRepo->oGetTargetPath();
-       	foreach ($aoSourcePaths as $oSourcePath) {
+		foreach ($aoSourcePaths as $oSourcePath) {
 			if (mb_substr("$oPath", 0, mb_strlen("$oSourcePath")) === "$oSourcePath") {
 				// find next directory level name and add it
 				$oPathWithoutSourcePath = new MergeHelper_RepoPath(mb_substr("$oPath", mb_strlen("$oSourcePath")));
@@ -113,7 +113,7 @@ class MergeHelper_Repohandler extends MergeHelper_Base {
 	public static function oGetCommonSourcePathForFullPath(MergeHelper_Repo $oRepo, MergeHelper_RepoPath $oPath) {
 
 		$aoSourcePaths = $oRepo->aoGetSourcePaths();
-       	foreach ($aoSourcePaths as $oSourcePath) {
+		foreach ($aoSourcePaths as $oSourcePath) {
 			if (mb_substr("$oPath", 0, mb_strlen("$oSourcePath")) === "$oSourcePath") {
 				// find next directory level name and add it
 				$oPathWithoutSourcePath = new MergeHelper_RepoPath(mb_substr("$oPath", mb_strlen("$oSourcePath")));
@@ -149,6 +149,7 @@ class MergeHelper_Repohandler extends MergeHelper_Base {
 			if (mb_substr("$oPath", 0, mb_strlen("$oSourcePath")) !== "$oSourcePath") return FALSE;
 		}
 		return TRUE;
+		
 	}
 
 	/**
