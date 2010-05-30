@@ -99,11 +99,11 @@ class MergeHelper_Repohandler extends MergeHelper_Base {
 	 * Returns the common path all paths on the given path will share
 	 *
 	 * Example: If the full path is
-	 * <pre>/branches/my-hammer2/_production/2010-04-15/cooperationsbox/log_conrad_123x30_AT.gif</pre>
+	 * <pre>/branches/_production/2010-04-15/cooperations/logo_acme_123x30.gif</pre>
 	 * and one of the source paths is
-	 * <pre>/branches/my-hammer2/_production</pre>
+	 * <pre>/branches/_production</pre>
 	 * then the common source path is
-	 * <pre>/branches/my-hammer2/_production/2010-04-15</pre>
+	 * <pre>/branches/_production/2010-04-15</pre>
 	 *
 	 * @uses MergeHelper_Repo::aoGetSourcePaths()
 	 * @uses MergeHelper_RepoPath
