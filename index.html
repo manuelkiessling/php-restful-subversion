@@ -5,7 +5,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-	<title>ManuelKiessling/PHPMergeHelper @ GitHub</title>
+	<title>PHPMergeHelper Project Homepage</title>
 	
 	<style type="text/css">
 		body {
@@ -21,12 +21,12 @@
 		h1 { font-size: 3.8em; color: #424242; margin-bottom: 3px; }
 		h1 .small { font-size: 0.4em; }
 		h1 a { text-decoration: none }
-		h2 { font-size: 1.5em; color: #507428; }
+		h2 { font-size: 1.5em; color: #507428; margin-top: 32px; }
     h3 { text-align: center; color: #00417c; }
     a { color: #002cff; }
     .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
     .download { float: right; }
-		pre { background: #000; color: #fff; padding: 15px;}
+		pre { color: #000; }
     hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
     .footer { text-align:center; padding-top:30px; font-style: italic; }
 	</style>
@@ -34,7 +34,6 @@
 </head>
 
 <body>
-  <a href="http://github.com/ManuelKiessling/PHPMergeHelper"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 
   <div id="container">
 
@@ -48,12 +47,13 @@
     <h1>PHPMergeHelper</h1>
 
     <div class="description">
-      PHP classes which make SVN merge management simple.
+      A collection of PHP classes which make SVN merge management simple.
     </div>
+
 
     <h2>Documentation</h2>
     <p>
-      The <a href="documentation/api/">API documentation of all PHPMergeHelper classes</a> is available.
+      Read the <a href="documentation/api/">API documentation of all PHPMergeHelper classes</a> online.
     </p>
 
 
@@ -65,16 +65,102 @@
     </p>
     <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
       by running:
-      <pre>$ git clone git://github.com/ManuelKiessling/PHPMergeHelper</pre>
+      <pre>git clone git://github.com/ManuelKiessling/PHPMergeHelper</pre>
     </p>
 
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/ManuelKiessling/PHPMergeHelper">ManuelKiessling/PHPMergeHelper</a>
-    </div>
+	<p>
+		Browse the project source code on <a href="http://github.com/ManuelKiessling/PHPMergeHelper">http://github.com/ManuelKiessling/PHPMergeHelper</a>
+	</p>
+
+
+	<h2>What is PHPMergeHelper good for?</h2>
+	
+	<p>PHPMergeHelper is a collection of PHP classes which allow developers to easily create tailor-made
+	tools for merge- and releasemanagement within SVN repositories.</p>
+	
+	<p>In my opinion, these tailor-made tools are necessary for two reasons:</p>
+	
+	<p>First: The available Subversion client tools do a great job in assisting us at merging whole
+	branches or single commits, but they don't provide any support for the high-level tasks of release
+	management, e.g. when we need to find all commits which belong to a certain project or when we need
+	to sort out which commits of a certain project are already merged and released and which aren't.</p>
+	
+	<p>Second: Every team of software developers does release management different. Therefore, it's
+	difficult (if not impossible) to create a one-size-fits-all solution, which means that it should be
+	easy for every team to build its own tool.</p>
+	
+	<p>Because it's only a collection of classes, PHPMergeHelper doesn't provide an instant solution!</p>
+	
+	<p>But it allows you to easily build your own tool which allows your release manager to shortcut and
+	even automate many tedious and time-consuming SVN tasks.</p>
+	
+	<p>PHPMergeHelper implements these use cases:</p>
+	
+	<ul>
+	<li><p>"Give me a list of all revisions whose commit message contains a given string"</p></li>
+	
+	<li><p>"For a given full path, give me the root path of the branch the full path belongs to"</p></li>
+	<li><p>"For a given revision, give me the root path of the branch this revision was applied to"</p></li>
+	<li><p>"Tell me if a given list of commits all apply to the same branch"</p></li>
+	<li><p>"Give me a list of all file and folder paths that were changed by a given commit"</p></li>
+	</ul>
+	
+	
+	<p>By combining these use cases, you could, for example, create a tool which allows your release
+	manager to enter a list of issue numbers (from the bugtracker your team uses, provided that all your
+	developers always put the relating issue numbers into the commit messages), whereupon the tool
+	shows him a chronologically ordered list of all commits for these issues, the command lines
+	neccessary to merge these issues, and warn him if there are already commits in older releases for
+	certain issues.</p>
+
+
+	<h2>Wozu sind die PHPMergeHelper gut?</h2>
+	
+	<p>Die PHPMergeHelper sind eine Sammlung von PHP Klassen die es erleichtern, maßgeschneiderte Werkzeuge
+	zum Merge- und Releasemanagement innerhalb eines SVN Repositories zu bauen.</p>
+	
+	<p>Diese maßgeschneiderten Werkzeuge wiederum sind meiner Meinung nach notwendig, aus zwei Gründen:</p>
+	
+	<p>Erstens: Die verfügbaren Subversion Client-Tools sind zwar sehr hilfreich beim Mergen von ganzen
+	Branches oder einzelnen Commits, bieten jedoch keinerlei Unterstützung bei den übergeordneten
+	Aufgaben des Releasens, wie zum Beispiel beim Zusammensuchen aller Änderungen die zu einem Projekt
+	gehören, oder dem Auseinandersortieren von den Commits eines Projekts, die bereits released wurden
+	und denen, die in den nächsten Release aufgenommen werden sollen.</p>
+	
+	<p>Zweitens: Jedes Team von Entwicklern betreibt Releasemanagement anders. Daher wird es auch schwierig
+	sein, eine one-size-fits-all Lösung zu bauen, was bedeutet dass jedes Team sein eigenes
+	maßgeschneidertes Tool bauen können sollte.</p>
+	
+	<p>Da es sich lediglich um eine Klassensammlung handelt, bieten die PHPMergeHelper keine Sofortlösung!</p>
+	
+	<p>Sie ermöglichen aber mit vergleichsweise geringem Aufwand, ein eigenes Tool zu bauen, mit dessen
+	Hilfe der Releasemanager eines Softwareentwicklerteams viele aufwendige und manuelle SVN Handgriffe
+	stark vereinfachen und ggf. automatisieren kann.</p>
+	
+	<p>Die PHPMergeHelper implementieren unter anderen folgende Use Cases:</p>
+	
+	<ul>
+	<li><p>"Liefere mir alle Revisionsnummern, deren Commit Message eine bestimmte Zeichenkette enthält"</p></li>
+	
+	<li><p>"Liefere mir auf Basis eines vollständigen Pfads das Wurzelverzeichnis des Branches, zu dem dieser
+	 Pfad gehört"</p></li>
+	<li><p>"Liefere mir das Wurzelverzeichnis des Branches, auf dem ein bestimmer Commit stattgefunden hat"</p></li>
+	<li><p>"Sage mir, ob eine Liste von Commits alle im gleichen Branch stattgefunden haben"</p></li>
+	<li><p>"Liefere mir eine Liste aller Datei- und Verzeichnispfade, die durch einen gegebenen Commit ver-
+	 ändert wurden"</p></li>
+	</ul>
+	
+	
+	<p>Verknüpft man diese Use Cases miteinander, kann man bspw. ein Tool bauen, das dem Releasemanager
+	nach Eingabe einer Liste von Ticketnummern (aus dem vom Team verwendeten Bugtracker, und natürlich
+	nur, wenn alle Entwickler brav die Tickenummern in die Commit Message schreiben) alle Commits zu
+	diesen Tickets in chronologischer Reihenfolge ausgibt, die notwendigen SVN Merge Kommandozeilen an-
+	zeigt, und darauf hinweist, wenn zu einem Ticket bereits Merges in einem alten Release gefunden
+	wurden.</p>
+
 
     <h2>Contact</h2>
     <p>Manuel Kiessling &lt;<a href="mailto:manuel@kiessling.net">manuel@kiessling.net</a>&gt;</p>
-
 
   </div>
 
