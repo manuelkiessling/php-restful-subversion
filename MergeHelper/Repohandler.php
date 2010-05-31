@@ -61,11 +61,12 @@ class MergeHelper_Repohandler extends MergeHelper_Base {
 	/**
 	 * @return array Array of MergeHelper_Revision objects
 	 */
-	public static function aoGetRevisionsForString(MergeHelper_Repo $oRepo, $sString) {
+	public static function aoGetRevisionsForString(MergeHelper_Repo $oRepo, $sString, $bUseCache) {
 
 		if ($sString === '') return array();
 		$aoReturn = array();
 		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo);
+		if ($bUseCache) $oLogCommand->enableCache();
 		return $oLogCommand->aoGetRevisionsWithMessageContainingText($sString);
 
 	}

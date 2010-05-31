@@ -18,16 +18,24 @@ class MergeHelper_RepohandlerTest extends PHPUnit_Framework_TestCase {
 
 	public function test_getRevisionsForString() {
 		
-		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsForString($this->oRepo, 'TF-4001');
+		// With cache (test cache is old, gives less revisions!)
+		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsForString($this->oRepo, 'TF-4001', TRUE);
 		$this->assertSame(2, sizeof($aoRevisions));
 		$this->assertSame('3', $aoRevisions[0]->sGetNumber());
 		$this->assertSame('5', $aoRevisions[1]->sGetNumber());
+		
+		// Without cache
+		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsForString($this->oRepo, 'TF-4001', FALSE);
+		$this->assertSame(3, sizeof($aoRevisions));
+		$this->assertSame('3', $aoRevisions[0]->sGetNumber());
+		$this->assertSame('5', $aoRevisions[1]->sGetNumber());
+		$this->assertSame('7', $aoRevisions[2]->sGetNumber());
 		
 	}
 	
 	public function test_getRevisionsForStringNoStringGiven() {
 		
-		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsForString($this->oRepo, '');
+		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsForString($this->oRepo, '', TRUE);
 		$this->assertSame(0, sizeof($aoRevisions));
 		
 	}

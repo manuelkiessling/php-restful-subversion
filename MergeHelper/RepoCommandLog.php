@@ -61,6 +61,7 @@ class MergeHelper_RepoCommandLog extends MergeHelper_Base {
 	private $aoRevisions = NULL;
 	private $bVerbose = FALSE;
 	private $bXml = FALSE;
+	private $bCacheEnabled = FALSE;
 	
 	public function __construct(MergeHelper_Repo $oRepo) {
 		
@@ -82,6 +83,14 @@ class MergeHelper_RepoCommandLog extends MergeHelper_Base {
 		$this->bXml = TRUE;
 	}
 	
+	public function enableCache() {
+		$this->bCacheEnabled = TRUE;
+	}
+	
+	public function disableCache() {
+		$this->bCacheEnabled = FALSE;
+	}
+	
 	public function asGetCommandlines() {
 	
 		$asReturn = array();
@@ -94,14 +103,23 @@ class MergeHelper_RepoCommandLog extends MergeHelper_Base {
 				$asReturn[] = $sCommandline;
 			}
 		} else {
-			if ($this->bVerbose && $this->bXml) {
-				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.v.x';
-			} elseif (!$this->bVerbose && $this->bXml) {
-				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.x';
-			} elseif ($this->bVerbose && !$this->bXml) {
-				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.v';
-			} elseif (!$this->bVerbose && !$this->bXml) {
-				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath();
+			if ($this->bCacheEnabled) {
+				if ($this->bVerbose && $this->bXml) {
+					$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.v.x';
+				} elseif (!$this->bVerbose && $this->bXml) {
+					$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.x';
+				} elseif ($this->bVerbose && !$this->bXml) {
+					$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.v';
+				} elseif (!$this->bVerbose && !$this->bXml) {
+					$asReturn[] = 'cat '.$this->oRepo->sGetCachepath();
+				}
+			}
+			else {
+				$sCommandline = 'svn --no-auth-cache --username='.$this->oRepo->sGetAuthinfoUsername().' --password='.$this->oRepo->sGetAuthinfoPassword().' log ';
+				if ($this->bVerbose) $sCommandline .= '-v ';
+				if ($this->bXml) $sCommandline .= '--xml ';
+				$sCommandline .= $this->oRepo->sGetLocation();
+				$asReturn[] = $sCommandline;
 			}
 		}
 		return $asReturn;
