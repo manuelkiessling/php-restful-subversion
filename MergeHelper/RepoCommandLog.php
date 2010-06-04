@@ -96,7 +96,12 @@ class MergeHelper_RepoCommandLog extends MergeHelper_Base {
 		$asReturn = array();
 		if (is_array($this->aoRevisions) && sizeof($this->aoRevisions) > 0) {
 			foreach ($this->aoRevisions as $oRevision) {
-				$sCommandline = 'svn --no-auth-cache --username='.$this->oRepo->sGetAuthinfoUsername().' --password='.$this->oRepo->sGetAuthinfoPassword().' log -r '.$oRevision->sGetNumber().' ';
+				$sCommandline = 'svn --no-auth-cache'.
+				                ' --username='.
+				                $this->oRepo->sGetAuthinfoUsername().
+				                ' --password='.
+				                $this->oRepo->sGetAuthinfoPassword().
+				                ' log -r '.$oRevision->sGetNumber().' ';
 				if ($this->bVerbose) $sCommandline .= '-v ';
 				if ($this->bXml) $sCommandline .= '--xml ';
 				$sCommandline .= $this->oRepo->sGetLocation();
@@ -115,7 +120,12 @@ class MergeHelper_RepoCommandLog extends MergeHelper_Base {
 				}
 			}
 			else {
-				$sCommandline = 'svn --no-auth-cache --username='.$this->oRepo->sGetAuthinfoUsername().' --password='.$this->oRepo->sGetAuthinfoPassword().' log ';
+				$sCommandline = 'svn --no-auth-cache'.
+				                ' --username='.
+				                $this->oRepo->sGetAuthinfoUsername().
+				                ' --password='.
+				                $this->oRepo->sGetAuthinfoPassword().
+				                ' log ';
 				if ($this->bVerbose) $sCommandline .= '-v ';
 				if ($this->bXml) $sCommandline .= '--xml ';
 				$sCommandline .= $this->oRepo->sGetLocation();
@@ -133,13 +143,22 @@ class MergeHelper_RepoCommandLog extends MergeHelper_Base {
 		$this->enableXml();
 		$asCommandlines = $this->asGetCommandlines();
 		foreach ($asCommandlines as $sCommandline) {
-			$sOutput = MergeHelper_RepoCommandExecutor::oGetInstance()->sGetCommandResult("$sCommandline | grep -v '<paths>' | grep -v '</paths>' | grep '<path' -A 2 | grep 'action'");
+			$sCommandline = $sCommandline.
+			                ' | grep -v "<paths>"'.
+			                ' | grep -v "</paths>"'.
+			                ' | grep "<path" -A 2'.
+			                ' | grep "action"';
+			$oExecutor = MergeHelper_RepoCommandExecutor::oGetInstance();
+			$sOutput = $oExecutor->sGetCommandResult($sCommandline);
 			$asLines = explode("\n", $sOutput);
 			foreach ($asLines as $sLine) {
 				if (mb_strstr($sLine, 'action')) {
-					// each line contains something like '   action="M">/branches/my-hammer2/_production/2010-01-01/c/d.php</path>'
-					preg_match_all('/   action="(.*)">(.*)<\/path>/', $sLine, $asMatches);
-					if(!is_null($asMatches[2][0])) $aoReturn[] = new MergeHelper_RepoPath($asMatches[2][0]);
+					preg_match_all('/   action="(.*)">(.*)<\/path>/',
+					               $sLine,
+					               $asMatches);
+					if (!is_null($asMatches[2][0])) {
+						$aoReturn[] = new MergeHelper_RepoPath($asMatches[2][0]);
+					}
 				}
 			}
 		}
