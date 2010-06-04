@@ -94,46 +94,67 @@ class MergeHelper_RepoCommandLog extends MergeHelper_Base {
 	public function asGetCommandlines() {
 	
 		$asReturn = array();
-		if (is_array($this->aoRevisions) && sizeof($this->aoRevisions) > 0) {
-			foreach ($this->aoRevisions as $oRevision) {
-				$sCommandline = 'svn --no-auth-cache'.
-				                ' --username='.
-				                $this->oRepo->sGetAuthinfoUsername().
-				                ' --password='.
-				                $this->oRepo->sGetAuthinfoPassword().
-				                ' log -r '.$oRevision->sGetNumber().' ';
-				if ($this->bVerbose) $sCommandline .= '-v ';
-				if ($this->bXml) $sCommandline .= '--xml ';
-				$sCommandline .= $this->oRepo->sGetLocation();
-				$asReturn[] = $sCommandline;
-			}
+		if ($this->bRevisionListNotEmpty()) {	
+			$asReturn = $this->asGetCommandlinesForRevisions($this->aoRevisions);
 		} else {
-			if ($this->bCacheEnabled) {
-				if ($this->bVerbose && $this->bXml) {
-					$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.v.x';
-				} elseif (!$this->bVerbose && $this->bXml) {
-					$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.x';
-				} elseif ($this->bVerbose && !$this->bXml) {
-					$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.v';
-				} elseif (!$this->bVerbose && !$this->bXml) {
-					$asReturn[] = 'cat '.$this->oRepo->sGetCachepath();
-				}
-			}
-			else {
-				$sCommandline = 'svn --no-auth-cache'.
-				                ' --username='.
-				                $this->oRepo->sGetAuthinfoUsername().
-				                ' --password='.
-				                $this->oRepo->sGetAuthinfoPassword().
-				                ' log ';
-				if ($this->bVerbose) $sCommandline .= '-v ';
-				if ($this->bXml) $sCommandline .= '--xml ';
-				$sCommandline .= $this->oRepo->sGetLocation();
-				$asReturn[] = $sCommandline;
-			}
+			$asReturn = $this->asGetCommandlinesWithoutRevisions();
 		}
 		return $asReturn;
 
+	}
+		
+	private function asGetCommandLinesForRevisions($aoRevisions) {
+
+		$asReturn = array();
+		foreach ($aoRevisions as $oRevision) {
+				
+				$oCommandLine = new cCommandLine();
+				$oCommandLine->setCommand('svn');
+				$oCommandLine->addParameter('log');
+				$oCommandLine->addLongSwitch('no-auth-cache');
+				$oCommandLine->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
+				$oCommandLine->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
+				$oCommandLine->addShortSwitchWithValue('r', $oRevision->sGetNumber());
+				if ($this->bVerbose) $oCommandLine->addShortSwitch('v');
+				if ($this->bVerbose) $oCommandLine->addLongSwitch('xml');
+				$oCommandLine->addParameter($this->oRepo->sGetLocation());
+				$asReturn[] = $sCommandline;
+		}
+
+	}
+	
+	private function asGetCommandLinesWithoutRevisions {
+
+		$asReturn = array();
+		if ($this->bCacheEnabled) {
+			if ($this->bVerbose && $this->bXml) {
+				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.v.x';
+			} elseif (!$this->bVerbose && $this->bXml) {
+				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.x';
+			} elseif ($this->bVerbose && !$this->bXml) {
+				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.v';
+			} elseif (!$this->bVerbose && !$this->bXml) {
+				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath();
+			}
+		}
+		else {
+			$sCommandline = 'svn --no-auth-cache'.
+							' --username='.
+							$this->oRepo->sGetAuthinfoUsername().
+							' --password='.
+							$this->oRepo->sGetAuthinfoPassword().
+							' log ';
+			if ($this->bVerbose) $sCommandline .= '-v ';
+			if ($this->bXml) $sCommandline .= '--xml ';
+			$sCommandline .= $this->oRepo->sGetLocation();
+			$asReturn[] = $sCommandline;
+		}
+		return $asReturn;
+
+	}
+	
+	private function bRevisionListNotEmpty() {
+		return is_array($this->aoRevisions) && sizeof($this->aoRevisions) > 0;
 	}
 	
 	public function aoGetPaths() {
