@@ -62,11 +62,13 @@ class MergeHelper_RepoCommandLog extends MergeHelper_Base {
 	private $bVerbose = FALSE;
 	private $bXml = FALSE;
 	private $bCacheEnabled = FALSE;
+	private $oCommandLineFactory = NULL;
 	
-	public function __construct(MergeHelper_Repo $oRepo) {
+	public function __construct(MergeHelper_Repo $oRepo, MergeHelper_CommandLineFactory $oCommandLineFactory) {
 		
 		parent::__preConstruct();
 		$this->oRepo = $oRepo;
+		$this->oCommandLineFactory = $oCommandLineFactory;
 		parent::__construct();
 		
 	}
@@ -108,7 +110,7 @@ class MergeHelper_RepoCommandLog extends MergeHelper_Base {
 		$asReturn = array();
 		foreach ($aoRevisions as $oRevision) {
 				
-				$oCommandLine = new cCommandLine();
+				$oCommandLine = $this->oCommandLineFactory::instantiate();
 				$oCommandLine->setCommand('svn');
 				$oCommandLine->addParameter('log');
 				$oCommandLine->addLongSwitch('no-auth-cache');
@@ -118,12 +120,12 @@ class MergeHelper_RepoCommandLog extends MergeHelper_Base {
 				if ($this->bVerbose) $oCommandLine->addShortSwitch('v');
 				if ($this->bVerbose) $oCommandLine->addLongSwitch('xml');
 				$oCommandLine->addParameter($this->oRepo->sGetLocation());
-				$asReturn[] = $sCommandline;
+				$asReturn[] = $oCommandLine->sGetCommandLine();
 		}
 
 	}
 	
-	private function asGetCommandLinesWithoutRevisions {
+	private function asGetCommandLinesWithoutRevisions() {
 
 		$asReturn = array();
 		if ($this->bCacheEnabled) {
