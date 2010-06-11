@@ -49,6 +49,7 @@
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
+ * @implements MergeHelper_CommandLineInterface
  */
 class MergeHelper_CommandLine implements MergeHelper_CommandLineInterface {
 
