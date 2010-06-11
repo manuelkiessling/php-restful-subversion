@@ -65,7 +65,7 @@ class MergeHelper_Repohandler extends MergeHelper_Base {
 
 		if ($sString === '') return array();
 		$aoReturn = array();
-		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo);
+		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
 		if ($bUseCache) $oLogCommand->enableCache();
 		return $oLogCommand->aoGetRevisionsWithMessageContainingText($sString);
 
@@ -160,7 +160,7 @@ class MergeHelper_Repohandler extends MergeHelper_Base {
 	 */
 	public static function aoGetPathsForRevisions(MergeHelper_Repo $oRepo, Array $aoRevisions) {
 
-		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo);
+		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
 		foreach ($aoRevisions as $oRevision) {
 			$oLogCommand->addRevision($oRevision);
 		}
