@@ -58,11 +58,11 @@
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																						
+																																																																																						
 				<div class="method-definition">
 											<span class="method-result">MergeHelper_RepoCommandLog</span>
 										<a href="#__construct" title="details" class="method-name">__construct</a>
-											(<span class="var-type"><a href="../../PHPMergeHelper/Repository/MergeHelper_Repo.html">MergeHelper_Repo</a></span>&nbsp;<span class="var-name">$oRepo</span>)
+											(<span class="var-type"><a href="../../PHPMergeHelper/Repository/MergeHelper_Repo.html">MergeHelper_Repo</a></span>&nbsp;<span class="var-name">$oRepo</span>, <span class="var-type"><a href="../../PHPMergeHelper/Command/MergeHelper_CommandLineFactory.html">MergeHelper_CommandLineFactory</a></span>&nbsp;<span class="var-name">$oCommandLineFactory</span>)
 									</div>
 														
 				<div class="method-definition">
@@ -86,6 +86,18 @@
 				<div class="method-definition">
 											<span class="method-result">void</span>
 										<a href="#asGetCommandlines" title="details" class="method-name">asGetCommandlines</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#disableCache" title="details" class="method-name">disableCache</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#enableCache" title="details" class="method-name">enableCache</a>
 										()
 									</div>
 														
@@ -116,10 +128,10 @@
 		<div class="info-box-body">
 			<A NAME='method_detail'></A>
 <a name="method__construct" id="__construct"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">Constructor __construct</span> (line <span class="line-number">65</span>)
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">67</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -132,13 +144,16 @@
 		<span class="method-name">
 			__construct
 		</span>
-					(<span class="var-type"><a href="../../PHPMergeHelper/Repository/MergeHelper_Repo.html">MergeHelper_Repo</a></span>&nbsp;<span class="var-name">$oRepo</span>)
+					(<span class="var-type"><a href="../../PHPMergeHelper/Repository/MergeHelper_Repo.html">MergeHelper_Repo</a></span>&nbsp;<span class="var-name">$oRepo</span>, <span class="var-type"><a href="../../PHPMergeHelper/Command/MergeHelper_CommandLineFactory.html">MergeHelper_CommandLineFactory</a></span>&nbsp;<span class="var-name">$oCommandLineFactory</span>)
 			</div>
 	
 			<ul class="parameters">
 					<li>
 				<span class="var-type"><a href="../../PHPMergeHelper/Repository/MergeHelper_Repo.html">MergeHelper_Repo</a></span>
 				<span class="var-name">$oRepo</span>			</li>
+					<li>
+				<span class="var-type"><a href="../../PHPMergeHelper/Command/MergeHelper_CommandLineFactory.html">MergeHelper_CommandLineFactory</a></span>
+				<span class="var-name">$oCommandLineFactory</span>			</li>
 				</ul>
 		
 			<hr class="separator" />
@@ -149,10 +164,10 @@
 			
 	</div>
 <a name="methodaddRevision" id="addRevision"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">addRevision</span> (line <span class="line-number">73</span>)
+		<span class="method-title">addRevision</span> (line <span class="line-number">76</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -177,10 +192,10 @@
 			
 	</div>
 <a name="methodaoGetPaths" id="aoGetPaths"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">aoGetPaths</span> (line <span class="line-number">111</span>)
+		<span class="method-title">aoGetPaths</span> (line <span class="line-number">163</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -200,10 +215,10 @@
 			
 	</div>
 <a name="methodaoGetRevisionsWithMessageContainingText" id="aoGetRevisionsWithMessageContainingText"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">aoGetRevisionsWithMessageContainingText</span> (line <span class="line-number">135</span>)
+		<span class="method-title">aoGetRevisionsWithMessageContainingText</span> (line <span class="line-number">196</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -229,10 +244,10 @@
 			
 	</div>
 <a name="methodasGetCommandlines" id="asGetCommandlines"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">asGetCommandlines</span> (line <span class="line-number">85</span>)
+		<span class="method-title">asGetCommandlines</span> (line <span class="line-number">96</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -251,11 +266,57 @@
 		
 			
 	</div>
-<a name="methodenableVerbose" id="enableVerbose"><!-- --></a>
+<a name="methoddisableCache" id="disableCache"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">disableCache</span> (line <span class="line-number">92</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			disableCache
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodenableCache" id="enableCache"><!-- --></a>
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">enableVerbose</span> (line <span class="line-number">77</span>)
+		<span class="method-title">enableCache</span> (line <span class="line-number">88</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			enableCache
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodenableVerbose" id="enableVerbose"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">enableVerbose</span> (line <span class="line-number">80</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -275,10 +336,10 @@
 			
 	</div>
 <a name="methodenableXml" id="enableXml"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">enableXml</span> (line <span class="line-number">81</span>)
+		<span class="method-title">enableXml</span> (line <span class="line-number">84</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -311,7 +372,7 @@
 
 
 	<p class="notes" id="credit">
-		Documentation generated on Fri, 21 May 2010 12:21:42 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Fri, 11 Jun 2010 18:03:09 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>
