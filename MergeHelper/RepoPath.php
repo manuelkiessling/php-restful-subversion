@@ -49,10 +49,9 @@
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Base
  * @uses       MergeHelper_RepoPathInvalidPathException
  */
-class MergeHelper_RepoPath extends MergeHelper_Base {
+class MergeHelper_RepoPath {
 
 	/**
 	 * Internal string representation of the path

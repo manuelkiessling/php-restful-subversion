@@ -50,9 +50,8 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  * @uses       MergeHelper_Bootstrap::sGetPackageRoot()
- * @uses       MergeHelper_Base
  */
-class MergeHelper_Autoloader extends MergeHelper_Base {
+class MergeHelper_Autoloader {
 	
 	public static function load($sClass)
 	{

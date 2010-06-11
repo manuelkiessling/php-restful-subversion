@@ -49,13 +49,12 @@
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Base
  * @uses       MergeHelper_Repo
  * @uses       MergeHelper_Revision
  * @uses       MergeHelper_RepoCommandExecutor
  * @uses       MergeHelper_RepoPath
  */
-class MergeHelper_RepoCommandLog extends MergeHelper_Base {
+class MergeHelper_RepoCommandLog {
 	
 	private $oRepo = NULL;
 	private $aoRevisions = NULL;

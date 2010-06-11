@@ -49,14 +49,13 @@
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Base
  * @uses       MergeHelper_Repo
  * @uses       MergeHelper_Revision
  * @uses       MergeHelper_RepoPath
  * @uses       MergeHelper_RepoCommandLog
  * @uses       MergeHelper_RepoCommandMerge
  */
-class MergeHelper_Repohandler extends MergeHelper_Base {
+class MergeHelper_Repohandler {
 
 	/**
 	 * @return array Array of MergeHelper_Revision objects

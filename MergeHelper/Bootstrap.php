@@ -39,7 +39,6 @@
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
 
-require_once realpath(dirname(__FILE__)).'/Base.php';
 require_once realpath(dirname(__FILE__)).'/Autoloader.php';
 
 spl_autoload_register('MergeHelper_Autoloader::load');
@@ -55,9 +54,8 @@ spl_autoload_register('MergeHelper_Autoloader::load');
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  * @uses       MergeHelper_Autoloader::load
- * @uses       MergeHelper_Base
  */
-class MergeHelper_Bootstrap extends MergeHelper_Base {
+class MergeHelper_Bootstrap {
 
 	public static function sGetPackageRoot() {
 		return realpath(dirname(__FILE__));
