@@ -2,11 +2,18 @@
 
 class MergeHelper_CommandLineTest extends PHPUnit_Framework_TestCase {
 
-	public function test_setAndGetCommand() {
+	public function test_CommandLineImplementsCommandLineInterface() {
+	
+		$oCommandLine = new MergeHelper_CommandLine();
+		$this->assertTrue(is_a($oCommandLine, 'MergeHelper_CommandLineInterface'));
+	
+	}
+	
+	public function test_setCommand() {
 
 		$oCommandLine = new MergeHelper_CommandLine();
 		$oCommandLine->setCommand('ls');
-		$this->assertSame($oCommandLine->sGetCommandLine(), 'ls');
+		$this->assertSame('ls', $oCommandLine->sGetCommandLine());
 
 	}
 	
@@ -15,7 +22,17 @@ class MergeHelper_CommandLineTest extends PHPUnit_Framework_TestCase {
 		$oCommandLine = new MergeHelper_CommandLine();
 		$oCommandLine->setCommand('svn');
 		$oCommandLine->addParameter('info');
-		$this->assertSame($oCommandLine->sGetCommandLine(), 'svn info');
+		$this->assertSame('svn info', $oCommandLine->sGetCommandLine());
+
+	}
+	
+	public function test_addParameters() {
+
+		$oCommandLine = new MergeHelper_CommandLine();
+		$oCommandLine->setCommand('svn');
+		$oCommandLine->addParameter('help');
+		$oCommandLine->addParameter('info');
+		$this->assertSame('svn help info', $oCommandLine->sGetCommandLine());
 
 	}
 	
@@ -24,7 +41,7 @@ class MergeHelper_CommandLineTest extends PHPUnit_Framework_TestCase {
 		$oCommandLine = new MergeHelper_CommandLine();
 		$oCommandLine->setCommand('ls');
 		$oCommandLine->addShortSwitch('lah');
-		$this->assertSame($oCommandLine->sGetCommandLine(), 'ls -lah');
+		$this->assertSame('ls -lah', $oCommandLine->sGetCommandLine());
 
 	}
 
@@ -33,16 +50,25 @@ class MergeHelper_CommandLineTest extends PHPUnit_Framework_TestCase {
 		$oCommandLine = new MergeHelper_CommandLine();
 		$oCommandLine->setCommand('svn');
 		$oCommandLine->addShortSwitchWithValue('r', '12345');
-		$this->assertSame($oCommandLine->sGetCommandLine(), 'svn -r 12345');
+		$this->assertSame('svn -r 12345', $oCommandLine->sGetCommandLine());
 
 	}
 	
+	public function test_addLongSwitch() {
+
+		$oCommandLine = new MergeHelper_CommandLine();
+		$oCommandLine->setCommand('svn');
+		$oCommandLine->addLongSwitch('xml');
+		$this->assertSame('svn --xml', $oCommandLine->sGetCommandLine());
+
+	}
+
 	public function test_addLongSwitchWithValue() {
 
 		$oCommandLine = new MergeHelper_CommandLine();
 		$oCommandLine->setCommand('svn');
 		$oCommandLine->addLongSwitchWithValue('username', 'manuel');
-		$this->assertSame($oCommandLine->sGetCommandLine(), 'svn --username=manuel');
+		$this->assertSame('svn --username=manuel', $oCommandLine->sGetCommandLine());
 
 	}
 	

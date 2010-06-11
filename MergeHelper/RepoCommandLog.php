@@ -110,18 +110,19 @@ class MergeHelper_RepoCommandLog extends MergeHelper_Base {
 		$asReturn = array();
 		foreach ($aoRevisions as $oRevision) {
 				
-				$oCommandLine = $this->oCommandLineFactory::instantiate();
-				$oCommandLine->setCommand('svn');
-				$oCommandLine->addParameter('log');
-				$oCommandLine->addLongSwitch('no-auth-cache');
-				$oCommandLine->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
-				$oCommandLine->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
-				$oCommandLine->addShortSwitchWithValue('r', $oRevision->sGetNumber());
-				if ($this->bVerbose) $oCommandLine->addShortSwitch('v');
-				if ($this->bVerbose) $oCommandLine->addLongSwitch('xml');
-				$oCommandLine->addParameter($this->oRepo->sGetLocation());
-				$asReturn[] = $oCommandLine->sGetCommandLine();
+			$oCommandLine = $this->oCommandLineFactory->instantiate();
+			$oCommandLine->setCommand('svn');
+			$oCommandLine->addParameter('log');
+			$oCommandLine->addLongSwitch('no-auth-cache');
+			$oCommandLine->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
+			$oCommandLine->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
+			$oCommandLine->addShortSwitchWithValue('r', $oRevision->sGetNumber());
+			if ($this->bVerbose) $oCommandLine->addShortSwitch('v');
+			if ($this->bXml) $oCommandLine->addLongSwitch('xml');
+			$oCommandLine->addParameter($this->oRepo->sGetLocation());
+			$asReturn[] = $oCommandLine->sGetCommandLine();
 		}
+		return $asReturn;
 
 	}
 	

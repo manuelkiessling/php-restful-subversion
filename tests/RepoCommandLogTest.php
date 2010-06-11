@@ -21,32 +21,32 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 
 	public function test_getVerboseLogForRevision() {
 		
-		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo);
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$oLogCommand->addRevision(new MergeHelper_Revision('2', '4'));
 		$oLogCommand->enableVerbose();
 		$asCommandlines = $oLogCommand->asGetCommandlines();
 		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('svn --no-auth-cache --username=user.name --password=secret log -r 2:4 -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 2:4 -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
 		
 	}
 
 	public function test_getLogCommandsForRevisionsNoCache() {
 		
-		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo);
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$oLogCommand->addRevision(new MergeHelper_Revision('1', '2'));
 		$oLogCommand->addRevision(new MergeHelper_Revision('3'));
 		$oLogCommand->enableVerbose();
 		$asCommandlines = $oLogCommand->asGetCommandlines();
 		$this->assertSame(2, sizeof($asCommandlines));
-		$this->assertSame('svn --no-auth-cache --username=user.name --password=secret log -r 1:2 -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
-		$this->assertSame('svn --no-auth-cache --username=user.name --password=secret log -r 3 -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[1]);
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 1:2 -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 3 -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[1]);
 		
 	}
 
 	public function test_getVerboseLogCommandsNoRevisionsFromCacheAndRemote() {
 		
 		// With cache
-		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo);
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$oLogCommand->enableCache();
 		
 		$asCommandlines = $oLogCommand->asGetCommandlines();
@@ -64,7 +64,7 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/MergeHelper.svncache.300b8d25873d3a25c651dc0825703bc08e48d754.v.x'), $asCommandlines[0]);
 
 		// Without cache
-		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo);
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$oLogCommand->disableCache();
 		
 		$asCommandlines = $oLogCommand->asGetCommandlines();
@@ -85,7 +85,7 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 
 	public function test_getPathListForRevision() {
 
-		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo);
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$oLogCommand->addRevision(new MergeHelper_Revision('3'));
 		$aoPaths = $oLogCommand->aoGetPaths();
 		$this->assertSame(2, sizeof($aoPaths));
@@ -96,7 +96,7 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 	
 	public function test_getPathListForRevisions() {
 
-		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo);
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$oLogCommand->addRevision(new MergeHelper_Revision('3'));
 		$oLogCommand->addRevision(new MergeHelper_Revision('4'));
 		$aoPaths = $oLogCommand->aoGetPaths();
@@ -109,7 +109,7 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 	
 	public function test_getRevisionsBySearchingForMessage() {
 
-		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo);
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		
 		// With cache (test cache is old, gives less revisions!)
 		$oLogCommand->enableCache();
