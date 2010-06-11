@@ -59,11 +59,9 @@ class MergeHelper_Revision {
 	 * @todo Check and Exception needed for number format
 	 */
 	public function __construct($sBegin, $sEnd = NULL) {
-	
-		parent::__preConstruct();
+
 		$this->sBegin = $sBegin;
 		$this->sEnd = $sEnd;
-		parent::__construct();
 	
 	}
 	

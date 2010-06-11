@@ -67,14 +67,12 @@ class MergeHelper_RepoPath {
 	 */
 	public function __construct($sPath) {
 
-		parent::__preConstruct();
 		if (mb_substr($sPath, -1) === '/') throw new MergeHelper_RepoPathInvalidPathException();
 		if ($sPath[0] !== '/') throw new MergeHelper_RepoPathInvalidPathException();
 		if (mb_substr($sPath, -1) === '.') throw new MergeHelper_RepoPathInvalidPathException();
 		if (mb_substr($sPath, -5) === '/.svn') throw new MergeHelper_RepoPathInvalidPathException();
 		if (mb_strstr($sPath, '..')) throw new MergeHelper_RepoPathInvalidPathException();
 		$this->sPath = $sPath;
-		parent::__construct();
 
 	}
 

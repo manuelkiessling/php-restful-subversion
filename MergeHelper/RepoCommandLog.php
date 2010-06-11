@@ -64,11 +64,9 @@ class MergeHelper_RepoCommandLog {
 	private $oCommandLineFactory = NULL;
 	
 	public function __construct(MergeHelper_Repo $oRepo, MergeHelper_CommandLineFactory $oCommandLineFactory) {
-		
-		parent::__preConstruct();
+
 		$this->oRepo = $oRepo;
 		$this->oCommandLineFactory = $oCommandLineFactory;
-		parent::__construct();
 		
 	}
 	

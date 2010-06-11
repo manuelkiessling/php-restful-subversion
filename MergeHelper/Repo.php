@@ -63,13 +63,6 @@ class MergeHelper_Repo {
 
 	const TYPE_SVN = 0;
 
-	public function __construct() {
-
-		parent::__preConstruct();
-		parent::__construct();
-
-	}
-
 	public function setType($iType) {
 		$this->iType = $iType;
 	}

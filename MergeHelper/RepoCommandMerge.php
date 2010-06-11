@@ -62,11 +62,7 @@ class MergeHelper_RepoCommandMerge {
 	private $bDryrun = FALSE;
 	
 	public function __construct(MergeHelper_Repo $oRepo) {
-		
-		parent::__preConstruct();
 		$this->oRepo = $oRepo;
-		parent::__construct();
-		
 	}
 	
 	public function addMerge(MergeHelper_Revision $oRevision, MergeHelper_RepoPath $oSourcePath, $sTargetPath, $bIsRollback = FALSE) {

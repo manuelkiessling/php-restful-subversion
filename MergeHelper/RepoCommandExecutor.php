@@ -57,7 +57,7 @@ class MergeHelper_RepoCommandExecutor {
 	
 	private static $oInstance = NULL;
 	private static $asCache = array();
-	
+
 	private function __construct() {}
 
 	private final function __clone() {}
