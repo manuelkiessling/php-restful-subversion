@@ -131,20 +131,22 @@ class MergeHelper_RepoCommandLog {
 
 	private function asGetCommandLinesWithoutRevisions() {
 
+		$oCommandLine = $this->oCommandLineFactory->instantiate();
 		$asReturn = array();
 		if ($this->bCacheEnabled) {
+			$oCommandLine->setCommand('cat');
 			if ($this->bVerbose && $this->bXml) {
-				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.v.x';
+				$oCommandLine->addParameter($this->oRepo->sGetCachepath().'.v.x');
 			} elseif (!$this->bVerbose && $this->bXml) {
-				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.x';
+				$oCommandLine->addParameter($this->oRepo->sGetCachepath().'.x');
 			} elseif ($this->bVerbose && !$this->bXml) {
-				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath().'.v';
+				$oCommandLine->addParameter($this->oRepo->sGetCachepath().'.v');
 			} elseif (!$this->bVerbose && !$this->bXml) {
-				$asReturn[] = 'cat '.$this->oRepo->sGetCachepath();
+				$oCommandLine->addParameter($this->oRepo->sGetCachepath());
 			}
+			$asReturn[] = $oCommandLine->sGetCommandLine();
 		}
 		else {
-			$oCommandLine = $this->oCommandLineFactory->instantiate();
 			$oCommandLine->setCommand('svn');
 			$oCommandLine->addParameter('log');
 			$oCommandLine->addLongSwitch('no-auth-cache');
