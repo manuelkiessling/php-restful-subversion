@@ -96,7 +96,7 @@ class MergeHelper_RepoCommandLog {
 		if ($this->bRevisionListNotEmpty()) {	
 			$asReturn = $this->asGetCommandlinesForRevisions($this->aoRevisions);
 		} else {
-			$asReturn = $this->asGetCommandlinesWithoutRevisions();
+			$asReturn[] = $this->sGetCommandlineWithoutRevisions();
 		}
 		return $asReturn;
 
@@ -129,10 +129,9 @@ class MergeHelper_RepoCommandLog {
 
 	}
 
-	private function asGetCommandLinesWithoutRevisions() {
+	private function sGetCommandLineWithoutRevisions() {
 
 		$oCommandLine = $this->oCommandLineFactory->instantiate();
-		$asReturn = array();
 		if ($this->bCacheEnabled) {
 			$oCommandLine->setCommand('cat');
 			if ($this->bVerbose && $this->bXml) {
@@ -144,7 +143,7 @@ class MergeHelper_RepoCommandLog {
 			} elseif (!$this->bVerbose && !$this->bXml) {
 				$oCommandLine->addParameter($this->oRepo->sGetCachepath());
 			}
-			$asReturn[] = $oCommandLine->sGetCommandLine();
+			$sReturn = $oCommandLine->sGetCommandLine();
 		}
 		else {
 			$oCommandLine->setCommand('svn');
@@ -155,9 +154,9 @@ class MergeHelper_RepoCommandLog {
 			if ($this->bVerbose) $oCommandLine->addShortSwitch('v');
 			if ($this->bXml) $oCommandLine->addLongSwitch('xml');
 			$oCommandLine->addParameter($this->oRepo->sGetLocation());
-			$asReturn[] = $oCommandLine->sGetCommandLine();
+			$sReturn = $oCommandLine->sGetCommandLine();
 		}
-		return $asReturn;
+		return $sReturn;
 
 	}
 	
