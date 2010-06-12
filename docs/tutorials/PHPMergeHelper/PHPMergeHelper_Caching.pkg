@@ -1,0 +1,21 @@
+<refentry id="{@id}">
+        <refnamediv>
+                <refname>Caching</refname>
+                <refpurpose></refpurpose>
+        </refnamediv>
+        <refsynopsisdiv>
+                <author>
+                        Manuel Kiessling
+                        <authorblurb>
+                                {@link mailto:manuel@kiessling.net}
+                        </authorblurb>
+                </author>
+        </refsynopsisdiv>
+        <refsect1 id="{@id intro}">
+                <title>Setting up a repository cache</title>
+                <para>
+			The svn log classes of PHPMergeHelper may be performance-optimized by providing a local file cache of your remote repository.
+                </para>
+        </refsect1>
+</refentry>
+
