@@ -39,13 +39,21 @@ class MergeHelper_RepoCommandExecutorTest extends PHPUnit_Framework_TestCase {
 		                  'Singleton instantiable. Please declare the construct as private or protected'
 		                 );
 
+	}
+
+	public function test_cloningImpossible() {
+
+		$bExceptionThrown = FALSE;
+		$o = MergeHelper_RepoCommandExecutor::oGetInstance();
 		try {
-			$cloneMethod = $oReflection->getMethod('__clone');
-		} catch (ReflectionException $e) {
-			self::fail($e->getMessage());
+			$o2 = clone($o);
+		} catch (MergeHelper_Exception $e) {
+			$bExceptionThrown = TRUE;
 		}
 
-		self::assertTrue($cloneMethod->isPrivate(), 'Singleton is clonable');
+		$this->assertTrue($bExceptionThrown);
+
+
 	}
 
 }

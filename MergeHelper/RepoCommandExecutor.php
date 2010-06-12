@@ -60,7 +60,9 @@ class MergeHelper_RepoCommandExecutor {
 
 	private function __construct() {}
 
-	private final function __clone() {}
+	public function __clone() {
+		throw new MergeHelper_Exception('You cannot clone the singleton instance MergeHelper_RepoCommandExecutor');
+	}
 	
 	public static function oGetInstance() {
 
