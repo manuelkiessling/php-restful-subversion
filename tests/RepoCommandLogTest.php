@@ -69,17 +69,17 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		
 		$asCommandlines = $oLogCommand->asGetCommandlines();
 		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('svn --no-auth-cache --username=user.name --password=secret log file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
 
 		$oLogCommand->enableVerbose();
 		$asCommandlines = $oLogCommand->asGetCommandlines();
 		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('svn --no-auth-cache --username=user.name --password=secret log -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
 
 		$oLogCommand->enableXml();
 		$asCommandlines = $oLogCommand->asGetCommandlines();
 		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('svn --no-auth-cache --username=user.name --password=secret log -v --xml file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v --xml file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
 
 	}
 

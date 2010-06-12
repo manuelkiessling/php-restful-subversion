@@ -144,16 +144,16 @@ class MergeHelper_RepoCommandLog {
 			}
 		}
 		else {
-			$sCommandline = 'svn --no-auth-cache'.
-							' --username='.
-							$this->oRepo->sGetAuthinfoUsername().
-							' --password='.
-							$this->oRepo->sGetAuthinfoPassword().
-							' log ';
-			if ($this->bVerbose) $sCommandline .= '-v ';
-			if ($this->bXml) $sCommandline .= '--xml ';
-			$sCommandline .= $this->oRepo->sGetLocation();
-			$asReturn[] = $sCommandline;
+			$oCommandLine = $this->oCommandLineFactory->instantiate();
+			$oCommandLine->setCommand('svn');
+			$oCommandLine->addParameter('log');
+			$oCommandLine->addLongSwitch('no-auth-cache');
+			$oCommandLine->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
+			$oCommandLine->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
+			if ($this->bVerbose) $oCommandLine->addShortSwitch('v');
+			if ($this->bXml) $oCommandLine->addLongSwitch('xml');
+			$oCommandLine->addParameter($this->oRepo->sGetLocation());
+			$asReturn[] = $oCommandLine->sGetCommandLine();
 		}
 		return $asReturn;
 
