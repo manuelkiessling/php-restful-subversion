@@ -106,7 +106,6 @@ class MergeHelper_RepoCommandLog {
 
 		$asReturn = array();
 		foreach ($aoRevisions as $oRevision) {
-
 			$asReturn[] = $this->asGetCommandLineForRevision($oRevision);
 		}
 		return $asReturn;
@@ -130,7 +129,7 @@ class MergeHelper_RepoCommandLog {
 
 	}
 
-    private function asGetCommandLinesWithoutRevisions() {
+	private function asGetCommandLinesWithoutRevisions() {
 
 		$asReturn = array();
 		if ($this->bCacheEnabled) {
