@@ -115,8 +115,8 @@ class MergeHelper_RepoCommandLog {
     private function asGetCommandLineForRevision($oRevision) {
 
 		$oCommandLine = $this->oCommandLineFactory->instantiate();
-		$oCommandLine->addParameter('log');
 		$oCommandLine->setCommand('svn');
+		$oCommandLine->addParameter('log');
 		$oCommandLine->addLongSwitch('no-auth-cache');
 		$oCommandLine->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
 		$oCommandLine->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
