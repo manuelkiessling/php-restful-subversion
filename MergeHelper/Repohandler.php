@@ -167,7 +167,7 @@ class MergeHelper_Repohandler {
 
 	}
 
-	public static function asGetMergeCommandlinesForRevisionsAndPaths(MergeHelper_Repo $oRepo, Array $aaRevisionsAndPaths, $bDryrun = FALSE) {
+	public static function asGetMergeCommandlinesForRevisionsAndPaths(MergeHelper_Repo $oRepo, Array $aaRevisionsAndPaths, $bDryrun = FALSE, $bIsRollback = FALSE) {
 
 		$oMergeCommand = new MergeHelper_RepoCommandMerge($oRepo);
 		if ($bDryrun) $oMergeCommand->enableDryrun();
@@ -178,7 +178,7 @@ class MergeHelper_Repohandler {
 			$sTargetBasePath = $amRevisionAndPath[2];
 			if ($amRevisionAndPath[3] === TRUE) $oRevision = new MergeHelper_Revision($oRevision->sGetNumberInverted());
 			$sTargetPath = $sTargetBasePath . mb_substr($oSourcePath, mb_strlen(MergeHelper_Repohandler::oGetCommonBasePathForFullPath($oRepo, $oSourcePath)));
-			$oMergeCommand->addMerge($oRevision, $oSourcePath, $sTargetPath);
+			$oMergeCommand->addMerge($oRevision, $oSourcePath, $sTargetPath, $bIsRollback);
 		}
 
 		return $oMergeCommand->asGetCommandlines();

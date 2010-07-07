@@ -84,19 +84,44 @@ class MergeHelper_RepoCommandMerge {
 		$this->bDryrun = TRUE;
 	}
 		
+	/**
+	 * creates commandline for mergeprocess
+	 * 
+	 * @param array $amMerge
+	 * @param string $sRevisions
+	 * @return varchar
+	 */
+	private function asGetCommandLine($amMerge, $sRevisions)
+	{
+		$oCommandLineFactory = new MergeHelper_CommandLineFactory();
+		$oCommandLine = $oCommandLineFactory->instantiate();
+		$oCommandLine->addParameter('merge');
+		$oCommandLine->setCommand('svn');
+		if ($this->bDryrun) {
+			$oCommandLine->addLongSwitch('dry-run');
+		}
+		if ($amMerge['oRevision']->bIsRange()) {
+			$oCommandLine->addShortSwitch('r');	
+		} else {
+			$oCommandLine->addShortSwitch('c');
+		}
+		$oCommandLine->addParameter($sRevisions);
+		$oCommandLine->addParameter($this->oRepo->sGetLocation() . $amMerge['oSourcePath']);
+		$oCommandLine->addParameter($amMerge['sTargetPath']);
+		return $oCommandLine->sGetCommandLine();
+	}
+	
+	/**
+	 * aggregates commandlines for svn merge
+	 * 
+	 * @return array
+	 */
 	public function asGetCommandlines() {
 
 		$asCommandlines = array();
 		if (is_array($this->aaMerges) && sizeof($this->aaMerges) > 0) {
 			foreach ($this->aaMerges as $amMerge) {
-				$sCommandline = self::SVN_CMD_MERGE.' ';
-				if ($this->bDryrun) $sCommandline .= '--dry-run ';
-				$sRevisionSwitch = '-c';
-				if ($amMerge['oRevision']->bIsRange()) $sRevisionSwitch = '-r';
-				$sCommandline .= $sRevisionSwitch.' '.$amMerge['oRevision']->sGetNumber().' ';
-				$sCommandline .= $this->oRepo->sGetLocation().$amMerge['oSourcePath'].' ';
-				$sCommandline .= $amMerge['sTargetPath'];
-				$asCommandlines[$amMerge['oRevision']->sGetNumber()] = $sCommandline;
+				$asCommandlines[$amMerge['oRevision']->sGetNumber()] = $this->asGetCommandLine($amMerge, $amMerge['oRevision']->sGetNumber());
 			}
 		} else {
 			return NULL;
