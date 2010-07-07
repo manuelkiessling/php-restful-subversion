@@ -14,10 +14,6 @@ class MergeHelper_RepoTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame('http://svn.abacho.net.local/my-hammer', $oRepo->sGetLocation());
 		$this->assertSame('http://svn.abacho.net.local/my-hammer/branches', $oRepo->sGetLocationBranches());
 
-		$oRepo->setCacheDirectory(realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache'));
-		$this->assertSame(realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache').'/MergeHelper.svncache.'.sha1('http://svn.abacho.net.local/my-hammer'),
-		                  $oRepo->sGetCachepath());
-
 		$oRepo->setAuthinfo('user.name', 'secret');
 		$this->assertSame('user.name', $oRepo->sGetAuthinfoUsername());
 		$this->assertSame('secret', $oRepo->sGetAuthinfoPassword());
@@ -40,5 +36,75 @@ class MergeHelper_RepoTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame('http://svn.abacho.net.local/my-hammer/branches/my-hammer2/_approval', $oRepo->sGetTargetLocation());
 
 	}
+	
+	public function test_setAndEnableCacheAndGetCachePath() {
 
+		$oRepo = new MergeHelper_Repo();		
+		$oRepo->setType(MergeHelper_Repo::TYPE_SVN);		
+		$oRepo->setLocation('http://svn.example.com/repo');
+	
+		$oRepo->setCacheDirectory(realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache'));
+		$oRepo->enableCache();
+		$this->assertSame(realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache').'/MergeHelper.svncache.'.sha1('http://svn.example.com/repo'),
+		                  $oRepo->sGetCachePath());
+
+	}
+	
+	public function test_getCachePathThrowsExceptionIfCacheIsNotEnabled() {
+	
+		$oRepo = new MergeHelper_Repo();		
+		$oRepo->setType(MergeHelper_Repo::TYPE_SVN);		
+		$oRepo->setLocation('http://svn.example.com/repo');
+		
+		$bThrown = FALSE;
+		try {
+			$oRepo->sGetCachePath();
+		} catch MergeHelper_RepoCannotEnableCacheIfNoCacheDirectoryWasSetException $e {
+			$bThrown = TRUE;
+		}
+		$this->assertTrue($bThrown);
+	
+	}
+	
+	public function test_enableCacheThrowsExceptionIfNoCacheDirectoryWasSet() {
+
+		$oRepo = new MergeHelper_Repo();		
+		$oRepo->setType(MergeHelper_Repo::TYPE_SVN);		
+		$oRepo->setLocation('http://svn.abacho.net.local/my-hammer');
+	
+		$bThrown = FALSE;
+		try {
+			$oRepo->enableCache();
+		} catch MergeHelper_RepoCannotEnableCacheIfNoCacheDirectoryWasSetException $e {
+			$bThrown = TRUE;
+		}
+		$this->assertTrue($bThrown);
+
+	}
+		
+	public function test_disableCache() {
+
+		$oRepo = new MergeHelper_Repo();		
+		$oRepo->setType(MergeHelper_Repo::TYPE_SVN);		
+		$oRepo->setLocation('http://svn.abacho.net.local/my-hammer');
+	
+		$oRepo->setCacheDirectory(realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache'));
+		$oRepo->enableCache();
+		$oRepo->disableCache();
+		$this->assertFalse($oRepo->bHasUptodateCache());
+	
+	}
+	
+	public function test_hasUptodateCache() {
+
+		$oRepo = new MergeHelper_Repo();		
+		$oRepo->setType(MergeHelper_Repo::TYPE_SVN);		
+		$oRepo->setLocation('http://svn.abacho.net.local/my-hammer');
+	
+		$oRepo->setCacheDirectory(realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache'));
+		$oRepo->enableCache();
+		$this->assertTrue($oRepo->bCacheEnabled());
+	
+	}
+	
 }
