@@ -93,7 +93,7 @@ class MergeHelper_RepoCommandLog {
 
 	}
 		
-	private function asGetCommandLinesForRevisions($aoRevisions) {
+	private function asGetCommandLinesForRevisions(Array $aoRevisions) {
 
 		$asReturn = array();
 		foreach ($aoRevisions as $oRevision) {
@@ -103,7 +103,7 @@ class MergeHelper_RepoCommandLog {
 
 	}
 
-    private function asGetCommandLineForRevision($oRevision) {
+    private function asGetCommandLineForRevision(MergeHelper_Revision $oRevision) {
 
 		$oCommandLine = $this->oCommandLineFactory->instantiate();
 		$oCommandLine->setCommand('svn');
