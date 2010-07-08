@@ -122,7 +122,7 @@ class MergeHelper_RepoCommandLog {
 
 	private function sGetCommandLineWithoutRevisions() {
 
-		if ($this->oRepo->bHasUptodateCache()) {
+		if ($this->oRepo->bHasUsableCache()) {
 			$sCommandLine = $this->sGetCommandLineWithoutRevisionsUsingCache();
 		} else {
 			$sCommandLine = $this->sGetCommandLineWithoutRevisionsNotUsingCache();
