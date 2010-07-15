@@ -156,5 +156,3 @@ class MergeHelper_Repo {
 	}
 
 }
-
-class MergeHelper_RepoCannotEnableCacheIfNoCacheDirectoryWasSetException extends Exception {}
