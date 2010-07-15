@@ -32,7 +32,7 @@
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
- * @subpackage Repository
+ * @subpackage Exception
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,87 +40,15 @@
  */
 
 /**
- * Class implementing a Mediator pattern to allow effective use of the library
+ * Exception for errors in MergeHelper_RepoPath
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
- * @subpackage Repository
+ * @subpackage Exception
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
+ * @uses       MergeHelper_Exception
  */
-class MergeHelper_Revision {
-
-	private $sBegin = NULL;
-	private $sEnd = NULL;
-	
-	/**
-	 * @todo Check and Exception needed for number format
-	 */
-	public function __construct($sBegin, $sEnd = NULL) {
-
-		if ((string)(int)$sBegin != $sBegin) {
-			throw new MergeHelper_RevisionInvalidRevisionNumberException('Revision start "'.$sBegin.'" is not a valid revision number.');
-		}
-
-		if (!is_null($sEnd)) {
-			if ((string)(int)$sEnd != $sEnd) {
-				throw new MergeHelper_RevisionInvalidRevisionNumberException('Revision start "'.$sEnd.'" is not a valid revision number.');
-			}
-			
-			if ((int)$sBegin < 0 || (int)$sEnd < 0) {
-				throw new MergeHelper_RevisionInvalidRevisionNumberException('When giving a range, both revision numbers must be positive.');
-			}
-		}
-
-		$this->sBegin = $sBegin;
-		$this->sEnd = $sEnd;
-	
-	}
-	
-	public function sGetNumber() {
-	
-		if (is_null($this->sEnd)) return $this->sBegin;
-		return $this->sBegin.':'.$this->sEnd;
-	
-	}
-	
-	public function sGetNumberInverted() {
-	
-		if (is_null($this->sEnd)) return (string)((int)$this->sBegin * -1);
-		return $this->sEnd.':'.$this->sBegin;
-	
-	}
-	
-	public function getRevertedRevisionAsObject() {
-
-		if ($this->bIsRange()) {
-			return new self($this->sEnd, $this->sBegin);
-		}
-
-		$sBegin = (string)((int)$this->sBegin * -1);
-		return new self($sBegin);
-
-	}
-	
-	public function __toString() {
-		return (string)$this->sGetNumber();
-	}
-	
-	public function sGetNumberBegin() {
-		return $this->sBegin;
-	}
-	
-	public function sGetNumberEnd() {
-		return $this->sEnd;
-	}
-	
-	public function bIsRange() {
-	
-		if (is_null($this->sEnd)) return FALSE;
-		return TRUE;
-	
-	}
-	
-}
+class MergeHelper_RevisionInvalidRevisionNumberException extends MergeHelper_Exception {};

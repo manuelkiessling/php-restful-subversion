@@ -70,7 +70,7 @@ class MergeHelper_RepoCommandMerge {
 		if ($this->aaMerges === NULL) $this->aaMerges = array();
 		$amMergeParts = array();
 		if ($bIsRollback) {
-			$amMergeParts['oRevision'] = new MergeHelper_Revision($oRevision->sGetNumberInverted());
+			$amMergeParts['oRevision'] = $oRevision->getRevertedRevisionAsObject();
 		} else {
 			$amMergeParts['oRevision'] = $oRevision;
 		}
