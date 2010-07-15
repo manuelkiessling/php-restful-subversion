@@ -5,22 +5,43 @@ class MergeHelper_RevisionTest extends PHPUnit_Framework_TestCase {
 	/**
      * @expectedException MergeHelper_RevisionInvalidRevisionNumberException
      */
-	public function test_invalidNumbersThrowExceptionRangeAsString() {
+	public function test_invalidNumbersThrowExceptionsInavlidSyntaxInBegin() {
 		$oRevision = new MergeHelper_Revision('12345:3242');
+	}
+
+	/**
+     * @expectedException MergeHelper_RevisionInvalidRevisionNumberException
+     */
+	public function test_invalidNumbersThrowExceptionsInavlidSyntaxInEnd() {
+		$oRevision = new MergeHelper_Revision('12345', 'r23234');
 	}
 	
 	/**
      * @expectedException MergeHelper_RevisionInvalidRevisionNumberException
      */
-	public function test_invalidNumbersThrowExceptionFloat() {
+	public function test_invalidNumbersThrowExceptionFloatInBegin() {
 		$oRevision = new MergeHelper_Revision(1.3234);
 	}
 
 	/**
      * @expectedException MergeHelper_RevisionInvalidRevisionNumberException
      */
-	public function test_invalidNumbersThrowExceptionNegativeNumbersInRange() {
+	public function test_invalidNumbersThrowExceptionFloatInEnd() {
+		$oRevision = new MergeHelper_Revision('12345', 1.3234);
+	}
+
+	/**
+     * @expectedException MergeHelper_RevisionInvalidRevisionNumberException
+     */
+	public function test_invalidNumbersThrowExceptionNegativeNumbersInRangeForBegin() {
 		$oRevision = new MergeHelper_Revision('-43278', '-3288');
+	}
+
+	/**
+     * @expectedException MergeHelper_RevisionInvalidRevisionNumberException
+     */
+	public function test_invalidNumbersThrowExceptionNegativeNumbersInRangeForEnd() {
+		$oRevision = new MergeHelper_Revision('43278', '-3288');
 	}
 
 	public function test_setAndGetSingle() {
