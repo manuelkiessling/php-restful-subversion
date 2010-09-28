@@ -109,7 +109,6 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 	
 	public function test_getRevisionsBySearchingForMessage() {
 
-		
 		// With cache (test cache is old, gives less revisions!)
 		$this->oRepo->enableCache();
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
@@ -127,7 +126,6 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame('5', $aoRevisions[1]->sGetNumber());
 		$this->assertSame('7', $aoRevisions[2]->sGetNumber());
 
-	
 	}
 
 }
