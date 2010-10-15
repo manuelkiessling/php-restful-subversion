@@ -152,7 +152,9 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$aoRevisions = $oLogCommand->aoGetRevisionsInRange(7, 'head');
 		$this->assertSame(array(2, '7', '8'),
-		                  array(sizeof($aoRevisions), $aoRevisions[0]->sGetNumber(), $aoRevisions[1]->sGetNumber()));
+		                  array(sizeof($aoRevisions),
+		                        $aoRevisions[0]->sGetNumber(),
+		                        $aoRevisions[1]->sGetNumber()));
 	}
 
 }
