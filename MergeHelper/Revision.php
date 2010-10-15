@@ -40,7 +40,7 @@
  */
 
 /**
- * Class implementing a Mediator pattern to allow effective use of the library
+ * Class representing a revision or range of revisions
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
