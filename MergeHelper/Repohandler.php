@@ -73,6 +73,11 @@ class MergeHelper_Repohandler {
 
 	}
 
+	public static function aoGetRevisionsInRange(MergeHelper_Repo $oRepo, $sRangeStart, $sRangeEnd) {
+		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
+		return $oLogCommand->aoGetRevisionsInRange($sRangeStart, $sRangeEnd);
+	}
+
 	public static function oGetCommonBasePathForFullPath(MergeHelper_Repo $oRepo, MergeHelper_RepoPath $oPath) {
 
 		$aoSourcePaths = $oRepo->aoGetSourcePaths();

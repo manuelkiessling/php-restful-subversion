@@ -9,7 +9,7 @@ $oRepo->setType(MergeHelper_Repo::TYPE_SVN);
 $oRepo->setLocation($sRepoUri);
 $oRepo->setAuthinfo('user.name', 'secret');
 
-$rDb = new PDO('sqlite:./svn.db');
+$rDb = new PDO('sqlite:./svn.db', NULL, NULL);
 
 $oQuery = $rDb->query("SELECT revision FROM revisions ORDER BY revision DESC LIMIT 1");
 $oRow = $oQuery->fetch(PDO::FETCH_ASSOC);

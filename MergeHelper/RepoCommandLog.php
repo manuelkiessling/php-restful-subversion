@@ -58,6 +58,7 @@ class MergeHelper_RepoCommandLog {
 	
 	private $oRepo = NULL;
 	private $aoRevisions = NULL;
+	private $sRange = NULL;
 	private $bVerbose = FALSE;
 	private $bXml = FALSE;
 	private $oCommandLineFactory = NULL;
@@ -72,7 +73,7 @@ class MergeHelper_RepoCommandLog {
 	public function addRevision(MergeHelper_Revision $oRevision) {
 		$this->aoRevisions[] = $oRevision;
 	}
-	
+
 	public function enableVerbose() {
 		$this->bVerbose = TRUE;
 	}
@@ -93,6 +94,10 @@ class MergeHelper_RepoCommandLog {
 
 	}
 		
+	private function setRange($sRangeStart, $sRangeEnd) {
+		$this->sRange = $sRangeStart.':'.$sRangeEnd;
+	}
+
 	private function asGetCommandLinesForRevisions(Array $aoRevisions) {
 
 		$asReturn = array();
@@ -122,7 +127,7 @@ class MergeHelper_RepoCommandLog {
 
 	private function sGetCommandLineWithoutRevisions() {
 
-		if ($this->oRepo->bHasUsableCache()) {
+		if ($this->oRepo->bHasUsableCache() && $this->sRange == NULL) {
 			$sCommandLine = $this->sGetCommandLineWithoutRevisionsUsingCache();
 		} else {
 			$sCommandLine = $this->sGetCommandLineWithoutRevisionsNotUsingCache();
@@ -156,6 +161,7 @@ class MergeHelper_RepoCommandLog {
 		$oCommandLine->addLongSwitch('no-auth-cache');
 		$oCommandLine->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
 		$oCommandLine->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
+		if ($this->sRange) $oCommandLine->addShortSwitchWithValue('r', $this->sRange);
 		if ($this->bVerbose) $oCommandLine->addShortSwitch('v');
 		if ($this->bXml) $oCommandLine->addLongSwitch('xml');
 		$oCommandLine->addParameter($this->oRepo->sGetLocation());
@@ -223,6 +229,25 @@ class MergeHelper_RepoCommandLog {
 		} 
 		return $aoReturnSorted;
 	
+	}
+
+	public function aoGetRevisionsInRange($sRangeStart, $sRangeEnd) {
+		$this->setRange($sRangeStart, $sRangeEnd);
+		$aoReturn = array();
+		$this->enableXml();
+		$asCommandlines = $this->asGetCommandlines();
+		foreach ($asCommandlines as $sCommandline) {
+           	$sOutput = MergeHelper_RepoCommandExecutor::oGetInstance()->sGetCommandResult("$sCommandline | grep \"$sText\" -B 3| grep revision");
+			$asLines = explode("\n", $sOutput);
+			foreach ($asLines as $sLine) {
+				if (mb_strstr($sLine, 'revision')) {
+					// each line contains something like '   revision="5">'
+					preg_match_all('/   revision="(.*)">/', $sLine, $asMatches);
+					$aoReturn[] = new MergeHelper_Revision($asMatches[1][0]);
+				}
+			}
+		}
+		return $aoReturn;
 	}
 
 }

@@ -128,4 +128,31 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 
 	}
 
+	public function test_getRevisionsInRangeTwoNumbers() {
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
+		$aoRevisions = $oLogCommand->aoGetRevisionsInRange(1, 2);
+		$this->assertSame(array(2, '1', '2'),
+		                  array(sizeof($aoRevisions),
+		                        $aoRevisions[0]->sGetNumber(),
+		                        $aoRevisions[1]->sGetNumber()));
+	}
+
+	public function test_getRevisionsInRangeTwoNumbersReverse() {
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
+		$aoRevisions = $oLogCommand->aoGetRevisionsInRange(4, 1);
+		$this->assertSame(array(4, '4', '3', '2', '1'),
+		                  array(sizeof($aoRevisions),
+		                  $aoRevisions[0]->sGetNumber(),
+		                  $aoRevisions[1]->sGetNumber(),
+		                  $aoRevisions[2]->sGetNumber(),
+						  $aoRevisions[3]->sGetNumber()));
+	}
+
+	public function test_getRevisionsInRangeNumberAndHead() {
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
+		$aoRevisions = $oLogCommand->aoGetRevisionsInRange(7, 'head');
+		$this->assertSame(array(2, '7', '8'),
+		                  array(sizeof($aoRevisions), $aoRevisions[0]->sGetNumber(), $aoRevisions[1]->sGetNumber()));
+	}
+
 }

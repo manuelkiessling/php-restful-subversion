@@ -40,6 +40,17 @@ class MergeHelper_RepohandlerTest extends PHPUnit_Framework_TestCase {
 		
 	}
 
+	public function test_getRevisionsInRange() {
+
+		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsInRange($this->oRepo, 'HEAD', 5);
+		$this->assertSame(4, sizeof($aoRevisions));
+		$this->assertSame('8', $aoRevisions[0]->sGetNumber());
+		$this->assertSame('7', $aoRevisions[1]->sGetNumber());
+		$this->assertSame('6', $aoRevisions[2]->sGetNumber());
+		$this->assertSame('5', $aoRevisions[3]->sGetNumber());
+
+	}
+
 	public function test_checkIfRevisionsAreInSameSourcePath() {
 	
 		$aoRevisions = array(new MergeHelper_Revision('3'), new MergeHelper_Revision('5'));
