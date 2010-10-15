@@ -213,13 +213,9 @@ class MergeHelper_RepoCommandLog {
 		$asCommandlines = $this->asGetCommandlines();
 		foreach ($asCommandlines as $sCommandline) {
         	$sOutput = MergeHelper_RepoCommandExecutor::oGetInstance()->sGetCommandResult("$sCommandline | grep \"$sText\" -B 3| grep revision");
-			$asLines = explode("\n", $sOutput);
-			foreach ($asLines as $sLine) {
-				if (mb_strstr($sLine, 'revision')) {
-					// each line contains something like '   revision="5">'
-					preg_match_all('/   revision="(.*)">/', $sLine, $asMatches);
-					$aoReturn[] = new MergeHelper_Revision($asMatches[1][0]);
-				}
+			$asRevisionNumbers = $this->asGetRevisionNumbersFromLogOutput($sOutput);
+			foreach ($asRevisionNumbers as $sRevisionNumber) {
+				$aoReturn[] = new MergeHelper_Revision($sRevisionNumber);
 			}
 		}
 		krsort($aoReturn);
@@ -238,16 +234,25 @@ class MergeHelper_RepoCommandLog {
 		$asCommandlines = $this->asGetCommandlines();
 		foreach ($asCommandlines as $sCommandline) {
 			$sOutput = MergeHelper_RepoCommandExecutor::oGetInstance()->sGetCommandResult("$sCommandline | grep revision");
-			$asLines = explode("\n", $sOutput);
-			foreach ($asLines as $sLine) {
-				if (mb_strstr($sLine, 'revision')) {
-					// each line contains something like '   revision="5">'
-					preg_match_all('/   revision="(.*)">/', $sLine, $asMatches);
-					$aoReturn[] = new MergeHelper_Revision($asMatches[1][0]);
-				}
+			$asRevisionNumbers = $this->asGetRevisionNumbersFromLogOutput($sOutput);
+			foreach ($asRevisionNumbers as $sRevisionNumber) {
+				$aoReturn[] = new MergeHelper_Revision($sRevisionNumber);
 			}
 		}
 		return $aoReturn;
+	}
+
+	protected function asGetRevisionNumbersFromLogOutput($sOutput) {
+		$asReturn = array();
+		$asLines = explode("\n", $sOutput);
+		foreach ($asLines as $sLine) {
+			if (mb_strstr($sLine, 'revision')) {
+				// each line contains something like '   revision="5">'
+				preg_match_all('/   revision="(.*)">/', $sLine, $asMatches);
+				$asReturn[] = $asMatches[1][0];
+			}
+		}
+		return $asReturn;
 	}
 
 }
