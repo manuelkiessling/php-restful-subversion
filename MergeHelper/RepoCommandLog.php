@@ -237,7 +237,7 @@ class MergeHelper_RepoCommandLog {
 		$this->enableXml();
 		$asCommandlines = $this->asGetCommandlines();
 		foreach ($asCommandlines as $sCommandline) {
-           	$sOutput = MergeHelper_RepoCommandExecutor::oGetInstance()->sGetCommandResult("$sCommandline | grep \"$sText\" -B 3| grep revision");
+           	$sOutput = MergeHelper_RepoCommandExecutor::oGetInstance()->sGetCommandResult("$sCommandline | grep revision");
 			$asLines = explode("\n", $sOutput);
 			foreach ($asLines as $sLine) {
 				if (mb_strstr($sLine, 'revision')) {
