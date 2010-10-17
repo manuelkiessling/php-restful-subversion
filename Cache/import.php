@@ -9,9 +9,9 @@ $oRepo->setType(MergeHelper_Repo::TYPE_SVN);
 $oRepo->setLocation($sRepoUri);
 $oRepo->setAuthinfo('user.name', 'secret');
 
-$rDb = new PDO('sqlite:./svn.db', NULL, NULL);
+$oDb = new PDO('sqlite:./svn.db', NULL, NULL);
 
-$oQuery = $rDb->query("SELECT revision FROM revisions ORDER BY revision DESC LIMIT 1");
+$oQuery = $oDb->query('SELECT revision FROM revisions ORDER BY revision DESC LIMIT 1');
 $oRow = $oQuery->fetch(PDO::FETCH_ASSOC);
 if (!$oRow) {
 	echo 'Database is empty, starting from scratch'."\n";
@@ -26,11 +26,13 @@ $aoRevisions = MergeHelper_Repohandler::aoGetRevisionsInRange($oRepo, $iStartRev
 foreach($aoRevisions as $oRevision) {
 	echo "\n";
 	echo 'Revision '.$oRevision->sGetNumber().":\n";
-	$rDb->exec('INSERT INTO revisions (revision) VALUES ("'.$oRevision->sGetNumber().'")');
+	$oDb->exec('INSERT INTO revisions (revision) VALUES ("'.$oRevision->sGetNumber().'")');
 	
 	$aoPaths = MergeHelper_Repohandler::aoGetPathsForRevisions($oRepo, array($oRevision));
 	foreach($aoPaths as $oPath) {
 		echo "\t".$oPath."\n";
-		$rDb->exec('INSERT INTO paths (revision, path, revertedpath) VALUES ("'.$oRevision->sGetNumber().'", "'.$oPath->sGetAsString().'", "'.strrev($oPath->sGetAsString()).'")');
+		$oDb->exec('INSERT INTO paths (revision, path, revertedpath) VALUES ("'.$oRevision->sGetNumber().'",
+		                                                                     "'.$oPath->sGetAsString().'",
+		                                                                     "'.strrev($oPath->sGetAsString()).'")');
 	}
 }
