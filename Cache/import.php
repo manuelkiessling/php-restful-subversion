@@ -16,7 +16,7 @@ $oRow = $oQuery->fetch(PDO::FETCH_ASSOC);
 if (!$oRow) {
 	echo 'Database is empty, starting from scratch'."\n";
 } else {
-	echo 'Highest revision in database: '.$oRow['revision']."\n";
+	echo 'Highest revision found in database: '.$oRow['revision']."\n";
 }
 $iStartRevision = $oRow['revision'] + 1;
 
