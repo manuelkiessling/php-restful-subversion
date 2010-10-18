@@ -1,4 +1,4 @@
-<?php
+  <?php
 
 /**
  * PHPMergeHelper
@@ -92,7 +92,9 @@ class MergeHelper_Repo {
 		if (!$this->bCacheEnabled) {
 			throw new MergeHelper_RepoCannotReturnCacheDirectoryPathIfCacheIsNotEnabledException();
 		}
-		return $this->sCacheDirectory.'/MergeHelper.svncache.'.sha1($this->sLocation);
+		$sLocation = str_replace('/', '_', $this->sLocation);
+		$sLocation = str_replace(':', '_', $sLocation);
+		return $this->sCacheDirectory.'/PHPMergeHelper.SVNCache.'.$sLocation;
 	}
 
 	public function enableCache() {
