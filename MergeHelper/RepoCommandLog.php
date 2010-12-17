@@ -187,6 +187,9 @@ class MergeHelper_RepoCommandLog {
 			                ' | grep "action"';
 			$oExecutor = MergeHelper_RepoCommandExecutor::oGetInstance();
 			$sOutput = $oExecutor->sGetCommandResult($sCommandline);
+			if ($sOutput == '') {
+				throw new MergeHelper_RepoCommandLogNoSuchRevisionException();
+			}
 			$asLines = explode("\n", $sOutput);
 			foreach ($asLines as $sLine) {
 				if (mb_strstr($sLine, 'action')) {

@@ -51,17 +51,17 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		
 		$asCommandlines = $oLogCommand->asGetCommandlines();
 		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/MergeHelper.svncache.300b8d25873d3a25c651dc0825703bc08e48d754'), $asCommandlines[0]);
+		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/PHPMergeHelper.SVNCache.file____Users_manuel_Dropbox_Projects_PHPMergeHelper_tests__testrepo'), $asCommandlines[0]);
 
 		$oLogCommand->enableVerbose();
 		$asCommandlines = $oLogCommand->asGetCommandlines();
 		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/MergeHelper.svncache.300b8d25873d3a25c651dc0825703bc08e48d754.v'), $asCommandlines[0]);
+		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/PHPMergeHelper.SVNCache.file____Users_manuel_Dropbox_Projects_PHPMergeHelper_tests__testrepo.v'), $asCommandlines[0]);
 
 		$oLogCommand->enableXml();
 		$asCommandlines = $oLogCommand->asGetCommandlines();
 		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/MergeHelper.svncache.300b8d25873d3a25c651dc0825703bc08e48d754.v.x'), $asCommandlines[0]);
+		$this->assertSame('cat '.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache/PHPMergeHelper.SVNCache.file____Users_manuel_Dropbox_Projects_PHPMergeHelper_tests__testrepo.v.x'), $asCommandlines[0]);
 
 		// Without cache
 		$this->oRepo->disableCache();
@@ -93,7 +93,18 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/a.php'), $aoPaths[1]);
 	
 	}
-	
+
+	/**
+	 * @expectedException MergeHelper_RepoCommandLogNoSuchRevisionException
+	 */
+	public function test_getPathListForRevisionExceptionIfNoSuchRevision() {
+
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
+		$oLogCommand->addRevision(new MergeHelper_Revision('9'));
+		$oLogCommand->aoGetPaths();
+
+	}
+
 	public function test_getPathListForRevisions() {
 
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());

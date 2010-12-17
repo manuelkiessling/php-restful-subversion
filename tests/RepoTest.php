@@ -45,7 +45,7 @@ class MergeHelper_RepoTest extends PHPUnit_Framework_TestCase {
 	
 		$oRepo->setCacheDirectory(realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache'));
 		$oRepo->enableCache();
-		$this->assertSame(realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache').'/MergeHelper.svncache.'.sha1('http://svn.example.com/repo'),
+		$this->assertSame(realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache').'/PHPMergeHelper.SVNCache.http___svn.example.com_repo',
 		                  $oRepo->sGetCachePath());
 
 	}
