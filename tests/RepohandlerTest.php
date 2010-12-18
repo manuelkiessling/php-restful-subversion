@@ -7,7 +7,6 @@ class MergeHelper_RepohandlerTest extends PHPUnit_Framework_TestCase {
 		$oRepo = new MergeHelper_Repo();
 		$oRepo->setType(MergeHelper_Repo::TYPE_SVN);
 		$oRepo->setLocation('file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'));
-		$oRepo->setCacheDirectory(realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepocache'));
 		$oRepo->setAuthinfo('user.name', 'secret');
 		$oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_production'));
 		$oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_project'));
@@ -18,13 +17,6 @@ class MergeHelper_RepohandlerTest extends PHPUnit_Framework_TestCase {
 
 	public function test_getRevisionsForString() {
 		
-		// With cache (test cache is old, gives less revisions!)
-		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsForString($this->oRepo, 'TF-4001', TRUE);
-		$this->assertSame(2, sizeof($aoRevisions));
-		$this->assertSame('3', $aoRevisions[0]->sGetNumber());
-		$this->assertSame('5', $aoRevisions[1]->sGetNumber());
-		
-		// Without cache
 		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsForString($this->oRepo, 'TF-4001', FALSE);
 		$this->assertSame(3, sizeof($aoRevisions));
 		$this->assertSame('3', $aoRevisions[0]->sGetNumber());

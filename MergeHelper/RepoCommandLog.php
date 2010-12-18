@@ -127,34 +127,6 @@ class MergeHelper_RepoCommandLog {
 
 	private function sGetCommandLineWithoutRevisions() {
 
-		if ($this->oRepo->bHasUsableCache() && $this->sRange == NULL) {
-			$sCommandLine = $this->sGetCommandLineWithoutRevisionsUsingCache();
-		} else {
-			$sCommandLine = $this->sGetCommandLineWithoutRevisionsNotUsingCache();
-		}
-		return $sCommandLine;
-
-	}
-	
-	private function sGetCommandLineWithoutRevisionsUsingCache() {
-
-		$oCommandLine = $this->oCommandLineFactory->instantiate();
-		$oCommandLine->setCommand('cat');
-		if ($this->bVerbose && $this->bXml) {
-			$oCommandLine->addParameter($this->oRepo->sGetCachepath().'.v.x');
-		} elseif (!$this->bVerbose && $this->bXml) {
-			$oCommandLine->addParameter($this->oRepo->sGetCachepath().'.x');
-		} elseif ($this->bVerbose && !$this->bXml) {
-			$oCommandLine->addParameter($this->oRepo->sGetCachepath().'.v');
-		} elseif (!$this->bVerbose && !$this->bXml) {
-			$oCommandLine->addParameter($this->oRepo->sGetCachepath());
-		}
-		return $oCommandLine->sGetCommandLine();
-
-	}
-	
-	private function sGetCommandLineWithoutRevisionsNotUsingCache() {
-
 		$oCommandLine = $this->oCommandLineFactory->instantiate();
 		$oCommandLine->setCommand('svn');
 		$oCommandLine->addParameter('log');
@@ -203,30 +175,6 @@ class MergeHelper_RepoCommandLog {
 			}
 		}
 		return $aoReturn;
-	
-	}
-	
-	/**
-	 * @todo Does currently only work if text is on first line of commit message
-	 */
-	public function aoGetRevisionsWithMessageContainingText($sText) {
-
-		$aoReturn = array();
-		$this->enableXml();
-		$asCommandlines = $this->asGetCommandlines();
-		foreach ($asCommandlines as $sCommandline) {
-        	$sOutput = MergeHelper_RepoCommandExecutor::oGetInstance()->sGetCommandResult("$sCommandline | grep \"$sText\" -B 3| grep revision");
-			$asRevisionNumbers = $this->asGetRevisionNumbersFromLogOutput($sOutput);
-			foreach ($asRevisionNumbers as $sRevisionNumber) {
-				$aoReturn[] = new MergeHelper_Revision($sRevisionNumber);
-			}
-		}
-		krsort($aoReturn);
-		$aoReturnSorted = array();
-		foreach ($aoReturn as $oRevision) {
-			$aoReturnSorted[] = $oRevision;
-		} 
-		return $aoReturnSorted;
 	
 	}
 

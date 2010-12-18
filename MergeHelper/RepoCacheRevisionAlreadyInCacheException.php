@@ -1,4 +1,4 @@
-  <?php
+<?php
 
 /**
  * PHPMergeHelper
@@ -32,7 +32,7 @@
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
- * @subpackage Repository
+ * @subpackage Exception
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,89 +40,15 @@
  */
 
 /**
- * Class representing an existing SVN repository
+ * Exception for errors in MergeHelper_RepoPath
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
- * @subpackage Repository
+ * @subpackage Exception
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_RepoPath
+ * @uses       MergeHelper_Exception
  */
-class MergeHelper_Repo {
-
-	private $sLocation = NULL;
-	private $sCacheDirectory = NULL;
-	private $bCacheEnabled = FALSE;
-	private $sAuthinfoUsername = NULL;
-	private $sAuthinfoPassword = NULL;
-	private $aoSourcePaths = array();
-	private $oTargetPath = NULL;
-	private $iType = NULL;
-
-	const TYPE_SVN = 0;
-
-	public function setType($iType) {
-		$this->iType = $iType;
-	}
-	
-	public function iGetType() {
-		return $this->iType;
-	}
-
-	public function setLocation($sLocation) {
-		$this->sLocation = $sLocation;
-	}
-
-	public function sGetLocation() {
-		return $this->sLocation;
-	}
-
-	public function sGetLocationBranches() {
-		return $this->sGetLocation().'/branches';
-	}
-
-  	public function setAuthinfo($sUsername, $sPassword) {
-		$this->sAuthinfoUsername = $sUsername;
-		$this->sAuthinfoPassword = $sPassword;
-	}
-
-	public function sGetAuthinfoUsername() {
-		return $this->sAuthinfoUsername;
-	}
-
-	public function sGetAuthinfoPassword() {
-		return $this->sAuthinfoPassword;
-	}
-
-	public function addSourcePath(MergeHelper_RepoPath $oPath) {
-		$this->aoSourcePaths[] = $oPath;
-	}
-
-	public function aoGetSourcePaths() {
-		return $this->aoSourcePaths;
-	}
-	
-	public function asGetSourceLocations() {
-		$asReturn = array();
-		foreach ($this->aoSourcePaths as $oSourcePath) {
-			$asReturn[] = $this->sGetLocation()."$oSourcePath";
-		}
-		return $asReturn;
-	}
-		
-	public function setTargetPath(MergeHelper_RepoPath $oPath) {
-		$this->oTargetPath = $oPath;
-	}
-
-	public function oGetTargetPath() {
-		return $this->oTargetPath;
-	}
-	
-	public function sGetTargetLocation() {
-		return $this->sGetLocation()."$this->oTargetPath";
-	}
-
-}
+class MergeHelper_RepoCacheRevisionAlreadyInCacheException extends MergeHelper_Exception {};
