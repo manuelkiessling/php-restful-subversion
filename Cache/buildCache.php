@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 require_once('../MergeHelper/Bootstrap.php');
@@ -5,38 +6,43 @@ require_once('../MergeHelper/Bootstrap.php');
 $sRepoUri = $argv[1];
 $sRepoUsername = $argv[2];
 $sRepoPassword = $argv[3];
-if (isset($argv[4])) {
-	$sCacheDbDirectory = $argv[4];
-} else {
-	$sCacheDbDirectory = '/var/tmp';
+$sCacheDbFilename = $argv[4];
+
+if (empty($sRepoUri)) {
+	echo "No repository URI given.\n";
+	exit(1);
+}
+
+if (empty($sRepoUsername)) {
+	echo "No repository username given.\n";
+	exit(1);
+}
+
+if (empty($sRepoPassword)) {
+	echo "No repository password given.\n";
+	exit(1);
+}
+
+if (empty($sCacheDbFilename)) {
+	echo "No cache db filename given.\n";
+	exit(1);
 }
 
 $oRepo = new MergeHelper_Repo();
 $oRepo->setType(MergeHelper_Repo::TYPE_SVN);
 $oRepo->setLocation($sRepoUri);
 $oRepo->setAuthinfo($sRepoUsername, $sRepoPassword);
-$oRepo->setCacheDirectory($sCacheDbDirectory);
-$oRepo->enableCache();
 
-$oDb = new PDO('sqlite:'.$oRepo->sGetCachepath(), NULL, NULL);
+$oRepoCache = new MergeHelper_RepoCache(new PDO('sqlite:'.$sCacheDbFilename, NULL, NULL));
 
-$sHighestRevisionSql = 'SELECT revision FROM revisions ORDER BY revision DESC LIMIT 1';
-$oQuery = $oDb->query($sHighestRevisionSql);
-if (!is_object($oQuery)) {
-	require_once('./createStatements.php');
-	foreach ($asSql as $sSql) {
-		$oQuery = $oDb->query($sSql);
-	}
-	$oQuery = $oDb->query($sHighestRevisionSql);
-}
+$iHighestRevision = $oRepoCache->iGetHighestRevision();
 
-$oRow = $oQuery->fetch(PDO::FETCH_ASSOC);
-if (!$oRow) {
+if (!$iHighestRevision) {
 	echo 'Database is empty, starting from scratch'."\n";
 } else {
-	echo 'Highest revision found in database: '.$oRow['revision']."\n";
+	echo 'Highest revision found in database: '.$iHighestRevision."\n";
 }
-$iCurrentRevision = $oRow['revision'] + 1;
+$iCurrentRevision = $iHighestRevision + 1;
 
 $bFinished = FALSE;
 $oMergeHelper = new MergeHelper_Repohandler();
@@ -47,15 +53,18 @@ while (!$bFinished) {
 
 	$oRevision = new MergeHelper_Revision($iCurrentRevision);
 
-	$aoPaths = MergeHelper_Repohandler::aoGetPathsForRevisions($oRepo, array($oRevision));
+	try {
+		$aoPaths = MergeHelper_Repohandler::aoGetPathsForRevisions($oRepo, array($oRevision));
+	} catch (MergeHelper_RepoCommandLogNoSuchRevisionException $e)  {
+		echo "All revisions imported to cache.\n";
+		exit(0);
+	}
 	if (sizeof($aoPaths) > 0) {
-		$oDb->exec('INSERT INTO revisions (revision) VALUES ("'.$oRevision->sGetNumber().'")');
-		foreach($aoPaths as $oPath) {
-			echo "\t".$oPath."\n";
-			$oDb->exec('INSERT INTO paths (revision, path, revertedpath) VALUES ("'.$oRevision->sGetNumber().'",
-			                                                                     "'.$oPath->sGetAsString().'",
-			                                                                     "'.strrev($oPath->sGetAsString()).'")');
+		$sPaths = array();
+		foreach ($aoPaths as $oPath) {
+			$sPaths[] = $oPath->sGetAsString();
 		}
+		$oRepoCache->addRevision($oRevision->sGetNumber(), '', $sPaths);
 		$iCurrentRevision++;
 	} else {
 		echo 'Latest revision reached, terminating.'."\n";

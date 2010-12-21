@@ -12,6 +12,19 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 		$this->oRepoCache->resetCache();
 	}
 
+	public function test_getHighestRevisionInCache() {
+		$this->oRepoCache->addRevision(1234, 'Hello World', array('/trunk/source/a.php', '/branches/foo/b.php'));
+		$this->oRepoCache->addRevision(1236, 'Hello World', array('/trunk/source/d.php', '/branches/foo/b.php', '/branches/bar/a.php'));
+		$this->oRepoCache->addRevision(1237, 'Hello World', array('/totally/different.php'));
+		$this->oRepoCache->addRevision(1235, 'Hello World', array('/trunk/source/a.php', '/branches/foo/c.php', '/branches/foo/a.php'));
+
+		$this->assertSame(1237, $this->oRepoCache->iGetHighestRevision());
+	}
+
+	public function test_getHighestRevisionInCacheForEmptyCache() {
+		$this->assertFalse($this->oRepoCache->iGetHighestRevision());
+	}
+
 	public function test_addToAndRetrievePathsFromCache() {
 		$aPaths = array('/trunk/source', '/branches/foo');
 		$this->oRepoCache->addRevision(1234, 'Hello World', $aPaths);

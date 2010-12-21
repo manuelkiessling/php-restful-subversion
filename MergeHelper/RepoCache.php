@@ -104,6 +104,17 @@ class MergeHelper_RepoCache {
 		}
 	}
 
+	public function iGetHighestRevision() {
+		foreach ($this->oDb->query('SELECT revision
+		                            FROM revisions
+		                            ORDER BY revision DESC
+		                            LIMIT 1')
+				 as $asRow) {
+			return (int)$asRow['revision'];
+		}
+		return FALSE;
+	}
+
 	public function asGetPathsForRevision($iRevision) {
 		$asReturn = array();
 		$oStatement = $this->oDb->prepare('SELECT path FROM paths WHERE revision = ?');
@@ -116,14 +127,12 @@ class MergeHelper_RepoCache {
 	}
 
 	public function asGetMessageForRevision($iRevision) {
-		$asReturn = array();
 		$oStatement = $this->oDb->prepare('SELECT message FROM revisions WHERE revision = ?');
 		$oStatement->execute(array($iRevision));
 		$oRows = $oStatement->fetchAll();
 		foreach ($oRows as $asRow) {
 			return $asRow['message'];
 		}
-		return $asReturn;
 	}
 
 	public function aiGetRevisionsWithPathEndingOn($sString) {
