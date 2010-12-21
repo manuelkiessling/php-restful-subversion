@@ -60,11 +60,14 @@ class MergeHelper_Repohandler {
 	/**
 	 * @return array Array of MergeHelper_Revision objects
 	 */
-	public static function aoGetRevisionsForString(MergeHelper_Repo $oRepo, $sString) {
+	public static function aoGetRevisionsForString(MergeHelper_RepoCache $oRepoCache, $sString) {
 
-		if ($sString === '') return array();
-		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
-		return $oLogCommand->aoGetRevisionsWithMessageContainingText($sString);
+		if ($sString == '') return array();
+		$iRevisions = $oRepoCache->aiGetRevisionsWithMessageContainingText($sString);
+		foreach ($iRevisions as $iRevision) {
+			$return[] = new MergeHelper_Revision($iRevision);
+		}
+		return $return;
 
 	}
 

@@ -52,71 +52,61 @@
    */
 class MergeHelper_RepoCache {
 
-	protected $sDatabaseDirectory = NULL;
-	protected $sDatabaseFile = NULL;
 	protected $oDb = NULL;
 
-	protected function oGetDb() {
-		if (is_null($this->oDb)) {
-			$this->oDb = new PDO('sqlite:'.$this->sDatabaseDirectory.'/'.$this->sDatabaseFile, NULL, NULL);
-
-			$oResult = $this->oDb->query('SELECT revision FROM revisions LIMIT 1');
-			if ($oResult === FALSE) { // Database is not yet created
-				$asSql = array();
-
-				$asSql[] = 'DROP TABLE IF EXISTS revisions;';
-				$asSql[] = 'CREATE TABLE revisions(revision INTEGER PRIMARY KEY NOT NULL, author TEXT(64), date TEXT(10), time TEXT(8));';
-
-				$asSql[] = 'CREATE INDEX author ON revisions(author);';
-				$asSql[] = 'CREATE INDEX datetime ON revisions(date, time);';
-
-				$asSql[] = 'DROP TABLE IF EXISTS paths;';
-				$asSql[] = 'CREATE TABLE paths (id INTEGER PRIMARY KEY, revision INTEGER NOT NULL, type TEXT(2), path TEXT(512), revertedpath TEXT(512), FOREIGN KEY(revision) REFERENCES revisions(revision));';
-
-				$asSql[] = 'CREATE INDEX path ON paths(path);';
-				$asSql[] = 'CREATE INDEX revertedpath ON paths(revertedpath);';
-
-				foreach ($asSql as $sSql) {
-					$this->oDb->exec($sSql);
-				}
-			}
+	protected function setupDatabaseIfNecessary() {
+		$oResult = $this->oDb->query('SELECT revision FROM revisions LIMIT 1');
+		if ($oResult === FALSE) { // Database is not yet created
+			$this->resetCache();
 		}
-		return $this->oDb;
 	}
 
-	public function setCacheLocation($sCacheLocation) {
-		$this->sDatabaseDirectory = $sCacheLocation;
+	public function __construct($oDb) {
+		$this->oDb = $oDb;
+		$this->setupDatabaseIfNecessary();
 	}
 
-	public function setCacheIdentifier($sIdentifier) {
-		$this->sDatabaseFile = str_replace('/', '_', $sIdentifier);
-		$this->sDatabaseFile = str_replace(':', '_', $this->sDatabaseFile);
-		$this->sDatabaseFile = str_replace('.', '_', $this->sDatabaseFile);
+	public function emptyCache() {
+		$this->oDb->exec('DELETE FROM revisions');
+		$this->oDb->exec('DELETE FROM paths');
 	}
 
-	public function clear() {
-		$oDb = $this->oGetDb();
-		$oDb->exec('DELETE FROM revisions');
-		$oDb->exec('DELETE FROM paths');
+	public function resetCache() {
+		$asSql = array();
+
+		$asSql[] = 'DROP TABLE IF EXISTS revisions;';
+		$asSql[] = 'CREATE TABLE revisions(revision INTEGER PRIMARY KEY NOT NULL, author TEXT(64), message TEXT(2048), date TEXT(10), time TEXT(8));';
+
+		$asSql[] = 'CREATE INDEX author ON revisions(author);';
+		$asSql[] = 'CREATE INDEX message ON revisions(message);';
+		$asSql[] = 'CREATE INDEX datetime ON revisions(date, time);';
+
+		$asSql[] = 'DROP TABLE IF EXISTS paths;';
+		$asSql[] = 'CREATE TABLE paths (id INTEGER PRIMARY KEY, revision INTEGER NOT NULL, type TEXT(2), path TEXT(512), revertedpath TEXT(512), FOREIGN KEY(revision) REFERENCES revisions(revision));';
+
+		$asSql[] = 'CREATE INDEX path ON paths(path);';
+		$asSql[] = 'CREATE INDEX revertedpath ON paths(revertedpath);';
+
+		foreach ($asSql as $sSql) {
+			$this->oDb->exec($sSql);
+		}
 	}
 
-	public function addRevision($iRevision, $aPaths) {
-		$oDb = $this->oGetDb();
-		$oStatement = $oDb->prepare('INSERT INTO revisions (revision) VALUES (?)');
-		$bSuccessful = $oStatement->execute(array($iRevision));
+	public function addRevision($iRevision, $sMessage, $aPaths) {
+		$oStatement = $this->oDb->prepare('INSERT INTO revisions (revision, message) VALUES (?, ?)');
+		$bSuccessful = $oStatement->execute(array($iRevision, $sMessage));
 		if (!$bSuccessful) {
 			throw new MergeHelper_RepoCacheRevisionAlreadyInCacheException();
 		}
 		foreach($aPaths as $sPath) {
-			$oStatement = $oDb->prepare('INSERT INTO paths (revision, path, revertedpath) VALUES (?, ?, ?)');
+			$oStatement = $this->oDb->prepare('INSERT INTO paths (revision, path, revertedpath) VALUES (?, ?, ?)');
 			$oStatement->execute(array($iRevision, $sPath, strrev($sPath)));
 		}
 	}
 
 	public function asGetPathsForRevision($iRevision) {
 		$asReturn = array();
-		$oDb = $this->oGetDb();
-		$oStatement = $oDb->prepare('SELECT path FROM paths WHERE revision = ?');
+		$oStatement = $this->oDb->prepare('SELECT path FROM paths WHERE revision = ?');
 		$oStatement->execute(array($iRevision));
 		$oRows = $oStatement->fetchAll();
 		foreach ($oRows as $asRow) {
@@ -125,12 +115,33 @@ class MergeHelper_RepoCache {
 		return $asReturn;
 	}
 
+	public function asGetMessageForRevision($iRevision) {
+		$asReturn = array();
+		$oStatement = $this->oDb->prepare('SELECT message FROM revisions WHERE revision = ?');
+		$oStatement->execute(array($iRevision));
+		$oRows = $oStatement->fetchAll();
+		foreach ($oRows as $asRow) {
+			return $asRow['message'];
+		}
+		return $asReturn;
+	}
+
 	public function aiGetRevisionsWithPathEndingOn($sString) {
 		$asReturn = array();
-		$oDb = $this->oGetDb();
-		foreach ($oDb->query('SELECT revision
-		                      FROM paths
-		                      WHERE revertedpath LIKE "'.strrev($sString).'%" GROUP BY revision ORDER BY revision DESC')
+		foreach ($this->oDb->query('SELECT revision
+		                            FROM paths
+		                            WHERE revertedpath LIKE "'.strrev($sString).'%" GROUP BY revision ORDER BY revision DESC')
+		         as $asRow) {
+			$asReturn[] = (int)$asRow['revision'];
+		}
+		return $asReturn;
+	}
+
+	public function aiGetRevisionsWithMessageContainingText($sText) {
+		$asReturn = array();
+		foreach ($this->oDb->query('SELECT revision
+		                            FROM revisions
+		                            WHERE message LIKE "%'.$sText.'%" ORDER BY revision DESC')
 		         as $asRow) {
 			$asReturn[] = (int)$asRow['revision'];
 		}

@@ -16,18 +16,26 @@ class MergeHelper_RepohandlerTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_getRevisionsForString() {
-		
-		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsForString($this->oRepo, 'TF-4001', FALSE);
-		$this->assertSame(3, sizeof($aoRevisions));
-		$this->assertSame('3', $aoRevisions[0]->sGetNumber());
-		$this->assertSame('5', $aoRevisions[1]->sGetNumber());
-		$this->assertSame('7', $aoRevisions[2]->sGetNumber());
-		
+
+		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
+		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
+		$oRepoCache->resetCache();
+		$oRepoCache->addRevision(1234, '', array('/trunk/source/a.php', '/branches/foo/b.php'));
+		$oRepoCache->addRevision(1235, 'Hello World', array('/trunk/source/a.php', '/branches/foo/b.php'));
+		$oRepoCache->addRevision(1236, 'Hello Other World', array('/trunk/source/a.php', '/branches/foo/b.php'));
+
+		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsForString($oRepoCache, 'World');
+		$this->assertSame(2, sizeof($aoRevisions));
+		$this->assertSame('1236', $aoRevisions[0]->sGetNumber());
+		$this->assertSame('1235', $aoRevisions[1]->sGetNumber());
+
 	}
 	
 	public function test_getRevisionsForStringNoStringGiven() {
-		
-		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsForString($this->oRepo, '', TRUE);
+
+		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
+		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
+		$aoRevisions = MergeHelper_Repohandler::aoGetRevisionsForString($oRepoCache, '');
 		$this->assertSame(0, sizeof($aoRevisions));
 		
 	}

@@ -81,8 +81,8 @@ class MergeHelper_Revision {
 	
 	public function sGetNumber() {
 	
-		if (is_null($this->sEnd)) return $this->sBegin;
-		return $this->sBegin.':'.$this->sEnd;
+		if (is_null($this->sEnd)) return (string)$this->sBegin;
+		return (string)($this->sBegin.':'.$this->sEnd);
 	
 	}
 	

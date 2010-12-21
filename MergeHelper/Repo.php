@@ -54,8 +54,6 @@
 class MergeHelper_Repo {
 
 	private $sLocation = NULL;
-	private $sCacheDirectory = NULL;
-	private $bCacheEnabled = FALSE;
 	private $sAuthinfoUsername = NULL;
 	private $sAuthinfoPassword = NULL;
 	private $aoSourcePaths = array();
