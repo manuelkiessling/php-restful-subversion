@@ -83,7 +83,7 @@ class MergeHelper_Repohandler {
 	}
 
 	public function bCacheIsUpToDate(MergeHelper_Repo $oRepo, MergeHelper_RepoCache $oRepoCache) {
-		
+		return (self::oGetHighestRevision($this->oRepo)->sGetNumber() == $oRepoCache->iGetHighestRevision());
 	}
 
 	public static function oGetCommonBasePathForFullPath(MergeHelper_Repo $oRepo, MergeHelper_RepoPath $oPath) {

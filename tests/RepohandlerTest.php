@@ -157,7 +157,25 @@ class MergeHelper_RepohandlerTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_bCacheIsUpToDate() {
-		
+		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
+		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
+		$oRepoCache->resetCache();
+
+		$oHighestRevision = MergeHelper_Repohandler::oGetHighestRevision($this->oRepo);
+		$oRepoCache->addRevision($oHighestRevision->sGetNumber(), '', array());
+
+		$this->assertTrue(MergeHelper_Repohandler::bCacheIsUpToDate($this->oRepo, $oRepoCache));
+	}
+
+	public function test_bCacheIsNotUpToDate() {
+		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
+		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
+		$oRepoCache->resetCache();
+
+		$oHighestRevision = MergeHelper_Repohandler::oGetHighestRevision($this->oRepo);
+		$oRepoCache->addRevision($oHighestRevision->sGetNumber() - 1, '', array());
+
+		$this->assertFalse(MergeHelper_Repohandler::bCacheIsUpToDate($this->oRepo, $oRepoCache));
 	}
 
 }
