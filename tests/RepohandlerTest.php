@@ -103,6 +103,16 @@ class MergeHelper_RepohandlerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/a.php'), $aoPaths[1]);
 		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_project/TF-0001/a.php'), $aoPaths[2]);
 	}
+
+	public function test_getMessagesForRevisions() {
+
+		$aoRevisions = array(new MergeHelper_Revision('3'), new MergeHelper_Revision('5'));
+		$asMessages = MergeHelper_Repohandler::asGetMessagesForRevisions($this->oRepo, $aoRevisions);
+		$this->assertSame(2, sizeof($asMessages));
+		$this->assertSame('TF-4001', $asMessages[0]);
+		$this->assertSame("TF-4001\n- added jabbadabbadoo", $asMessages[1]);
+
+	}
 	
 	public function test_getMergeCommandlineForRevisionAndPath() {
 	

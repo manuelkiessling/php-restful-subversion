@@ -63,11 +63,13 @@ while (!$bFinished) {
 		$sPaths = array();
 		foreach ($aoPaths as $oPath) {
 			$sPaths[] = $oPath->sGetAsString();
+			echo ' '.$oPath->sGetAsString()."\n";
 		}
-		$oRepoCache->addRevision($oRevision->sGetNumber(), '', $sPaths);
+		$asMessages = MergeHelper_Repohandler::asGetMessagesForRevisions($oRepo, array($oRevision));
+		$oRepoCache->addRevision($oRevision->sGetNumber(), $asMessages[0], $sPaths);
 		$iCurrentRevision++;
 	} else {
-		echo 'Latest revision reached, terminating.'."\n";
-		break;
+		echo "All revisions imported to cache.\n";
+		exit(0);
 	}
 }

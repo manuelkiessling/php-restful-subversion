@@ -173,6 +173,14 @@ class MergeHelper_Repohandler {
 
 	}
 
+	public static function asGetMessagesForRevisions(MergeHelper_Repo $oRepo, Array $aoRevisions) {
+		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
+		foreach ($aoRevisions as $oRevision) {
+			$oLogCommand->addRevision($oRevision);
+		}
+		return $oLogCommand->asGetMessages();
+	}
+
 	public static function asGetMergeCommandlinesForRevisionsAndPaths(MergeHelper_Repo $oRepo, Array $aaRevisionsAndPaths, $bDryrun = FALSE, $bIsRollback = FALSE) {
 
 		$oMergeCommand = new MergeHelper_RepoCommandMerge($oRepo);

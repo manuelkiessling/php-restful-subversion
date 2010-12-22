@@ -62,7 +62,7 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 
 	}
 
-	public function test_getPathListForRevision() {
+	public function test_getPathListForOneRevision() {
 
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$oLogCommand->addRevision(new MergeHelper_Revision('3'));
@@ -71,6 +71,19 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'), $aoPaths[0]);
 		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/a.php'), $aoPaths[1]);
 	
+	}
+
+	public function test_getPathListForMultipleRevisions() {
+
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
+		$oLogCommand->addRevision(new MergeHelper_Revision('3'));
+		$oLogCommand->addRevision(new MergeHelper_Revision('4'));
+		$aoPaths = $oLogCommand->aoGetPaths();
+		$this->assertSame(3, sizeof($aoPaths));
+		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'), $aoPaths[0]);
+		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/a.php'), $aoPaths[1]);
+		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_project/TF-0001/a.php'), $aoPaths[2]);
+
 	}
 
 	/**
@@ -84,19 +97,39 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 
 	}
 
-	public function test_getPathListForRevisions() {
+	public function test_getMessageForOneRevision() {
 
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$oLogCommand->addRevision(new MergeHelper_Revision('3'));
-		$oLogCommand->addRevision(new MergeHelper_Revision('4'));
-		$aoPaths = $oLogCommand->aoGetPaths();
-		$this->assertSame(3, sizeof($aoPaths));
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'), $aoPaths[0]);
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/a.php'), $aoPaths[1]);
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_project/TF-0001/a.php'), $aoPaths[2]);
-	
+		$asMessages = $oLogCommand->asGetMessages();
+		$this->assertSame(1, sizeof($asMessages));
+		$this->assertSame('TF-4001', $asMessages[0]);
+
 	}
-	
+
+	public function test_getMessageForMultipleRevisions() {
+
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
+		$oLogCommand->addRevision(new MergeHelper_Revision('3'));
+		$oLogCommand->addRevision(new MergeHelper_Revision('5'));
+		$asMessages = $oLogCommand->asGetMessages();
+		$this->assertSame(2, sizeof($asMessages));
+		$this->assertSame('TF-4001', $asMessages[0]);
+		$this->assertSame("TF-4001\n- added jabbadabbadoo", $asMessages[1]);
+
+	}
+
+	/**
+	 * @expectedException MergeHelper_RepoCommandLogNoSuchRevisionException
+	 */
+	public function test_getMessageForRevisionExceptionIfNoSuchRevision() {
+
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
+		$oLogCommand->addRevision(new MergeHelper_Revision('9'));
+		$oLogCommand->asGetMessages();
+
+	}
+
 	public function test_getRevisionsInRangeTwoNumbers() {
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$aoRevisions = $oLogCommand->aoGetRevisionsInRange(1, 2);

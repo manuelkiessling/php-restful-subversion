@@ -153,7 +153,8 @@ class MergeHelper_RepoCommandLog {
 		$asCommandlines = $this->asGetCommandlines();
 		foreach ($asCommandlines as $sCommandline) {
 			$sCommandline = $sCommandline.
-			                ' | grep -v "<paths>"'.
+			                ' | grep -v "copyfrom"'.
+							' | grep -v "<paths>"'.
 			                ' | grep -v "</paths>"'.
 			                ' | grep "<path" -A 2'.
 			                ' | grep "action"';
@@ -176,6 +177,30 @@ class MergeHelper_RepoCommandLog {
 		}
 		return $aoReturn;
 	
+	}
+
+	public function asGetMessages() {
+
+		$asReturn = array();
+		$this->enableVerbose();
+		$this->enableXml();
+		$asCommandlines = $this->asGetCommandlines();
+		foreach ($asCommandlines as $sCommandline) {
+			$sCommandline = $sCommandline.
+			                ' | grep -A 9999 "<msg>"'.
+							' | grep -B 9999 "</msg>"';
+			$oExecutor = MergeHelper_RepoCommandExecutor::oGetInstance();
+			$sOutput = $oExecutor->sGetCommandResult($sCommandline);
+			if ($sOutput == '') {
+				throw new MergeHelper_RepoCommandLogNoSuchRevisionException();
+			}
+			$sMessage = str_replace('<msg>', '', $sOutput);
+			$sMessage = str_replace('</msg>', '', $sMessage);
+			$sMessage = trim($sMessage);
+			$asReturn[] = $sMessage;
+		}
+		return $asReturn;
+
 	}
 
 	public function aoGetRevisionsInRange($sRangeStart, $sRangeEnd) {
