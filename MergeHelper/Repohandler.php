@@ -76,6 +76,16 @@ class MergeHelper_Repohandler {
 		return $oLogCommand->aoGetRevisionsInRange($sRangeStart, $sRangeEnd);
 	}
 
+	public static function oGetHighestRevision(MergeHelper_Repo $oRepo) {
+		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
+		$oHighestRevision = $oLogCommand->aoGetRevisionsInRange('HEAD', 'HEAD');
+		return $oHighestRevision[0];
+	}
+
+	public function bCacheIsUpToDate(MergeHelper_Repo $oRepo, MergeHelper_RepoCache $oRepoCache) {
+		
+	}
+
 	public static function oGetCommonBasePathForFullPath(MergeHelper_Repo $oRepo, MergeHelper_RepoPath $oPath) {
 
 		$aoSourcePaths = $oRepo->aoGetSourcePaths();

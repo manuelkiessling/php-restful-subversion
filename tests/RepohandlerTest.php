@@ -151,4 +151,13 @@ class MergeHelper_RepohandlerTest extends PHPUnit_Framework_TestCase {
 
 	}
 
+	public function test_getHighestRevision() {
+		$oHighestRevision = MergeHelper_Repohandler::oGetHighestRevision($this->oRepo);
+		$this->assertSame('8', $oHighestRevision->sGetNumber());
+	}
+
+	public function test_bCacheIsUpToDate() {
+		
+	}
+
 }
