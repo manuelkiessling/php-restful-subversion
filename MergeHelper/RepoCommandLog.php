@@ -56,23 +56,22 @@
  */
 class MergeHelper_RepoCommandLog {
 	
-	private $oRepo = NULL;
-	private $aoRevisions = NULL;
-	private $bVerbose = FALSE;
-	private $bXml = FALSE;
-	private $oCommandLineFactory = NULL;
+	protected $oRepo = NULL;
+	protected $aoRevisions = NULL;
+	protected $sRange = NULL;
+	protected $bVerbose = FALSE;
+	protected $bXml = FALSE;
+	protected $oCommandLineFactory = NULL;
 	
 	public function __construct(MergeHelper_Repo $oRepo, MergeHelper_CommandLineFactory $oCommandLineFactory) {
-
 		$this->oRepo = $oRepo;
 		$this->oCommandLineFactory = $oCommandLineFactory;
-		
 	}
 	
 	public function addRevision(MergeHelper_Revision $oRevision) {
 		$this->aoRevisions[] = $oRevision;
 	}
-	
+
 	public function enableVerbose() {
 		$this->bVerbose = TRUE;
 	}
@@ -82,105 +81,92 @@ class MergeHelper_RepoCommandLog {
 	}
 		
 	public function asGetCommandlines() {
-	
 		$asReturn = array();
-		if ($this->bRevisionListNotEmpty()) {	
+
+		if ($this->bRevisionListNotEmpty()) {
 			$asReturn = $this->asGetCommandlinesForRevisions($this->aoRevisions);
 		} else {
 			$asReturn[] = $this->sGetCommandlineWithoutRevisions();
 		}
-		return $asReturn;
 
+		return $asReturn;
 	}
 		
-	private function asGetCommandLinesForRevisions(Array $aoRevisions) {
+	protected function setRange($sRangeStart, $sRangeEnd) {
+		$this->sRange = $sRangeStart.':'.$sRangeEnd;
+	}
 
+	protected function asGetCommandLinesForRevisions(Array $aoRevisions) {
 		$asReturn = array();
+
 		foreach ($aoRevisions as $oRevision) {
 			$asReturn[] = $this->asGetCommandLineForRevision($oRevision);
 		}
-		return $asReturn;
 
+		return $asReturn;
 	}
 
-    private function asGetCommandLineForRevision(MergeHelper_Revision $oRevision) {
-
+    protected function asGetCommandLineForRevision(MergeHelper_Revision $oRevision) {
 		$oCommandLine = $this->oCommandLineFactory->instantiate();
+
 		$oCommandLine->setCommand('svn');
 		$oCommandLine->addParameter('log');
 		$oCommandLine->addLongSwitch('no-auth-cache');
 		$oCommandLine->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
 		$oCommandLine->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
 		$oCommandLine->addShortSwitchWithValue('r', $oRevision->sGetNumber());
+
 		if ($this->bVerbose) $oCommandLine->addShortSwitch('v');
 		if ($this->bXml) $oCommandLine->addLongSwitch('xml');
+
 		$oCommandLine->addParameter($this->oRepo->sGetLocation());
 
 		return $oCommandLine->sGetCommandLine();
-
 	}
 
-	private function sGetCommandLineWithoutRevisions() {
-
-		if ($this->oRepo->bHasUsableCache()) {
-			$sCommandLine = $this->sGetCommandLineWithoutRevisionsUsingCache();
-		} else {
-			$sCommandLine = $this->sGetCommandLineWithoutRevisionsNotUsingCache();
-		}
-		return $sCommandLine;
-
-	}
-	
-	private function sGetCommandLineWithoutRevisionsUsingCache() {
-
+	protected function sGetCommandLineWithoutRevisions() {
 		$oCommandLine = $this->oCommandLineFactory->instantiate();
-		$oCommandLine->setCommand('cat');
-		if ($this->bVerbose && $this->bXml) {
-			$oCommandLine->addParameter($this->oRepo->sGetCachepath().'.v.x');
-		} elseif (!$this->bVerbose && $this->bXml) {
-			$oCommandLine->addParameter($this->oRepo->sGetCachepath().'.x');
-		} elseif ($this->bVerbose && !$this->bXml) {
-			$oCommandLine->addParameter($this->oRepo->sGetCachepath().'.v');
-		} elseif (!$this->bVerbose && !$this->bXml) {
-			$oCommandLine->addParameter($this->oRepo->sGetCachepath());
-		}
-		return $oCommandLine->sGetCommandLine();
 
-	}
-	
-	private function sGetCommandLineWithoutRevisionsNotUsingCache() {
-
-		$oCommandLine = $this->oCommandLineFactory->instantiate();
 		$oCommandLine->setCommand('svn');
 		$oCommandLine->addParameter('log');
 		$oCommandLine->addLongSwitch('no-auth-cache');
 		$oCommandLine->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
 		$oCommandLine->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
+
+		if ($this->sRange) $oCommandLine->addShortSwitchWithValue('r', $this->sRange);
 		if ($this->bVerbose) $oCommandLine->addShortSwitch('v');
 		if ($this->bXml) $oCommandLine->addLongSwitch('xml');
+
 		$oCommandLine->addParameter($this->oRepo->sGetLocation());
-		return $oCommandLine->sGetCommandLine();
-	
+
+		return $oCommandLine->sGetCommandLine();	
 	}
 	
-	private function bRevisionListNotEmpty() {
+	protected function bRevisionListNotEmpty() {
 		return is_array($this->aoRevisions) && sizeof($this->aoRevisions) > 0;
 	}
 	
 	public function aoGetPaths() {
-	
 		$aoReturn = array();
+
 		$this->enableVerbose();
 		$this->enableXml();
+
 		$asCommandlines = $this->asGetCommandlines();
 		foreach ($asCommandlines as $sCommandline) {
 			$sCommandline = $sCommandline.
-			                ' | grep -v "<paths>"'.
+			                ' | grep -v "copyfrom"'.
+							' | grep -v "<paths>"'.
 			                ' | grep -v "</paths>"'.
 			                ' | grep "<path" -A 2'.
 			                ' | grep "action"';
 			$oExecutor = MergeHelper_RepoCommandExecutor::oGetInstance();
 			$sOutput = $oExecutor->sGetCommandResult($sCommandline);
+
+			if ($sOutput == '') {
+				throw new MergeHelper_RepoCommandLogNoSuchRevisionException();
+			}
+
 			$asLines = explode("\n", $sOutput);
 			foreach ($asLines as $sLine) {
 				if (mb_strstr($sLine, 'action')) {
@@ -193,36 +179,63 @@ class MergeHelper_RepoCommandLog {
 				}
 			}
 		}
-		return $aoReturn;
-	
+		return $aoReturn;	
 	}
-	
-	/**
-	 * @todo Does currently only work if text is on first line of commit message
-	 */
-	public function aoGetRevisionsWithMessageContainingText($sText) {
 
-		$aoReturn = array();
+	public function asGetMessages() {
+		$asReturn = array();
+
+		$this->enableVerbose();
 		$this->enableXml();
+
 		$asCommandlines = $this->asGetCommandlines();
 		foreach ($asCommandlines as $sCommandline) {
-           	$sOutput = MergeHelper_RepoCommandExecutor::oGetInstance()->sGetCommandResult("$sCommandline | grep \"$sText\" -B 3| grep revision");
-			$asLines = explode("\n", $sOutput);
-			foreach ($asLines as $sLine) {
-				if (mb_strstr($sLine, 'revision')) {
-					// each line contains something like '   revision="5">'
-					preg_match_all('/   revision="(.*)">/', $sLine, $asMatches);
-					$aoReturn[] = new MergeHelper_Revision($asMatches[1][0]);
-				}
+			$sCommandline = $sCommandline.
+			                ' | grep -A 9999 "<msg>"'.
+							' | grep -B 9999 "</msg>"';
+			$oExecutor = MergeHelper_RepoCommandExecutor::oGetInstance();
+			$sOutput = $oExecutor->sGetCommandResult($sCommandline);
+			if ($sOutput == '') {
+				throw new MergeHelper_RepoCommandLogNoSuchRevisionException();
+			}
+			$sMessage = str_replace('<msg>', '', $sOutput);
+			$sMessage = str_replace('</msg>', '', $sMessage);
+			$sMessage = trim($sMessage);
+			$asReturn[] = $sMessage;
+		}
+		return $asReturn;
+	}
+
+	public function aoGetRevisionsInRange($sRangeStart, $sRangeEnd) {
+		$aoReturn = array();
+
+		$this->setRange($sRangeStart, $sRangeEnd);
+		$this->enableXml();
+
+		$asCommandlines = $this->asGetCommandlines();
+		foreach ($asCommandlines as $sCommandline) {
+			$sOutput = MergeHelper_RepoCommandExecutor::oGetInstance()->sGetCommandResult("$sCommandline | grep revision");
+			$asRevisionNumbers = $this->asGetRevisionNumbersFromLogOutput($sOutput);
+			foreach ($asRevisionNumbers as $sRevisionNumber) {
+				$aoReturn[] = new MergeHelper_Revision($sRevisionNumber);
 			}
 		}
-		krsort($aoReturn);
-		$aoReturnSorted = array();
-		foreach ($aoReturn as $oRevision) {
-			$aoReturnSorted[] = $oRevision;
-		} 
-		return $aoReturnSorted;
-	
+		return $aoReturn;
+	}
+
+	protected function asGetRevisionNumbersFromLogOutput($sOutput) {
+		$asReturn = array();
+
+		$asLines = explode("\n", $sOutput);
+		foreach ($asLines as $sLine) {
+			if (mb_strstr($sLine, 'revision')) {
+				// each line contains something like '   revision="5">'
+				preg_match_all('/   revision="(.*)">/', $sLine, $asMatches);
+				$asReturn[] = $asMatches[1][0];
+			}
+		}
+
+		return $asReturn;
 	}
 
 }

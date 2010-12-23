@@ -1,4 +1,4 @@
-<?php
+  <?php
 
 /**
  * PHPMergeHelper
@@ -53,14 +53,12 @@
  */
 class MergeHelper_Repo {
 
-	private $sLocation = NULL;
-	private $sCacheDirectory = NULL;
-	private $bCacheEnabled = FALSE;
-	private $sAuthinfoUsername = NULL;
-	private $sAuthinfoPassword = NULL;
-	private $aoSourcePaths = array();
-	private $oTargetPath = NULL;
-	private $iType = NULL;
+	protected $sLocation = NULL;
+	protected $sAuthinfoUsername = NULL;
+	protected $sAuthinfoPassword = NULL;
+	protected $aoSourcePaths = array();
+	protected $oTargetPath = NULL;
+	protected $iType = NULL;
 
 	const TYPE_SVN = 0;
 
@@ -82,36 +80,6 @@ class MergeHelper_Repo {
 
 	public function sGetLocationBranches() {
 		return $this->sGetLocation().'/branches';
-	}
-
-	public function setCacheDirectory($sDirectoryName) {
-		$this->sCacheDirectory = $sDirectoryName;
-	}
-
-	public function sGetCachepath() {
-		if (!$this->bCacheEnabled) {
-			throw new MergeHelper_RepoCannotReturnCacheDirectoryPathIfCacheIsNotEnabledException();
-		}
-		return $this->sCacheDirectory.'/MergeHelper.svncache.'.sha1($this->sLocation);
-	}
-
-	public function enableCache() {
-		if ($this->sCacheDirectory == NULL) {
-			throw new MergeHelper_RepoCannotEnableCacheIfNoCacheDirectoryWasSetException();
-		}
-		$this->bCacheEnabled = TRUE;
-	}
-	
-	public function disableCache() {
-		$this->bCacheEnabled = FALSE;
-	}
-	
-	public function bHasUsableCache() {
-		if ($this->bCacheEnabled == FALSE) {
-			return FALSE;
-		} else {
-			return TRUE;
-		}
 	}
 
   	public function setAuthinfo($sUsername, $sPassword) {
@@ -137,9 +105,11 @@ class MergeHelper_Repo {
 	
 	public function asGetSourceLocations() {
 		$asReturn = array();
+
 		foreach ($this->aoSourcePaths as $oSourcePath) {
 			$asReturn[] = $this->sGetLocation()."$oSourcePath";
 		}
+
 		return $asReturn;
 	}
 		

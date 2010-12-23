@@ -3,28 +3,26 @@
 class MergeHelper_RepoCommandMergeTest extends PHPUnit_Framework_TestCase {
 
 	public function setUp() {
-
 		$oRepo = new MergeHelper_Repo();
+
 		$oRepo->setType(MergeHelper_Repo::TYPE_SVN);
 		$oRepo->setLocation('file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'));
 		$oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_production'));
 		$oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_project'));
 		$oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/my-hammer2/_approval'));
-		$this->oRepo = $oRepo;
 
+		$this->oRepo = $oRepo;
 	}
 	
 	public function test_getMergeCommandsNothingToMerge() {
-	
 		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo);
 		$oMergeCommand->enableDryrun();
 		$asCommandlines = $oMergeCommand->asGetCommandlines();
-		$this->assertNull($asCommandlines);
 
+		$this->assertNull($asCommandlines);
 	}
 
 	public function test_getMergeCommandsSingleRevision() {
-	
 		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo);
 		$oMergeCommand->addMerge(new MergeHelper_Revision('5'),
 		                         new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-04'),
@@ -40,6 +38,7 @@ class MergeHelper_RepoCommandMergeTest extends PHPUnit_Framework_TestCase {
 
 		$oMergeCommand->enableDryrun();
 		$asCommandlines = $oMergeCommand->asGetCommandlines();
+
 		$this->assertSame(3, sizeof($asCommandlines));
 		// Important assert: the commands must be sorted by revision number, ascending
 		$this->assertSame('svn merge --dry-run -c -7 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/2010-01-04/a/b.txt /var/tmp/testwc/a/b.txt', $asCommandlines[0]);
@@ -49,7 +48,6 @@ class MergeHelper_RepoCommandMergeTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_getMergeCommandsRevisionRangeNumberOfCommandsIsCorrect() {
-	
 		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo);
 		$oMergeCommand->addMerge(new MergeHelper_Revision('5', '12'),
 		                         new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-04'),
@@ -74,7 +72,6 @@ class MergeHelper_RepoCommandMergeTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_getMergeCommandsRevisionRangeCommandLineIsCorrect() {
-	
 		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo);
 		$oMergeCommand->addMerge(new MergeHelper_Revision('5', '12'),
 		                         new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-04'),

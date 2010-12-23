@@ -2,11 +2,12 @@
 
 class MergeHelper_AutoloaderTest extends PHPUnit_Framework_TestCase {
 
-	public function test() {
-	
+	public function test_existingFile() {
 		$this->assertSame('Repohandler.php', MergeHelper_Autoloader::load('MergeHelper_Repohandler'));
-		$this->assertFalse(MergeHelper_Autoloader::load('dewdew.php'));
+	}
 
+	public function test_nonExistantFile() {
+		$this->assertFalse(MergeHelper_Autoloader::load('dewdew.php'));
 	}
 
 }

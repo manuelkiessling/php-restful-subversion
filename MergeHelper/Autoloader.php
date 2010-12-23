@@ -55,14 +55,16 @@ class MergeHelper_Autoloader {
 	
 	public static function load($sClass)
 	{
-		$asPaths = array(realpath(MergeHelper_Bootstrap::sGetPackageRoot()));
 		$sFilename = mb_substr($sClass, 12).'.php';
+
+		$asPaths = array(realpath(MergeHelper_Bootstrap::sGetPackageRoot()));
 		foreach ($asPaths as $sPath) {
 			if (file_exists(realpath($sPath.'/'.$sFilename))) {
 				require_once realpath($sPath.'/'.$sFilename);
 				return $sFilename;
 			}
 		}
+
 		return FALSE;
 	}
 

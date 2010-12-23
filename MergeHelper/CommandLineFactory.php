@@ -54,9 +54,7 @@
 class MergeHelper_CommandLineFactory {
 
 	public function instantiate() {
-	
 		return new MergeHelper_CommandLine();
-	
 	}
 
 }
