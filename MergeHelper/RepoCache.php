@@ -54,13 +54,6 @@ class MergeHelper_RepoCache {
 
 	protected $oDb = NULL;
 
-	protected function setupDatabaseIfNecessary() {
-		$oResult = $this->oDb->query('SELECT revision FROM revisions LIMIT 1');
-		if ($oResult === FALSE) { // Database is not yet created
-			$this->resetCache();
-		}
-	}
-
 	public function __construct($oDb) {
 		$this->oDb = $oDb;
 		$this->setupDatabaseIfNecessary();
@@ -94,10 +87,12 @@ class MergeHelper_RepoCache {
 
 	public function addRevision($iRevision, $sMessage, $aPaths) {
 		$oStatement = $this->oDb->prepare('INSERT INTO revisions (revision, message) VALUES (?, ?)');
+
 		$bSuccessful = $oStatement->execute(array($iRevision, $sMessage));
 		if (!$bSuccessful) {
 			throw new MergeHelper_RepoCacheRevisionAlreadyInCacheException();
 		}
+
 		foreach($aPaths as $sPath) {
 			$oStatement = $this->oDb->prepare('INSERT INTO paths (revision, path, revertedpath) VALUES (?, ?, ?)');
 			$oStatement->execute(array($iRevision, $sPath, strrev($sPath)));
@@ -119,20 +114,25 @@ class MergeHelper_RepoCache {
 		$asReturn = array();
 		$oStatement = $this->oDb->prepare('SELECT path FROM paths WHERE revision = ?');
 		$oStatement->execute(array($iRevision));
+
 		$oRows = $oStatement->fetchAll();
 		foreach ($oRows as $asRow) {
 			$asReturn[] = $asRow['path'];
 		}
+
 		return $asReturn;
 	}
 
 	public function asGetMessageForRevision($iRevision) {
 		$oStatement = $this->oDb->prepare('SELECT message FROM revisions WHERE revision = ?');
 		$oStatement->execute(array($iRevision));
+
 		$oRows = $oStatement->fetchAll();
 		foreach ($oRows as $asRow) {
-			return $asRow['message'];
+			$sMessage = $asRow['message'];
 		}
+
+		return $sMessage;
 	}
 
 	public function aiGetRevisionsWithPathEndingOn($sString) {
@@ -157,4 +157,10 @@ class MergeHelper_RepoCache {
 		return $asReturn;
 	}
 
+	protected function setupDatabaseIfNecessary() {
+		$oResult = $this->oDb->query('SELECT revision FROM revisions LIMIT 1');
+		if ($oResult === FALSE) { // Database is not yet created
+			$this->resetCache();
+		}
+	}
 }

@@ -52,14 +52,13 @@
  */
 class MergeHelper_Revision {
 
-	private $sBegin = NULL;
-	private $sEnd = NULL;
+	protected $sBegin = NULL;
+	protected $sEnd = NULL;
 	
 	/**
 	 * @todo Check and Exception needed for number format
 	 */
 	public function __construct($sBegin, $sEnd = NULL) {
-
 		if ((string)(int)$sBegin != $sBegin) {
 			throw new MergeHelper_RevisionInvalidRevisionNumberException('Revision start "'.$sBegin.'" is not a valid revision number.');
 		}
@@ -76,32 +75,25 @@ class MergeHelper_Revision {
 
 		$this->sBegin = $sBegin;
 		$this->sEnd = $sEnd;
-	
 	}
 	
 	public function sGetNumber() {
-	
 		if (is_null($this->sEnd)) return (string)$this->sBegin;
 		return (string)($this->sBegin.':'.$this->sEnd);
-	
 	}
 	
 	public function sGetNumberInverted() {
-	
 		if (is_null($this->sEnd)) return (string)((int)$this->sBegin * -1);
 		return $this->sEnd.':'.$this->sBegin;
-	
 	}
 	
 	public function getRevertedRevisionAsObject() {
-
 		if ($this->bIsRange()) {
 			return new self($this->sEnd, $this->sBegin);
 		}
 
 		$sBegin = (string)((int)$this->sBegin * -1);
 		return new self($sBegin);
-
 	}
 	
 	public function __toString() {
@@ -117,10 +109,8 @@ class MergeHelper_Revision {
 	}
 	
 	public function bIsRange() {
-	
 		if (is_null($this->sEnd)) return FALSE;
 		return TRUE;
-	
 	}
 	
 }

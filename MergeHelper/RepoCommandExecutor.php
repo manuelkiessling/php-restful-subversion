@@ -55,10 +55,10 @@
  */
 class MergeHelper_RepoCommandExecutor {
 	
-	private static $oInstance = NULL;
-	private static $asCache = array();
+	protected static $oInstance = NULL;
+	protected static $asCache = array();
 
-	private function __construct() {}
+	protected function __construct() {}
 
 	public function __clone() {
 		throw new MergeHelper_Exception('You cannot clone the singleton instance MergeHelper_RepoCommandExecutor');

@@ -53,12 +53,12 @@
  */
 class MergeHelper_Repo {
 
-	private $sLocation = NULL;
-	private $sAuthinfoUsername = NULL;
-	private $sAuthinfoPassword = NULL;
-	private $aoSourcePaths = array();
-	private $oTargetPath = NULL;
-	private $iType = NULL;
+	protected $sLocation = NULL;
+	protected $sAuthinfoUsername = NULL;
+	protected $sAuthinfoPassword = NULL;
+	protected $aoSourcePaths = array();
+	protected $oTargetPath = NULL;
+	protected $iType = NULL;
 
 	const TYPE_SVN = 0;
 
@@ -105,9 +105,11 @@ class MergeHelper_Repo {
 	
 	public function asGetSourceLocations() {
 		$asReturn = array();
+
 		foreach ($this->aoSourcePaths as $oSourcePath) {
 			$asReturn[] = $this->sGetLocation()."$oSourcePath";
 		}
+
 		return $asReturn;
 	}
 		
