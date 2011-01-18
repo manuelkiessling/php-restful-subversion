@@ -28,12 +28,14 @@
 				<li><span class="field">author:</span> Manuel Kiessling &lt;<a href="mailto:manuel@kiessling.net">manuel@kiessling.net</a>&gt;</li>
 				<li><span class="field">copyright:</span> 2010 Manuel Kiessling &lt;manuel@kiessling.net&gt;</li>
 				<li><span class="field">link:</span> <a href="http://manuelkiessling.github.com/PHPMergeHelper">http://manuelkiessling.github.com/PHPMergeHelper</a></li>
-				<li><span class="field">usedby:</span> <a href="../../PHPMergeHelper/Exception/MergeHelper_RepoPathInvalidPathException.html">MergeHelper_RepoPathInvalidPathException</a></li>
 				<li><span class="field">usedby:</span> <a href="../../PHPMergeHelper/Exception/MergeHelper_RevisionInvalidRevisionNumberException.html">MergeHelper_RevisionInvalidRevisionNumberException</a></li>
-				<li><span class="field">usedby:</span> <a href="../../PHPMergeHelper/Exception/MergeHelper_RepoCannotReturnCacheDirectoryPathIfCacheIsNotEnabledException.html">MergeHelper_RepoCannotReturnCacheDirectoryPathIfCacheIsNotEnabledException</a></li>
-				<li><span class="field">uses:</span> Exception</li>
-				<li><span class="field">license:</span> <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a></li>
+				<li><span class="field">usedby:</span> <a href="../../PHPMergeHelper/Exception/MergeHelper_RepoCommandLogNoSuchRevisionException.html">MergeHelper_RepoCommandLogNoSuchRevisionException</a></li>
 				<li><span class="field">usedby:</span> <a href="../../PHPMergeHelper/Exception/MergeHelper_RepoCannotEnableCacheIfNoCacheDirectoryWasSetException.html">MergeHelper_RepoCannotEnableCacheIfNoCacheDirectoryWasSetException</a></li>
+				<li><span class="field">usedby:</span> <a href="../../PHPMergeHelper/Exception/MergeHelper_RepoPathInvalidPathException.html">MergeHelper_RepoPathInvalidPathException</a></li>
+				<li><span class="field">usedby:</span> <a href="../../PHPMergeHelper/Exception/MergeHelper_RepoCannotReturnCacheDirectoryPathIfCacheIsNotEnabledException.html">MergeHelper_RepoCannotReturnCacheDirectoryPathIfCacheIsNotEnabledException</a></li>
+				<li><span class="field">license:</span> <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a></li>
+				<li><span class="field">uses:</span> Exception</li>
+				<li><span class="field">usedby:</span> <a href="../../PHPMergeHelper/Exception/MergeHelper_RepoCacheRevisionAlreadyInCacheException.html">MergeHelper_RepoCacheRevisionAlreadyInCacheException</a></li>
 			</ul>
 		<p class="notes">
 			Located in <a class="field" href="_MergeHelper---Exception.php.html">/MergeHelper/Exception.php</a> (line <span class="field">54</span>)
@@ -64,13 +66,13 @@
 					<th class="class-table-header">Description</th>
 				</tr>
 								<tr>
-					<td style="padding-right: 2em"><a href="../../PHPMergeHelper/Exception/MergeHelper_RepoCannotEnableCacheIfNoCacheDirectoryWasSetException.html">MergeHelper_RepoCannotEnableCacheIfNoCacheDirectoryWasSetException</a></td>
+					<td style="padding-right: 2em"><a href="../../PHPMergeHelper/Exception/MergeHelper_RepoCannotReturnCacheDirectoryPathIfCacheIsNotEnabledException.html">MergeHelper_RepoCannotReturnCacheDirectoryPathIfCacheIsNotEnabledException</a></td>
 					<td>
 											Exception for errors in MergeHelper_RepoPath
 										</td>
 				</tr>
 								<tr>
-					<td style="padding-right: 2em"><a href="../../PHPMergeHelper/Exception/MergeHelper_RepoCannotReturnCacheDirectoryPathIfCacheIsNotEnabledException.html">MergeHelper_RepoCannotReturnCacheDirectoryPathIfCacheIsNotEnabledException</a></td>
+					<td style="padding-right: 2em"><a href="../../PHPMergeHelper/Exception/MergeHelper_RepoCacheRevisionAlreadyInCacheException.html">MergeHelper_RepoCacheRevisionAlreadyInCacheException</a></td>
 					<td>
 											Exception for errors in MergeHelper_RepoPath
 										</td>
@@ -83,6 +85,18 @@
 				</tr>
 								<tr>
 					<td style="padding-right: 2em"><a href="../../PHPMergeHelper/Exception/MergeHelper_RevisionInvalidRevisionNumberException.html">MergeHelper_RevisionInvalidRevisionNumberException</a></td>
+					<td>
+											Exception for errors in MergeHelper_RepoPath
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../PHPMergeHelper/Exception/MergeHelper_RepoCannotEnableCacheIfNoCacheDirectoryWasSetException.html">MergeHelper_RepoCannotEnableCacheIfNoCacheDirectoryWasSetException</a></td>
+					<td>
+											Exception for errors in MergeHelper_RepoPath
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../PHPMergeHelper/Exception/MergeHelper_RepoCommandLogNoSuchRevisionException.html">MergeHelper_RepoCommandLogNoSuchRevisionException</a></td>
 					<td>
 											Exception for errors in MergeHelper_RepoPath
 										</td>
@@ -148,9 +162,6 @@
 								<span class="var-name">$message</span><br>
 							</span>
 													<span class="var-title">
-								<span class="var-name">$previous</span><br>
-							</span>
-													<span class="var-title">
 								<span class="var-name">$string</span><br>
 							</span>
 													<span class="var-title">
@@ -174,7 +185,7 @@
 		<div class="info-box-body">
 			<A NAME='method_detail'></A>
 <a name="method__construct" id="__construct"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<span class="method-title">Constructor __construct</span> (line <span class="line-number">56</span>)
@@ -205,7 +216,7 @@
 			<hr class="separator" />
 		<div class="notes">Redefinition of:</div>
 		<dl>
-			<dt>Exception::constructor __construct ( [$message = ], [$code = ], [$previous = ] )</dt>
+			<dt>Exception::constructor __construct ( [$message = ], [$code = ] )</dt>
 					</dl>
 			
 	</div>
@@ -214,12 +225,11 @@
 									<!-- =========== Summary =========== -->
 					<p>Inherited From <span class="classname">Exception (Internal Class)</span></p>
 					<blockquote>
-													<span class="method-name">constructor __construct ( [$message = ], [$code = ], [$previous = ] )</span><br>
+													<span class="method-name">constructor __construct ( [$message = ], [$code = ] )</span><br>
 													<span class="method-name">getCode (  )</span><br>
 													<span class="method-name">getFile (  )</span><br>
 													<span class="method-name">getLine (  )</span><br>
 													<span class="method-name">getMessage (  )</span><br>
-													<span class="method-name">getPrevious (  )</span><br>
 													<span class="method-name">getTrace (  )</span><br>
 													<span class="method-name">getTraceAsString (  )</span><br>
 													<span class="method-name">__clone (  )</span><br>
@@ -231,7 +241,7 @@
 
 
 	<p class="notes" id="credit">
-		Documentation generated on Thu, 15 Jul 2010 10:26:45 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Tue, 18 Jan 2011 15:01:32 +0100 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>
