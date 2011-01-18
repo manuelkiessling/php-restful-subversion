@@ -41,22 +41,44 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		                  $asCommandlines);
 	}
 
-	public function test_getVerboseLogCommandsNoRevisions() {
+	public function test_getLogCommandNoRevisions() {
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
-		
-		$asCommandlines = $oLogCommand->asGetCommandlines();
-		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
 
+		$asCommandlines = $oLogCommand->asGetCommandlines();
+		$this->assertSame(array('svn log --no-auth-cache --username=user.name --password=secret file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo')),
+		                   $asCommandlines
+		                  );
+	}
+
+	public function test_getLogCommandsNoRevisionsVerbose() {
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$oLogCommand->enableVerbose();
 		$asCommandlines = $oLogCommand->asGetCommandlines();
-		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
 
+		$this->assertSame(array('svn log --no-auth-cache --username=user.name --password=secret -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo')),
+		                  $asCommandlines
+		                 );
+	}
+
+	public function test_getLogCommandsNoRevisionsXml() {
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
 		$oLogCommand->enableXml();
 		$asCommandlines = $oLogCommand->asGetCommandlines();
-		$this->assertSame(1, sizeof($asCommandlines));
-		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v --xml file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'), $asCommandlines[0]);
+
+		$this->assertSame(array('svn log --no-auth-cache --username=user.name --password=secret --xml file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo')),
+		                  $asCommandlines
+		                 );
+	}
+
+	public function test_getLogCommandsNoRevisionsVerboseAndXml() {
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory());
+		$oLogCommand->enableVerbose();
+		$oLogCommand->enableXml();
+		$asCommandlines = $oLogCommand->asGetCommandlines();
+
+		$this->assertSame(array('svn log --no-auth-cache --username=user.name --password=secret -v --xml file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo')),
+		                  $asCommandlines
+		                 );
 	}
 
 	public function test_getPathListForOneRevision() {
@@ -64,9 +86,10 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$oLogCommand->addRevision(new MergeHelper_Revision('3'));
 		$aoPaths = $oLogCommand->aoGetPaths();
 
-		$this->assertSame(2, sizeof($aoPaths));
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'), $aoPaths[0]);
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/a.php'), $aoPaths[1]);
+		$this->assertEquals(array(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'),
+		                          new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/a.php')
+		                         ),
+		                    $aoPaths);
 	}
 
 	public function test_getPathListForMultipleRevisions() {
@@ -75,10 +98,11 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$oLogCommand->addRevision(new MergeHelper_Revision('4'));
 		$aoPaths = $oLogCommand->aoGetPaths();
 
-		$this->assertSame(3, sizeof($aoPaths));
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'), $aoPaths[0]);
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/a.php'), $aoPaths[1]);
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_project/TF-0001/a.php'), $aoPaths[2]);
+		$this->assertEquals(array(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'),
+		                          new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/a.php'),
+		                          new MergeHelper_RepoPath('/branches/my-hammer2/_project/TF-0001/a.php')
+		                         ),
+		                    $aoPaths);
 	}
 
 	/**
@@ -95,8 +119,7 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$oLogCommand->addRevision(new MergeHelper_Revision('3'));
 		$asMessages = $oLogCommand->asGetMessages();
 
-		$this->assertSame(1, sizeof($asMessages));
-		$this->assertSame('TF-4001', $asMessages[0]);
+		$this->assertEquals(array('TF-4001'), $asMessages);
 	}
 
 	public function test_getMessageForMultipleRevisions() {
@@ -105,9 +128,10 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$oLogCommand->addRevision(new MergeHelper_Revision('5'));
 		$asMessages = $oLogCommand->asGetMessages();
 
-		$this->assertSame(2, sizeof($asMessages));
-		$this->assertSame('TF-4001', $asMessages[0]);
-		$this->assertSame("TF-4001\n- added jabbadabbadoo", $asMessages[1]);
+		$this->assertEquals(array('TF-4001',
+		                          "TF-4001\n- added jabbadabbadoo"
+		                         ),
+		                    $asMessages);
 	}
 
 	/**
@@ -135,10 +159,12 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertSame(array(4, '4', '3', '2', '1'),
 		                  array(sizeof($aoRevisions),
-		                  $aoRevisions[0]->sGetNumber(),
-		                  $aoRevisions[1]->sGetNumber(),
-		                  $aoRevisions[2]->sGetNumber(),
-						  $aoRevisions[3]->sGetNumber()));
+		                        $aoRevisions[0]->sGetNumber(),
+		                        $aoRevisions[1]->sGetNumber(),
+		                        $aoRevisions[2]->sGetNumber(),
+		                        $aoRevisions[3]->sGetNumber()
+		                       )
+		                 );
 	}
 
 	public function test_getRevisionsInRangeNumberAndHead() {
@@ -148,7 +174,9 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame(array(2, '7', '8'),
 		                  array(sizeof($aoRevisions),
 		                        $aoRevisions[0]->sGetNumber(),
-		                        $aoRevisions[1]->sGetNumber()));
+		                        $aoRevisions[1]->sGetNumber()
+		                       )
+		                 );
 	}
 
 	public function test_getRevisionsInRangeHeadAndNumber() {
@@ -158,7 +186,9 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame(array(2, '8', '7'),
 		                  array(sizeof($aoRevisions),
 		                        $aoRevisions[0]->sGetNumber(),
-		                        $aoRevisions[1]->sGetNumber()));
+		                        $aoRevisions[1]->sGetNumber()
+		                       )
+		                 );
 	}
 
 }

@@ -26,14 +26,17 @@ class MergeHelper_RepoCommandExecutorTest extends PHPUnit_Framework_TestCase {
 
 	}
 
-	public function test_singleton() {
-		self::assertTrue(MergeHelper_RepoCommandExecutor::oGetInstance() === MergeHelper_RepoCommandExecutor::oGetInstance(),
+	public function test_singletonReturnsSameInstance() {
+		$this->assertTrue(MergeHelper_RepoCommandExecutor::oGetInstance() === MergeHelper_RepoCommandExecutor::oGetInstance(),
                          'Singleton is not working!'
 		                );
 
+	}
+
+	public function test_singletonIsNotDirectlyInstantiable() {
 		$oReflection = new ReflectionClass('MergeHelper_RepoCommandExecutor');
 
-		self::assertFalse($oReflection->isInstantiable(),
+		$this->assertFalse($oReflection->isInstantiable(),
 		                  'Singleton instantiable. Please declare the construct as private or protected'
 		                 );
 	}
@@ -43,7 +46,7 @@ class MergeHelper_RepoCommandExecutorTest extends PHPUnit_Framework_TestCase {
 		$o = MergeHelper_RepoCommandExecutor::oGetInstance();
 
 		try {
-			$o2 = clone($o);
+			clone($o);
 		} catch (MergeHelper_Exception $e) {
 			$bExceptionThrown = TRUE;
 		}
