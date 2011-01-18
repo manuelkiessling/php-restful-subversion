@@ -45,7 +45,7 @@ if (!$iHighestRevision) {
 $iCurrentRevision = $iHighestRevision + 1;
 
 $bFinished = FALSE;
-$oMergeHelper = new MergeHelper_Repohandler();
+$oMergeHelper = new MergeHelper_Manager();
 
 while (!$bFinished) {
 	echo "\n";
@@ -54,7 +54,7 @@ while (!$bFinished) {
 	$oRevision = new MergeHelper_Revision($iCurrentRevision);
 
 	try {
-		$aoPaths = MergeHelper_Repohandler::aoGetPathsForRevisions($oRepo, array($oRevision));
+		$aoPaths = MergeHelper_Manager::aoGetPathsForRevisions($oRepo, array($oRevision));
 	} catch (MergeHelper_RepoCommandLogNoSuchRevisionException $e)  {
 		echo "All revisions imported to cache.\n";
 		exit(0);
@@ -65,7 +65,7 @@ while (!$bFinished) {
 			$sPaths[] = $oPath->sGetAsString();
 			echo ' '.$oPath->sGetAsString()."\n";
 		}
-		$asMessages = MergeHelper_Repohandler::asGetMessagesForRevisions($oRepo, array($oRevision));
+		$asMessages = MergeHelper_Manager::asGetMessagesForRevisions($oRepo, array($oRevision));
 		$oRepoCache->addRevision($oRevision->sGetNumber(), $asMessages[0], $sPaths);
 		$iCurrentRevision++;
 	} else {
