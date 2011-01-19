@@ -160,4 +160,22 @@ class MergeHelper_ManagerTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse(MergeHelper_Manager::bCacheIsUpToDate($this->oRepo, $oRepoCache));
 	}
 
+	public function test_aoGetRevisionsWithPathEndingOn() {
+		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
+		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
+		$oRepoCache->resetCache();
+
+		$oRepoCache->addRevision(1234, 'Hello World', array('/trunk/source/a.php', '/branches/foo/b.php'));
+		$oRepoCache->addRevision(1235, 'Hello World', array('/trunk/source/a.php', '/branches/foo/c.php', '/branches/foo/a.php'));
+		$oRepoCache->addRevision(1236, 'Hello World', array('/trunk/source/d.php', '/branches/foo/b.php', '/branches/bar/a.php'));
+		$oRepoCache->addRevision(1237, 'Hello World', array('/totally/different.php'));
+
+		$aoActual = MergeHelper_Manager::aoGetRevisionsWithPathEndingOn($oRepoCache, 'a.php');
+		$aoExpected = array(new MergeHelper_Revision(1236),
+		                    new MergeHelper_Revision(1235),
+		                    new MergeHelper_Revision(1234));
+
+		$this->assertEquals($aoExpected, $aoActual);
+	}
+
 }
