@@ -15,6 +15,32 @@ class MergeHelper_ManagerTest extends PHPUnit_Framework_TestCase {
 		$this->oRepo = $oRepo;
 	}
 
+	public function test_construct() {
+		$oRepoMediator = new oUncachedRepoMediator($this->oRepo);
+		$this->assertTrue(is_object($oRepoMediator));
+	}
+
+	public function test_getRevisionsInRange() {
+		$oRepoMediator = new oUncachedRepoMediator($this->oRepo);
+		$aoRevisions = $oRepoMediator->aoGetRevisionsInRange('HEAD', 5);
+
+		$this->assertSame(4, sizeof($aoRevisions));
+		$this->assertSame('8', $aoRevisions[0]->sGetNumber());
+		$this->assertSame('7', $aoRevisions[1]->sGetNumber());
+		$this->assertSame('6', $aoRevisions[2]->sGetNumber());
+		$this->assertSame('5', $aoRevisions[3]->sGetNumber());
+	}
+
+	public function test_checkIfRevisionsAreInSameSourcePath() {
+		$aoRevisions = array(new MergeHelper_Revision('3'), new MergeHelper_Revision('5'));
+		$this->assertTrue(MergeHelper_Manager::bRevisionsAreInSameSourcePath($this->oRepo, $aoRevisions));
+
+		$aoRevisions = array(new MergeHelper_Revision('5'), new MergeHelper_Revision('6'));
+		$this->assertFalse(MergeHelper_Manager::bRevisionsAreInSameSourcePath($this->oRepo, $aoRevisions));
+	}
+
+	/**
+
 	public function test_getRevisionsForString() {
 		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
 		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
@@ -35,16 +61,6 @@ class MergeHelper_ManagerTest extends PHPUnit_Framework_TestCase {
 		$aoRevisions = MergeHelper_Manager::aoGetRevisionsForString($oRepoCache, '');
 
 		$this->assertSame(0, sizeof($aoRevisions));
-	}
-
-	public function test_getRevisionsInRange() {
-		$aoRevisions = MergeHelper_Manager::aoGetRevisionsInRange($this->oRepo, 'HEAD', 5);
-
-		$this->assertSame(4, sizeof($aoRevisions));
-		$this->assertSame('8', $aoRevisions[0]->sGetNumber());
-		$this->assertSame('7', $aoRevisions[1]->sGetNumber());
-		$this->assertSame('6', $aoRevisions[2]->sGetNumber());
-		$this->assertSame('5', $aoRevisions[3]->sGetNumber());
 	}
 
 	public function test_checkIfRevisionsAreInSameSourcePath() {
@@ -178,4 +194,5 @@ class MergeHelper_ManagerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($aoExpected, $aoActual);
 	}
 
+	*/
 }
