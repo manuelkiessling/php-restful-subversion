@@ -67,15 +67,11 @@ class MergeHelper_UncachedRepoMediator {
 	/**
 	 * @return array Array of MergeHelper_Revision objects
 	 */
-	public static function aoGetRevisionsForString(MergeHelper_RepoCache $oRepoCache, $sString) {
+	public function aoGetRevisionsForString($sString) {
 		if ($sString == '') return array();
 
-		$iRevisions = $oRepoCache->aiGetRevisionsWithMessageContainingText($sString);
-		foreach ($iRevisions as $iRevision) {
-			$return[] = new MergeHelper_Revision($iRevision);
-		}
-
-		return $return;
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory);
+		return $oLogCommand->aoGetRevisionsWithMessageContainingText($sString);
 	}
 
 	public function aoGetRevisionsInRange($sRangeStart, $sRangeEnd) {

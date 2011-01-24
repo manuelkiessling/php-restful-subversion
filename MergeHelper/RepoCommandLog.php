@@ -238,4 +238,32 @@ class MergeHelper_RepoCommandLog {
 		return $asReturn;
 	}
 
+	/**
+	 * @todo Does currently only work if text is on first line of commit message
+	 */
+	public function aoGetRevisionsWithMessageContainingText($sText) {
+
+		$aoReturn = array();
+		$this->enableXml();
+		$asCommandlines = $this->asGetCommandlines();
+		foreach ($asCommandlines as $sCommandline) {
+           	$sOutput = MergeHelper_RepoCommandExecutor::oGetInstance()->sGetCommandResult("$sCommandline | grep \"$sText\" -B 3| grep revision");
+			$asLines = explode("\n", $sOutput);
+			foreach ($asLines as $sLine) {
+				if (mb_strstr($sLine, 'revision')) {
+					// each line contains something like '   revision="5">'
+					preg_match_all('/   revision="(.*)">/', $sLine, $asMatches);
+					$aoReturn[] = new MergeHelper_Revision($asMatches[1][0]);
+				}
+			}
+		}
+		krsort($aoReturn);
+		$aoReturnSorted = array();
+		foreach ($aoReturn as $oRevision) {
+			$aoReturnSorted[] = $oRevision;
+		}
+		return $aoReturnSorted;
+
+	}
+
 }
