@@ -31,17 +31,17 @@ class MergeHelper_UncachedRepoMediatorTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame('5', $aoRevisions[3]->sGetNumber());
 	}
 
-	/**
-
 	public function test_checkIfRevisionsAreInSameSourcePath() {
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
+
 		$aoRevisions = array(new MergeHelper_Revision('3'), new MergeHelper_Revision('5'));
-		$this->assertTrue(MergeHelper_Manager::bRevisionsAreInSameSourcePath($this->oRepo, $aoRevisions));
+		$this->assertTrue($oRepoMediator->bRevisionsAreInSameSourcePath($aoRevisions));
 
 		$aoRevisions = array(new MergeHelper_Revision('5'), new MergeHelper_Revision('6'));
-		$this->assertFalse(MergeHelper_Manager::bRevisionsAreInSameSourcePath($this->oRepo, $aoRevisions));
+		$this->assertFalse($oRepoMediator->bRevisionsAreInSameSourcePath($aoRevisions));
 	}
 
-
+/**
 	public function test_getRevisionsForString() {
 		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
 		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);

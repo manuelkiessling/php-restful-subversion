@@ -133,8 +133,8 @@ class MergeHelper_UncachedRepoMediator {
 	 * @return MergeHelper_RepoPath|NULL MergeHelper_RepoPath if a common path could be found, NULL if none of the $oRepo source paths matched the given path
 	 * @todo Source paths should know themselves at which level the common path starts, we currently assume sourcepath + 1
 	 */
-	public static function oGetCommonSourcePathForFullPath(MergeHelper_Repo $oRepo, MergeHelper_RepoPath $oPath) {
-		$aoSourcePaths = $oRepo->aoGetSourcePaths();
+	public function oGetCommonSourcePathForFullPath(MergeHelper_RepoPath $oPath) {
+		$aoSourcePaths = $this->oRepo->aoGetSourcePaths();
 		foreach ($aoSourcePaths as $oSourcePath) {
 			if (mb_substr("$oPath", 0, mb_strlen("$oSourcePath")) === "$oSourcePath") {
 				// find next directory level name and add it
@@ -157,13 +157,13 @@ class MergeHelper_UncachedRepoMediator {
 	 *
 	 * @return bool TRUE if all $aoRevisions are on the one $oRepo source path, FALSE if not
 	 */
-	public static function bRevisionsAreInSameSourcePath(MergeHelper_Repo $oRepo, Array $aoRevisions) {
+	public function bRevisionsAreInSameSourcePath(Array $aoRevisions) {
 		if (sizeof($aoRevisions) === 0) return FALSE;
 
-		$aoPaths = self::aoGetPathsForRevisions($oRepo, $aoRevisions);
+		$aoPaths = $this->aoGetPathsForRevisions($aoRevisions);
 		if (sizeof($aoPaths) === 0) return FALSE; // no paths, no matches
 
-		$oSourcePath = self::oGetCommonSourcePathForFullPath($oRepo, $aoPaths[0]);
+		$oSourcePath = $this->oGetCommonSourcePathForFullPath($aoPaths[0]);
 		if ($oSourcePath === NULL) return FALSE; // first path of first revision did not match any source path
 
 		foreach ($aoPaths as $oPath) {
@@ -178,8 +178,8 @@ class MergeHelper_UncachedRepoMediator {
 	 *
 	 * @return array Array of MergeHelper_RepoPath objects representing the paths of all elements of the given revisions
 	 */
-	public static function aoGetPathsForRevisions(MergeHelper_Repo $oRepo, Array $aoRevisions) {
-		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
+	public function aoGetPathsForRevisions(Array $aoRevisions) {
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory);
 
 		foreach ($aoRevisions as $oRevision) {
 			$oLogCommand->addRevision($oRevision);
