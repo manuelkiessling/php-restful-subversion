@@ -31,16 +31,6 @@ class MergeHelper_UncachedRepoMediatorTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame('5', $aoRevisions[3]->sGetNumber());
 	}
 
-	public function test_checkIfRevisionsAreInSameSourcePath() {
-		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
-
-		$aoRevisions = array(new MergeHelper_Revision('3'), new MergeHelper_Revision('5'));
-		$this->assertTrue($oRepoMediator->bRevisionsAreInSameSourcePath($aoRevisions));
-
-		$aoRevisions = array(new MergeHelper_Revision('5'), new MergeHelper_Revision('6'));
-		$this->assertFalse($oRepoMediator->bRevisionsAreInSameSourcePath($aoRevisions));
-	}
-
 	public function test_getRevisionsForString() {
 		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
 		$aoRevisions = $oRepoMediator->aoGetRevisionsForString('TF-4001');
@@ -51,30 +41,35 @@ class MergeHelper_UncachedRepoMediatorTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame('7', $aoRevisions[2]->sGetNumber());
 	}
 
-	/**
 	public function test_getRevisionsForStringNoStringGiven() {
-		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
-		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
-		$aoRevisions = MergeHelper_Manager::aoGetRevisionsForString($oRepoCache, '');
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
+
+		$aoRevisions = $oRepoMediator->aoGetRevisionsForString('');
 
 		$this->assertSame(0, sizeof($aoRevisions));
 	}
 
 	public function test_checkIfRevisionsAreInSameSourcePath() {
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
+
 		$aoRevisions = array(new MergeHelper_Revision('3'), new MergeHelper_Revision('5'));
-		$this->assertTrue(MergeHelper_Manager::bRevisionsAreInSameSourcePath($this->oRepo, $aoRevisions));
+		$this->assertTrue($oRepoMediator->bRevisionsAreInSameSourcePath($aoRevisions));
 		
 		$aoRevisions = array(new MergeHelper_Revision('5'), new MergeHelper_Revision('6'));
-		$this->assertFalse(MergeHelper_Manager::bRevisionsAreInSameSourcePath($this->oRepo, $aoRevisions));
+		$this->assertFalse($oRepoMediator->bRevisionsAreInSameSourcePath($aoRevisions));
 	}
 	
 	public function test_checkIfRevisionsAreInSameSourcePathNoRevisionsGiven() {
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
+
 		$aoRevisions = array();
-		$this->assertFalse(MergeHelper_Manager::bRevisionsAreInSameSourcePath($this->oRepo, $aoRevisions));
+		$this->assertFalse($oRepoMediator->bRevisionsAreInSameSourcePath($aoRevisions));
 	}
 	
 	public function test_getCommonSourcePathForFullPath() {
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01'), MergeHelper_Manager::oGetCommonSourcePathForFullPath($this->oRepo, new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/lala/lulu/blah.txt')));
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
+
+		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01'), $oRepoMediator->oGetCommonSourcePathForFullPath(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/lala/lulu/blah.txt')));
 	}
 	
 	public function test_getCommonSourcePathForFullPathNoSourcePaths() {
@@ -83,7 +78,9 @@ class MergeHelper_UncachedRepoMediatorTest extends PHPUnit_Framework_TestCase {
 		$oRepo->setLocation('file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'));
 		$oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/my-hammer2/_approval'));
 
-		$this->assertEquals(NULL, MergeHelper_Manager::oGetCommonSourcePathForFullPath($oRepo, new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/lala/lulu/blah.txt')));
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($oRepo);
+
+		$this->assertEquals(NULL, $oRepoMediator->oGetCommonSourcePathForFullPath(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/lala/lulu/blah.txt')));
 	}
 
 	public function test_getCommonBasePathForFullPathNoSourcePaths() {
@@ -92,12 +89,16 @@ class MergeHelper_UncachedRepoMediatorTest extends PHPUnit_Framework_TestCase {
 		$oRepo->setLocation('file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'));
 		$oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/my-hammer2/_approval'));
 
-		$this->assertEquals(NULL, MergeHelper_Manager::oGetCommonBasePathForFullPath($oRepo, new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/lala/lulu/blah.txt')));
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($oRepo);
+
+		$this->assertEquals(NULL, $oRepoMediator->oGetCommonBasePathForFullPath(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/lala/lulu/blah.txt')));
 	}
 	
 	public function test_getPathsForRevisions() {
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
+
 		$aoRevisions = array(new MergeHelper_Revision('3'), new MergeHelper_Revision('4'));
-		$aoPaths = MergeHelper_Manager::aoGetPathsForRevisions($this->oRepo, $aoRevisions);
+		$aoPaths = $oRepoMediator->aoGetPathsForRevisions($aoRevisions);
 
 		$this->assertSame(3, sizeof($aoPaths));
 		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'), $aoPaths[0]);
@@ -106,8 +107,10 @@ class MergeHelper_UncachedRepoMediatorTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_getMessagesForRevisions() {
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
+
 		$aoRevisions = array(new MergeHelper_Revision('3'), new MergeHelper_Revision('5'));
-		$asMessages = MergeHelper_Manager::asGetMessagesForRevisions($this->oRepo, $aoRevisions);
+		$asMessages = $oRepoMediator->asGetMessagesForRevisions($aoRevisions);
 
 		$this->assertSame(2, sizeof($asMessages));
 		$this->assertSame('TF-4001', $asMessages[0]);
@@ -115,21 +118,22 @@ class MergeHelper_UncachedRepoMediatorTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function test_getMergeCommandlineForRevisionAndPath() {
-		$asCommandlines = MergeHelper_Manager::asGetMergeCommandlinesForRevisionsAndPaths($this->oRepo,
-		                                                                                      array(
-		                                                                                       array(
-		                                                                                        new MergeHelper_Revision('4'),
-		                                                                                        new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'),
-		                                                                                        '.',
-		                                                                                        FALSE
-		                                                                                       ),
-		                                                                                       array(
-		                                                                                        new MergeHelper_Revision('3'),
-		                                                                                        new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'),
-		                                                                                        '.',
-		                                                                                        TRUE
-		                                                                                       )
-		                                                                                      ));
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
+
+		$asCommandlines = $oRepoMediator->asGetMergeCommandlinesForRevisionsAndPaths(array(
+		                                                                              array(
+		                                                                               new MergeHelper_Revision('4'),
+		                                                                               new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'),
+		                                                                               '.',
+		                                                                               FALSE
+		                                                                              ),
+		                                                                              array(
+		                                                                               new MergeHelper_Revision('3'),
+		                                                                               new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'),
+		                                                                               '.',
+		                                                                               TRUE
+		                                                                              )
+		                                                                             ));
 
 		$this->assertSame('svn merge -c -3 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/2010-01-01/c/d.php ./c/d.php',
 		                  $asCommandlines[0]);
@@ -138,58 +142,31 @@ class MergeHelper_UncachedRepoMediatorTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function test_getCommonSourcePathForRevision() {
-			$this->assertSame('/branches/my-hammer2/_project/TF-0001', (string)MergeHelper_Manager::oGetCommonSourcePathForRevision($this->oRepo, new MergeHelper_Revision('4')));
-			$this->assertNull(MergeHelper_Manager::oGetCommonSourcePathForRevision($this->oRepo, new MergeHelper_Revision('8')));
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
+
+		$this->assertSame('/branches/my-hammer2/_project/TF-0001', (string)$oRepoMediator->oGetCommonSourcePathForRevision(new MergeHelper_Revision('4')));
+		$this->assertNull($oRepoMediator->oGetCommonSourcePathForRevision(new MergeHelper_Revision('8')));
 	}
 
 	public function test_getCommonBasePathForRevision() {
-			$this->assertSame('/branches/my-hammer2/_approval/2010-01-03_TF-3000', (string)MergeHelper_Manager::oGetCommonBasePathForRevision($this->oRepo, new MergeHelper_Revision('8')));
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
+		$this->assertSame('/branches/my-hammer2/_approval/2010-01-03_TF-3000', (string)$oRepoMediator->oGetCommonBasePathForRevision(new MergeHelper_Revision('8')));
 	}
 
 	public function test_getHighestRevision() {
-		$oHighestRevision = MergeHelper_Manager::oGetHighestRevision($this->oRepo);
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
+
+		$oHighestRevision = $oRepoMediator->oGetHighestRevision($this->oRepo);
 		$this->assertSame('8', $oHighestRevision->sGetNumber());
 	}
 
-	public function test_bCacheIsUpToDate() {
-		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
-		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
-		$oRepoCache->resetCache();
-
-		$oHighestRevision = MergeHelper_Manager::oGetHighestRevision($this->oRepo);
-		$oRepoCache->addRevision($oHighestRevision->sGetNumber(), '', array());
-
-		$this->assertTrue(MergeHelper_Manager::bCacheIsUpToDate($this->oRepo, $oRepoCache));
-	}
-
-	public function test_bCacheIsNotUpToDate() {
-		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
-		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
-		$oRepoCache->resetCache();
-
-		$oHighestRevision = MergeHelper_Manager::oGetHighestRevision($this->oRepo);
-		$oRepoCache->addRevision($oHighestRevision->sGetNumber() - 1, '', array());
-
-		$this->assertFalse(MergeHelper_Manager::bCacheIsUpToDate($this->oRepo, $oRepoCache));
-	}
-
+	/**
+	 * @expectedException MergeHelper_Exception
+	 */
 	public function test_aoGetRevisionsWithPathEndingOn() {
-		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
-		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
-		$oRepoCache->resetCache();
+		$oRepoMediator = new MergeHelper_UncachedRepoMediator($this->oRepo);
 
-		$oRepoCache->addRevision(1234, 'Hello World', array('/trunk/source/a.php', '/branches/foo/b.php'));
-		$oRepoCache->addRevision(1235, 'Hello World', array('/trunk/source/a.php', '/branches/foo/c.php', '/branches/foo/a.php'));
-		$oRepoCache->addRevision(1236, 'Hello World', array('/trunk/source/d.php', '/branches/foo/b.php', '/branches/bar/a.php'));
-		$oRepoCache->addRevision(1237, 'Hello World', array('/totally/different.php'));
-
-		$aoActual = MergeHelper_Manager::aoGetRevisionsWithPathEndingOn($oRepoCache, 'a.php');
-		$aoExpected = array(new MergeHelper_Revision(1236),
-		                    new MergeHelper_Revision(1235),
-		                    new MergeHelper_Revision(1234));
-
-		$this->assertEquals($aoExpected, $aoActual);
+		$aoActual = $oRepoMediator->aoGetRevisionsWithPathEndingOn('a.php');
 	}
 
-	*/
 }

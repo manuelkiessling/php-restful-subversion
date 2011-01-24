@@ -79,19 +79,15 @@ class MergeHelper_UncachedRepoMediator {
 		return $oLogCommand->aoGetRevisionsInRange($sRangeStart, $sRangeEnd);
 	}
 
-	public static function oGetHighestRevision(MergeHelper_Repo $oRepo) {
+	public function oGetHighestRevision(MergeHelper_Repo $oRepo) {
 		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
 		$oHighestRevision = $oLogCommand->aoGetRevisionsInRange('HEAD', 'HEAD');
 		return $oHighestRevision[0];
 	}
 
-	public static function bCacheIsUpToDate(MergeHelper_Repo $oRepo, MergeHelper_RepoCache $oRepoCache) {
-		return (self::oGetHighestRevision($oRepo)->sGetNumber() == $oRepoCache->iGetHighestRevision());
-	}
-
-	public static function oGetCommonBasePathForFullPath(MergeHelper_Repo $oRepo, MergeHelper_RepoPath $oPath) {
-		$aoSourcePaths = $oRepo->aoGetSourcePaths();
-		$aoSourcePaths[] = $oRepo->oGetTargetPath();
+	public function oGetCommonBasePathForFullPath(MergeHelper_RepoPath $oPath) {
+		$aoSourcePaths = $this->oRepo->aoGetSourcePaths();
+		$aoSourcePaths[] = $this->oRepo->oGetTargetPath();
 
 		foreach ($aoSourcePaths as $oSourcePath) {
 			if (mb_substr("$oPath", 0, mb_strlen("$oSourcePath")) === "$oSourcePath") {
@@ -106,12 +102,12 @@ class MergeHelper_UncachedRepoMediator {
 		return NULL;
 	}
 
-	public static function oGetCommonBasePathForRevision(MergeHelper_Repo $oRepo, MergeHelper_Revision $oRevision) {
-		$aoPaths = self::aoGetPathsForRevisions($oRepo, array($oRevision));
+	public function oGetCommonBasePathForRevision(MergeHelper_Revision $oRevision) {
+		$aoPaths = $this->aoGetPathsForRevisions(array($oRevision));
 
 		if (!isset($aoPaths[0])) return NULL;
 
-		return self::oGetCommonBasePathForFullPath($oRepo, $aoPaths[0]);
+		return $this->oGetCommonBasePathForFullPath($aoPaths[0]);
 	}
 
 	/**
@@ -143,9 +139,9 @@ class MergeHelper_UncachedRepoMediator {
 		return NULL;
 	}
 
-	public static function oGetCommonSourcePathForRevision(MergeHelper_Repo $oRepo, MergeHelper_Revision $oRevision) {
-		$aoPaths = self::aoGetPathsForRevisions($oRepo, array($oRevision));
-		return self::oGetCommonSourcePathForFullPath($oRepo, $aoPaths[0]);
+	public function oGetCommonSourcePathForRevision(MergeHelper_Revision $oRevision) {
+		$aoPaths = $this->aoGetPathsForRevisions(array($oRevision));
+		return $this->oGetCommonSourcePathForFullPath($aoPaths[0]);
 	}
 
 	/**
@@ -184,8 +180,8 @@ class MergeHelper_UncachedRepoMediator {
 		return $oLogCommand->aoGetPaths();
 	}
 
-	public static function asGetMessagesForRevisions(MergeHelper_Repo $oRepo, Array $aoRevisions) {
-		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
+	public function asGetMessagesForRevisions(Array $aoRevisions) {
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory);
 
 		foreach ($aoRevisions as $oRevision) {
 			$oLogCommand->addRevision($oRevision);
@@ -194,8 +190,8 @@ class MergeHelper_UncachedRepoMediator {
 		return $oLogCommand->asGetMessages();
 	}
 
-	public static function asGetMergeCommandlinesForRevisionsAndPaths(MergeHelper_Repo $oRepo, Array $aaRevisionsAndPaths, $bDryrun = FALSE, $bIsRollback = FALSE) {
-		$oMergeCommand = new MergeHelper_RepoCommandMerge($oRepo);
+	public function asGetMergeCommandlinesForRevisionsAndPaths(Array $aaRevisionsAndPaths, $bDryrun = FALSE, $bIsRollback = FALSE) {
+		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo);
 
 		if ($bDryrun) $oMergeCommand->enableDryrun();
 
@@ -206,22 +202,15 @@ class MergeHelper_UncachedRepoMediator {
 			if ($amRevisionAndPath[3] === TRUE) {
 				$oRevision = new MergeHelper_Revision($oRevision->sGetNumberInverted());
 			}
-			$sTargetPath = $sTargetBasePath . mb_substr($oSourcePath, mb_strlen(MergeHelper_Manager::oGetCommonBasePathForFullPath($oRepo, $oSourcePath)));
+			$sTargetPath = $sTargetBasePath . mb_substr($oSourcePath, mb_strlen($this->oGetCommonBasePathForFullPath($oSourcePath)));
 			$oMergeCommand->addMerge($oRevision, $oSourcePath, $sTargetPath, $bIsRollback);
 		}
 
 		return $oMergeCommand->asGetCommandlines();
 	}
 
-	public static function aoGetRevisionsWithPathEndingOn(MergeHelper_RepoCache $oRepoCache, $sString) {
-		$aoRevisions = array();
-		$aiRevisions = $oRepoCache->aiGetRevisionsWithPathEndingOn($sString);
-
-		foreach ($aiRevisions as $iRevision) {
-			$aoRevisions[] = new MergeHelper_Revision((string)$iRevision);
-		}
-
-		return $aoRevisions;
+	public function aoGetRevisionsWithPathEndingOn($sString) {
+		throw new MergeHelper_Exception('This function is only available using the CachedRepoMediator.');
 	}
 
 }
