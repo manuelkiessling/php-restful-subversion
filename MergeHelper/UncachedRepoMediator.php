@@ -40,7 +40,7 @@
  */
 
 /**
- * Class implementing a Mediator pattern to allow effective use of the library
+ * Class implementing a Mediator pattern to allow effective use of the library, using no cache
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
@@ -55,7 +55,14 @@
  * @uses       MergeHelper_RepoCommandLog
  * @uses       MergeHelper_RepoCommandMerge
  */
-class MergeHelper_Manager {
+class MergeHelper_UncachedRepoMediator {
+
+	protected $oRepo = NULL;
+
+	public function __construct(MergeHelper_Repo $oRepo) {
+		$this->oRepo = $oRepo;
+	}
+
 
 	/**
 	 * @return array Array of MergeHelper_Revision objects
@@ -71,8 +78,8 @@ class MergeHelper_Manager {
 		return $return;
 	}
 
-	public static function aoGetRevisionsInRange(MergeHelper_Repo $oRepo, $sRangeStart, $sRangeEnd) {
-		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
+	public function aoGetRevisionsInRange($sRangeStart, $sRangeEnd) {
+		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineFactory);
 		return $oLogCommand->aoGetRevisionsInRange($sRangeStart, $sRangeEnd);
 	}
 
