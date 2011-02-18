@@ -52,65 +52,28 @@
  */
 class MergeHelper_Revision {
 
-	protected $sBegin = NULL;
-	protected $sEnd = NULL;
+	protected $sRevisionNumber = NULL;
 	
-	/**
-	 * @todo Check and Exception needed for number format
-	 */
-	public function __construct($sBegin, $sEnd = NULL) {
-		if ((string)(int)$sBegin != $sBegin) {
-			throw new MergeHelper_RevisionInvalidRevisionNumberException('Revision start "'.$sBegin.'" is not a valid revision number.');
+	public function __construct($sRevisionNumber) {
+		if ((int)$sRevisionNumber < 0) {
+			throw new MergeHelper_RevisionInvalidRevisionNumberException('Revision number must be positive.');
 		}
-
-		if (!is_null($sEnd)) {
-			if ((string)(int)$sEnd != $sEnd) {
-				throw new MergeHelper_RevisionInvalidRevisionNumberException('Revision start "'.$sEnd.'" is not a valid revision number.');
-			}
-			
-			if ((int)$sBegin < 0 || (int)$sEnd < 0) {
-				throw new MergeHelper_RevisionInvalidRevisionNumberException('When giving a range, both revision numbers must be positive.');
-			}
+		if ((string)(int)$sRevisionNumber != $sRevisionNumber) {
+			throw new MergeHelper_RevisionInvalidRevisionNumberException('"'.$sRevisionNumber.'" is not a valid revision number.');
 		}
-
-		$this->sBegin = $sBegin;
-		$this->sEnd = $sEnd;
+		$this->sRevisionNumber = $sRevisionNumber;
 	}
 	
 	public function sGetNumber() {
-		if (is_null($this->sEnd)) return (string)$this->sBegin;
-		return (string)($this->sBegin.':'.$this->sEnd);
+		return (string)($this->sRevisionNumber);
 	}
 	
 	public function sGetNumberInverted() {
-		if (is_null($this->sEnd)) return (string)((int)$this->sBegin * -1);
-		return $this->sEnd.':'.$this->sBegin;
-	}
-	
-	public function getRevertedRevisionAsObject() {
-		if ($this->bIsRange()) {
-			return new self($this->sEnd, $this->sBegin);
-		}
-
-		$sBegin = (string)((int)$this->sBegin * -1);
-		return new self($sBegin);
+		return '-'.$this->sRevisionNumber;
 	}
 	
 	public function __toString() {
 		return (string)$this->sGetNumber();
-	}
-	
-	public function sGetNumberBegin() {
-		return $this->sBegin;
-	}
-	
-	public function sGetNumberEnd() {
-		return $this->sEnd;
-	}
-	
-	public function bIsRange() {
-		if (is_null($this->sEnd)) return FALSE;
-		return TRUE;
 	}
 	
 }
