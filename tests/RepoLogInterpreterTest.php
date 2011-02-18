@@ -37,7 +37,7 @@ EOT;
 		                   'sAuthor' => 'Han.Solo',
 		                   'sDateTime' => '2011-02-17 10:58:40',
 		                   'sMessage' => "DEV-5678: Hello World\n- This is foo bar\n",
-		                   'aPaths' => array(
+		                   'aPathOperations' => array(
 		                   	0 => array('sKind' => '',
 		                                'sAction' => 'A',
 		                                'sPath' => '/branches/production/v22/src/a/b.php'

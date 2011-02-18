@@ -61,7 +61,7 @@ class MergeHelper_RepoLogInterpreter {
 		$aRevisionInfos['sDateTime'] = date('Y-m-d H:i:s', strtotime($oXml->logentry[0]->date));
 		$aRevisionInfos['sMessage'] = (string)$oXml->logentry[0]->msg;
 
-		$aRevisionInfos['aPaths'] = array();
+		$aRevisionInfos['aPathOperations'] = array();
 		foreach ($oXml->logentry[0]->paths[0] as $oPath) {
 			$aPathInfo = array();
 			$aPathInfo['sKind'] = (string)$oPath['kind'];
@@ -69,7 +69,7 @@ class MergeHelper_RepoLogInterpreter {
 			if ($oPath['copyfrom-path']) $aPathInfo['sCopyfromPath'] = (string)$oPath['copyfrom-path'];
 			if ($oPath['copyfrom-rev']) $aPathInfo['sCopyfromRev'] = (string)$oPath['copyfrom-rev'];
 			$aPathInfo['sPath'] = (string)$oPath;
-			$aRevisionInfos['aPaths'][] = $aPathInfo;
+			$aRevisionInfos['aPathOperations'][] = $aPathInfo;
 		}
 	
 		return $aRevisionInfos;
