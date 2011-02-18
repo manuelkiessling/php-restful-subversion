@@ -17,7 +17,6 @@ class MergeHelper_RepoLogInterpreterTest extends PHPUnit_Framework_TestCase {
 <path
    kind=""
    action="M">/branches/production/v22/src/a/a.php</path>
-</paths>
 <path
    kind=""
    copyfrom-path="/branches/staging/sourcefile.php"
@@ -26,6 +25,7 @@ class MergeHelper_RepoLogInterpreterTest extends PHPUnit_Framework_TestCase {
 <path
    kind=""
    action="D">/branches/production/otherfile.php</path>
+</paths>
 <msg>DEV-5678: Hello World
 - This is foo bar
 </msg>
@@ -34,34 +34,34 @@ class MergeHelper_RepoLogInterpreterTest extends PHPUnit_Framework_TestCase {
 EOT;
 
 		$aExpected = array('sRevision' => '12345',
-		                   'author' => 'Han.Solo',
-		                   'datetime' => '2011-02-17 09:58:40',
-		                   'message' => "DEV-5678: Hello World\n- This is foo bar\n",
-		                   'paths' => array(
-		                   	0 => array('kind' => '',
-		                                'action' => 'A',
-		                                'path' => '/branches/production/v22/src/a/b.php'
+		                   'sAuthor' => 'Han.Solo',
+		                   'sDateTime' => '2011-02-17 10:58:40',
+		                   'sMessage' => "DEV-5678: Hello World\n- This is foo bar\n",
+		                   'aPaths' => array(
+		                   	0 => array('sKind' => '',
+		                                'sAction' => 'A',
+		                                'sPath' => '/branches/production/v22/src/a/b.php'
 		                               ),
-		                     1 => array('kind' => '',
-					                       'action' => 'M',
-					                       'path' => '/branches/production/v22/src/a/a.php'
+		                     1 => array('sKind' => '',
+					                       'sAction' => 'M',
+					                       'sPath' => '/branches/production/v22/src/a/a.php'
 					                      ),
-		                     2 => array('kind' => '',
-					                       'action' => 'A',
-					                       'copyfrom-path' => '/branches/staging/sourcefile.php',
-					                       'copyfrom-rev' => '5505',
-					                       'path' => '/branches/production/targetfile.php'
+		                     2 => array('sKind' => '',
+					                       'sAction' => 'A',
+					                       'sCopyfromPath' => '/branches/staging/sourcefile.php',
+					                       'sCopyfromRev' => '5505',
+					                       'sPath' => '/branches/production/targetfile.php'
 					                      ),
-		                     2 => array('kind' => '',
-					                       'action' => 'D',
-					                       'path' => '/branches/production/otherfile.php'
+		                     3 => array('sKind' => '',
+					                       'sAction' => 'D',
+					                       'sPath' => '/branches/production/otherfile.php'
 					                      )
 		                   )
 		                  );
 
 		$oInterpreter = new MergeHelper_RepoLogInterpreter();
-		$aActual = $oInterpreter->getAllRevisionInfosFromXml($sXml);
-		
+		$aActual = $oInterpreter->aGetAllRevisionInfosFromXml($sXml);
+				
 		$this->assertSame($aExpected, $aActual);
 		
 	}

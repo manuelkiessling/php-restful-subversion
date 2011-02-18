@@ -3,7 +3,7 @@
 /**
  * PHPMergeHelper
  *
- * Copyright (c) 2010, Manuel Kiessling <manuel@kiessling.net>
+ * Copyright (c) 2011, Manuel Kiessling <manuel@kiessling.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,34 +32,48 @@
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
- * @subpackage Core
+ * @subpackage Command
  * @author     Manuel Kiessling <manuel@kiessling.net>
- * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
+ * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
 
-require_once realpath(dirname(__FILE__)).'/Autoloader.php';
-
-spl_autoload_register('MergeHelper_Autoloader::load');
-date_default_timezone_set('Europe/Berlin');
-
 /**
- * Provides bootstrap helper functions
+ * Class that can interprete the XML output of svn log
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
- * @subpackage Core
+ * @subpackage Utility
  * @author     Manuel Kiessling <manuel@kiessling.net>
- * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
+ * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Autoloader::load
  */
-class MergeHelper_Bootstrap {
+class MergeHelper_RepoLogInterpreter {
 
-	public static function sGetPackageRoot() {
-		return realpath(dirname(__FILE__));
+	public function aGetAllRevisionInfosFromXml($sXml) {
+		$oXml = new SimpleXMLElement($sXml);
+		
+		$aRevisionInfos = array();
+		$aRevisionInfos['sRevision'] = (string)$oXml->logentry[0]['revision'];
+		$aRevisionInfos['sAuthor'] = (string)$oXml->logentry[0]->author;
+		$aRevisionInfos['sDateTime'] = date('Y-m-d H:i:s', strtotime($oXml->logentry[0]->date));
+		$aRevisionInfos['sMessage'] = (string)$oXml->logentry[0]->msg;
+
+		$aRevisionInfos['aPaths'] = array();
+		foreach ($oXml->logentry[0]->paths[0] as $oPath) {
+			$aPathInfo = array();
+			$aPathInfo['sKind'] = (string)$oPath['kind'];
+			$aPathInfo['sAction'] = (string)$oPath['action'];
+			if ($oPath['copyfrom-path']) $aPathInfo['sCopyfromPath'] = (string)$oPath['copyfrom-path'];
+			if ($oPath['copyfrom-rev']) $aPathInfo['sCopyfromRev'] = (string)$oPath['copyfrom-rev'];
+			$aPathInfo['sPath'] = (string)$oPath;
+			$aRevisionInfos['aPaths'][] = $aPathInfo;
+		}
+	
+		return $aRevisionInfos;
+		
 	}
 
 }
