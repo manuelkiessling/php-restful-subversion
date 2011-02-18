@@ -53,8 +53,7 @@
  */
 class MergeHelper_Autoloader {
 	
-	public static function load($sClass)
-	{
+	public static function load($sClass) {
 		$sFilename = mb_substr($sClass, 12).'.php';
 
 		$asPaths = array(realpath(MergeHelper_Bootstrap::sGetPackageRoot()));
