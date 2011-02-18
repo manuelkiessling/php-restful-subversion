@@ -53,11 +53,23 @@
  */
 class MergeHelper_CommandLineBuilder implements MergeHelper_CommandLineBuilderInterface {
 
-	protected $iNumberOfArguments = 0;
-	protected $sCommand = NULL;
-	protected $asParameters = array();
-	protected $aaShortSwitches = array();
-	protected $aaLongSwitches = array();
+	protected $iNumberOfArguments;
+	protected $sCommand;
+	protected $asParameters;
+	protected $aaShortSwitches;
+	protected $aaLongSwitches;
+
+	public function __construct() {
+		$this->reset();
+	}
+
+	public function reset() {
+		$this->iNumberOfArguments = 0;
+		$this->sCommand = '';
+		$this->asParameters = array();
+		$this->aaShortSwitches = array();
+		$this->aaLongSwitches = array();
+	}
 
 	public function setCommand($sCommand) {
 		$this->sCommand = $sCommand;

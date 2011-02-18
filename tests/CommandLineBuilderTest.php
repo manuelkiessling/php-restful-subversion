@@ -64,4 +64,13 @@ class MergeHelper_CommandLineBuilderTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame('svn --username=manuel', $oCommandLineBuilder->sGetCommandLine());
 	}
 	
+	public function test_reset() {
+		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+		$oCommandLineBuilder->setCommand('svn');
+		$oCommandLineBuilder->addLongSwitchWithValue('username', 'manuel');
+		$oCommandLineBuilder->reset();
+
+		$this->assertSame('', $oCommandLineBuilder->sGetCommandLine());
+	}
+	
 }
