@@ -53,7 +53,7 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
-class MergeHelper_RepoCommandExecutor {
+class MergeHelper_CommandLineExecutor {
 	
 	protected static $oInstance = NULL;
 	protected static $asCache = array();
@@ -61,7 +61,7 @@ class MergeHelper_RepoCommandExecutor {
 	protected function __construct() {}
 
 	public function __clone() {
-		throw new MergeHelper_Exception('You cannot clone the singleton instance MergeHelper_RepoCommandExecutor');
+		throw new MergeHelper_Exception('You cannot clone the singleton instance MergeHelper_CommandLineExecutor');
 	}
 	
 	public static function oGetInstance() {

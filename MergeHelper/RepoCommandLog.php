@@ -51,7 +51,7 @@
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  * @uses       MergeHelper_Repo
  * @uses       MergeHelper_Revision
- * @uses       MergeHelper_RepoCommandExecutor
+ * @uses       MergeHelper_CommandLineExecutor
  * @uses       MergeHelper_RepoPath
  */
 class MergeHelper_RepoCommandLog {
