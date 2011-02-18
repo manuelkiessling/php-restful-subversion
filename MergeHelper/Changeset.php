@@ -74,12 +74,12 @@ class MergeHelper_Changeset {
 		$this->sMessage = $sMessage;
 	}
 	
-	public function addPathOperation($sAction, $sPath, $sCopyfromPath = NULL, $sCopyfromRev = NULL) {
+	public function addPathOperation($sAction, MergeHelper_RepoPath $oPath, MergeHelper_RepoPath $oCopyfromPath = NULL, MergeHelper_Revision $oCopyfromRev = NULL) {
 		$aPathOperation = array('sAction' => $sAction,
-		                        'sPath' => $sPath
+		                        'oPath' => $oPath
 		                       );
-		if ($sCopyfromPath) $aPathOperation['sCopyfromPath'] = $sCopyfromPath;
-		if ($sCopyfromRev) $aPathOperation['sCopyfromRev'] = $sCopyfromRev;
+		if ($oCopyfromPath) $aPathOperation['oCopyfromPath'] = $oCopyfromPath;
+		if ($oCopyfromRev) $aPathOperation['oCopyfromRev'] = $oCopyfromRev;
 		$this->aaPathOperations[] = $aPathOperation;
 	}
 

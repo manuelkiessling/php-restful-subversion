@@ -2,29 +2,29 @@
 
 class MergeHelper_RepoLogInterpreterTest extends PHPUnit_Framework_TestCase {
 
-	public function test_getAllRevisionInfosFromXml() {
+	public function test_getChangesetFromXml() {
 		$sXml = <<<EOT
 <?xml version="1.0"?>
 <log>
 <logentry
    revision="12345">
-<author>Han.Solo</author>
+<author>Han Solo</author>
 <date>2011-02-17T09:58:40.648317Z</date>
 <paths>
 <path
    kind=""
-   action="A">/branches/production/v22/src/a/b.php</path>
+   action="A">/foo/bar.php</path>
 <path
    kind=""
-   action="M">/branches/production/v22/src/a/a.php</path>
+   action="M">/foo/foo.php</path>
 <path
    kind=""
-   copyfrom-path="/branches/staging/sourcefile.php"
-   copyfrom-rev="5505"
-   action="A">/branches/production/targetfile.php</path>
+   copyfrom-path="/foo/sourcefile.php"
+   copyfrom-rev="12344"
+   action="A">/foo/targetfile.php</path>
 <path
    kind=""
-   action="D">/branches/production/otherfile.php</path>
+   action="D">/foo/other.php</path>
 </paths>
 <msg>DEV-5678: Hello World
 - This is foo bar
@@ -33,32 +33,19 @@ class MergeHelper_RepoLogInterpreterTest extends PHPUnit_Framework_TestCase {
 </log>
 EOT;
 
-		$aExpected = array('sRevision' => '12345',
-		                   'sAuthor' => 'Han.Solo',
-		                   'sDateTime' => '2011-02-17 10:58:40',
-		                   'sMessage' => "DEV-5678: Hello World\n- This is foo bar\n",
-		                   'aPathOperations' => array(
-		                   	0 => array('sAction' => 'A',
-		                               'sPath' => '/branches/production/v22/src/a/b.php'
-		                              ),
-		                    1 => array('sAction' => 'M',
-					                   'sPath' => '/branches/production/v22/src/a/a.php'
-					                  ),
-		                    2 => array('sAction' => 'A',
-					                   'sCopyfromPath' => '/branches/staging/sourcefile.php',
-					                   'sCopyfromRev' => '5505',
-					                   'sPath' => '/branches/production/targetfile.php'
-					                  ),
-		                    3 => array('sAction' => 'D',
-					                   'sPath' => '/branches/production/otherfile.php'
-					                  )
-		                   )
-		                  );
-
+		$oExpected = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oExpected->setAuthor('Han Solo');
+		$oExpected->setDateTime('2011-02-17 10:58:40');
+		$oExpected->setMessage("DEV-5678: Hello World\n- This is foo bar\n");
+		$oExpected->addPathOperation('A', new MergeHelper_RepoPath('/foo/bar.php'));
+		$oExpected->addPathOperation('M', new MergeHelper_RepoPath('/foo/foo.php'));
+		$oExpected->addPathOperation('A', new MergeHelper_RepoPath('/foo/targetfile.php'), new MergeHelper_RepoPath('/foo/sourcefile.php'), new MergeHelper_Revision('12344'));
+		$oExpected->addPathOperation('D', new MergeHelper_RepoPath('/foo/other.php'));
+		
 		$oInterpreter = new MergeHelper_RepoLogInterpreter();
-		$aActual = $oInterpreter->aGetAllRevisionInfosFromXml($sXml);
+		$oActual = $oInterpreter->oGetChangesetFromXml($sXml);
 				
-		$this->assertSame($aExpected, $aActual);
+		$this->assertEquals($oExpected, $oActual);
 		
 	}
 

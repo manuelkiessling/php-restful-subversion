@@ -52,27 +52,26 @@
  */
 class MergeHelper_RepoLogInterpreter {
 
-	public function aGetAllRevisionInfosFromXml($sXml) {
+	public function oGetChangesetFromXml($sXml) {
 		$oXml = new SimpleXMLElement($sXml);
-		
-		$aRevisionInfos = array();
-		$aRevisionInfos['sRevision'] = (string)$oXml->logentry[0]['revision'];
-		$aRevisionInfos['sAuthor'] = (string)$oXml->logentry[0]->author;
-		$aRevisionInfos['sDateTime'] = date('Y-m-d H:i:s', strtotime($oXml->logentry[0]->date));
-		$aRevisionInfos['sMessage'] = (string)$oXml->logentry[0]->msg;
 
-		$aRevisionInfos['aPathOperations'] = array();
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$oXml->logentry[0]['revision']));
+		$oChangeset->setAuthor((string)$oXml->logentry[0]->author);
+		$oChangeset->setDateTime(date('Y-m-d H:i:s', strtotime($oXml->logentry[0]->date)));
+		$oChangeset->setMessage((string)$oXml->logentry[0]->msg);
+
 		foreach ($oXml->logentry[0]->paths[0] as $oPath) {
-			$aPathInfo = array();
-			$aPathInfo['sAction'] = (string)$oPath['action'];
-			if ($oPath['copyfrom-path']) $aPathInfo['sCopyfromPath'] = (string)$oPath['copyfrom-path'];
-			if ($oPath['copyfrom-rev']) $aPathInfo['sCopyfromRev'] = (string)$oPath['copyfrom-rev'];
-			$aPathInfo['sPath'] = (string)$oPath;
-			$aRevisionInfos['aPathOperations'][] = $aPathInfo;
+			$oCopyfromPath = NULL;
+			$oCopyfromRev = NULL;
+			if ($oPath['copyfrom-path']) $oCopyfromPath = new MergeHelper_RepoPath((string)$oPath['copyfrom-path']);
+			if ($oPath['copyfrom-rev']) $oCopyfromRev = new MergeHelper_Revision((string)$oPath['copyfrom-rev']);
+			$oChangeset->addPathOperation((string)$oPath['action'],
+			                              new MergeHelper_RepoPath((string)$oPath),
+			                              $oCopyfromPath,
+			                              $oCopyfromRev);
 		}
-	
-		return $aRevisionInfos;
-		
+
+		return $oChangeset;
 	}
 
 }

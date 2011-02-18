@@ -32,10 +32,10 @@ class MergeHelper_ChangesetTest extends PHPUnit_Framework_TestCase {
 
 	public function test_getPathOperations() {
 		$aaExpected = array(
-		                    array('sAction' => 'M', 'sPath' => new MergeHelper_RepoPath('/foo/bar.php')),
-		                    array('sAction' => 'A', 'sPath' => new MergeHelper_RepoPath('/foo/foo.php')),
-		                    array('sAction' => 'A', 'sPath' => new MergeHelper_RepoPath('/foo/targetfile.php'), 'sCopyfromPath' => new MergeHelper_RepoPath('/foo/sourcefile.php'), 'sCopyfromRev' => new MergeHelper_Revision('12344')),
-		                    array('sAction' => 'D', 'sPath' => new MergeHelper_RepoPath('/foo/other.php'))
+		                    array('sAction' => 'M', 'oPath' => new MergeHelper_RepoPath('/foo/bar.php')),
+		                    array('sAction' => 'A', 'oPath' => new MergeHelper_RepoPath('/foo/foo.php')),
+		                    array('sAction' => 'A', 'oPath' => new MergeHelper_RepoPath('/foo/targetfile.php'), 'oCopyfromPath' => new MergeHelper_RepoPath('/foo/sourcefile.php'), 'oCopyfromRev' => new MergeHelper_Revision('12344')),
+		                    array('sAction' => 'D', 'oPath' => new MergeHelper_RepoPath('/foo/other.php'))
 		);
 
 		$aaActual = $this->oChangeset->aaGetPathOperations();
