@@ -40,7 +40,7 @@
  */
 
 /**
- * Factory which produces objects that implement the MergeHelper_CommandLineInterface
+ * Object representing a command line on a shell
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
@@ -49,12 +49,66 @@
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_CommandLine
+ * @implements MergeHelper_CommandLineInterface
  */
-class MergeHelper_CommandLineFactory {
+class MergeHelper_CommandLineBuilder implements MergeHelper_CommandLineBuilderInterface {
 
-	public function instantiate() {
-		return new MergeHelper_CommandLine();
+	protected $iNumberOfArguments = 0;
+	protected $sCommand = NULL;
+	protected $asParameters = array();
+	protected $aaShortSwitches = array();
+	protected $aaLongSwitches = array();
+
+	public function setCommand($sCommand) {
+		$this->sCommand = $sCommand;
+	}
+	
+	public function addParameter($sParameterName) {
+		$this->asParameters[$this->iNumberOfArguments] = $sParameterName;
+		$this->iNumberOfArguments++;
+	}
+	
+	public function addShortSwitch($sSwitchName) {
+		$this->addShortSwitchWithValue($sSwitchName, '');
+	}
+	
+	public function addShortSwitchWithValue($sSwitchName, $sSwitchValue) {
+		$this->aaShortSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
+		$this->iNumberOfArguments++;
+	}
+	
+	public function addLongSwitch($sSwitchName) {
+		$this->addLongSwitchWithValue($sSwitchName, '');
+	}
+	
+	public function addLongSwitchWithValue($sSwitchName, $sSwitchValue) {
+		$this->aaLongSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
+		$this->iNumberOfArguments++;
+	}
+	
+	public function sGetCommandLine() {
+		$return = $this->sCommand;
+
+		for ($i = 0; $i < $this->iNumberOfArguments; $i++) {
+			
+			if (isset($this->asParameters[$i])) $return .= ' '.$this->asParameters[$i];
+			
+			if (isset($this->aaShortSwitches[$i])) {
+				$return .= ' -'.$this->aaShortSwitches[$i]['sSwitchName'];
+				if ($this->aaShortSwitches[$i]['sSwitchValue'] !== '') {
+					$return .= ' '.$this->aaShortSwitches[$i]['sSwitchValue'];
+				}
+			}
+			
+			if (isset($this->aaLongSwitches[$i])) {
+				$return .= ' --'.$this->aaLongSwitches[$i]['sSwitchName'];
+				if ($this->aaLongSwitches[$i]['sSwitchValue'] !== '') {
+					$return .= '='.$this->aaLongSwitches[$i]['sSwitchValue'];
+				}
+			}
+			
+		}
+		return $return;
 	}
 
 }

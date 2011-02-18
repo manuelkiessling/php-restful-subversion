@@ -40,7 +40,7 @@
  */
 
 /**
- * Object representing a command line on a shell
+ * Interface for MergeHelper_CommandLine classes
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
@@ -49,66 +49,21 @@
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @implements MergeHelper_CommandLineInterface
  */
-class MergeHelper_CommandLine implements MergeHelper_CommandLineInterface {
+interface MergeHelper_CommandLineBuilderInterface {	
 
-	protected $iNumberOfArguments = 0;
-	protected $sCommand = NULL;
-	protected $asParameters = array();
-	protected $aaShortSwitches = array();
-	protected $aaLongSwitches = array();
-
-	public function setCommand($sCommand) {
-		$this->sCommand = $sCommand;
-	}
+	public function setCommand($sCommand);
 	
-	public function addParameter($sParameterName) {
-		$this->asParameters[$this->iNumberOfArguments] = $sParameterName;
-		$this->iNumberOfArguments++;
-	}
+	public function addParameter($sParameterName);
 	
-	public function addShortSwitch($sSwitchName) {
-		$this->addShortSwitchWithValue($sSwitchName, '');
-	}
+	public function addShortSwitch($sSwitchName);
 	
-	public function addShortSwitchWithValue($sSwitchName, $sSwitchValue) {
-		$this->aaShortSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
-		$this->iNumberOfArguments++;
-	}
+	public function addShortSwitchWithValue($sSwitchName, $sSwitchValue);
 	
-	public function addLongSwitch($sSwitchName) {
-		$this->addLongSwitchWithValue($sSwitchName, '');
-	}
+	public function addLongSwitch($sSwitchName);
 	
-	public function addLongSwitchWithValue($sSwitchName, $sSwitchValue) {
-		$this->aaLongSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
-		$this->iNumberOfArguments++;
-	}
+	public function addLongSwitchWithValue($sSwitchName, $sSwitchValue);
 	
-	public function sGetCommandLine() {
-		$return = $this->sCommand;
-
-		for ($i = 0; $i < $this->iNumberOfArguments; $i++) {
-			
-			if (isset($this->asParameters[$i])) $return .= ' '.$this->asParameters[$i];
-			
-			if (isset($this->aaShortSwitches[$i])) {
-				$return .= ' -'.$this->aaShortSwitches[$i]['sSwitchName'];
-				if ($this->aaShortSwitches[$i]['sSwitchValue'] !== '') {
-					$return .= ' '.$this->aaShortSwitches[$i]['sSwitchValue'];
-				}
-			}
-			
-			if (isset($this->aaLongSwitches[$i])) {
-				$return .= ' --'.$this->aaLongSwitches[$i]['sSwitchName'];
-				if ($this->aaLongSwitches[$i]['sSwitchValue'] !== '') {
-					$return .= '='.$this->aaLongSwitches[$i]['sSwitchValue'];
-				}
-			}
-			
-		}
-		return $return;
-	}
+	public function sGetCommandLine();
 
 }

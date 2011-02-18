@@ -40,7 +40,7 @@
  */
 
 /**
- * Interface for MergeHelper_CommandLine classes
+ * Factory which produces objects that implement the MergeHelper_CommandLineBuilderInterface
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
@@ -49,21 +49,12 @@
  * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
+ * @uses       MergeHelper_CommandLine
  */
-interface MergeHelper_CommandLineInterface {	
+class MergeHelper_CommandLineBuilderFactory {
 
-	public function setCommand($sCommand);
-	
-	public function addParameter($sParameterName);
-	
-	public function addShortSwitch($sSwitchName);
-	
-	public function addShortSwitchWithValue($sSwitchName, $sSwitchValue);
-	
-	public function addLongSwitch($sSwitchName);
-	
-	public function addLongSwitchWithValue($sSwitchName, $sSwitchValue);
-	
-	public function sGetCommandLine();
+	public function instantiate() {
+		return new MergeHelper_CommandLineBuilder();
+	}
 
 }
