@@ -64,7 +64,6 @@ class MergeHelper_RepoLogInterpreter {
 		$aRevisionInfos['aPathOperations'] = array();
 		foreach ($oXml->logentry[0]->paths[0] as $oPath) {
 			$aPathInfo = array();
-			$aPathInfo['sKind'] = (string)$oPath['kind'];
 			$aPathInfo['sAction'] = (string)$oPath['action'];
 			if ($oPath['copyfrom-path']) $aPathInfo['sCopyfromPath'] = (string)$oPath['copyfrom-path'];
 			if ($oPath['copyfrom-rev']) $aPathInfo['sCopyfromRev'] = (string)$oPath['copyfrom-rev'];

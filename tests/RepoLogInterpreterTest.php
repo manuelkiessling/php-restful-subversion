@@ -38,22 +38,18 @@ EOT;
 		                   'sDateTime' => '2011-02-17 10:58:40',
 		                   'sMessage' => "DEV-5678: Hello World\n- This is foo bar\n",
 		                   'aPathOperations' => array(
-		                   	0 => array('sKind' => '',
-		                               'sAction' => 'A',
+		                   	0 => array('sAction' => 'A',
 		                               'sPath' => '/branches/production/v22/src/a/b.php'
 		                              ),
-		                    1 => array('sKind' => '',
-					                   'sAction' => 'M',
+		                    1 => array('sAction' => 'M',
 					                   'sPath' => '/branches/production/v22/src/a/a.php'
 					                  ),
-		                    2 => array('sKind' => '',
-					                   'sAction' => 'A',
+		                    2 => array('sAction' => 'A',
 					                   'sCopyfromPath' => '/branches/staging/sourcefile.php',
 					                   'sCopyfromRev' => '5505',
 					                   'sPath' => '/branches/production/targetfile.php'
 					                  ),
-		                    3 => array('sKind' => '',
-					                   'sAction' => 'D',
+		                    3 => array('sAction' => 'D',
 					                   'sPath' => '/branches/production/otherfile.php'
 					                  )
 		                   )
