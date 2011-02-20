@@ -5,7 +5,6 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 	public function setUp() {
 		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
 		$this->oRepoCache = new MergeHelper_RepoCache($oCacheDb);
-		$this->oRepoCache->resetCache();
 	}
 
 	public function tearDown() {
@@ -13,57 +12,112 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_getHighestRevisionInCache() {
-		$this->oRepoCache->addRevision(1234, 'Hello World', array('/trunk/source/a.php', '/branches/foo/b.php'));
-		$this->oRepoCache->addRevision(1236, 'Hello World', array('/trunk/source/d.php', '/branches/foo/b.php', '/branches/bar/a.php'));
-		$this->oRepoCache->addRevision(1237, 'Hello World', array('/totally/different.php'));
-		$this->oRepoCache->addRevision(1235, 'Hello World', array('/trunk/source/a.php', '/branches/foo/c.php', '/branches/foo/a.php'));
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/bar.php'));
 
-		$this->assertSame(1237, $this->oRepoCache->iGetHighestRevision());
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertSame('12345', $this->oRepoCache->sGetHighestRevision());
 	}
 
 	public function test_getHighestRevisionInCacheForEmptyCache() {
-		$this->assertFalse($this->oRepoCache->iGetHighestRevision());
+		$this->assertFalse($this->oRepoCache->sGetHighestRevision());
 	}
 
-	public function test_addToAndRetrievePathsFromCache() {
-		$aPaths = array('/trunk/source', '/branches/foo');
-		$this->oRepoCache->addRevision(1234, 'Hello World', $aPaths);
+	public function test_retrieveChangesetFromCache() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/bar.php'));
 
-		$this->assertSame($aPaths, $this->oRepoCache->asGetPathsForRevision(1234));
+		$this->oRepoCache->addChangeset($oChangeset);
+		unset($this->oRepoCache);
+		$this->setUp();
+
+		$this->assertEquals($oChangeset, $this->oRepoCache->oGetChangesetForRevision(new MergeHelper_Revision('12345')));
 	}
 
-	public function test_addToAndRetrieveMessageFromCache() {
-		$aPaths = array('/trunk/source', '/branches/foo');
-		$this->oRepoCache->addRevision(1234, 'Hello World', $aPaths);
+	public function test_findRevisionsWithPathEndingOn() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1234'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/a.php'));
 
-		$this->assertSame('Hello World', $this->oRepoCache->asGetMessageForRevision(1234));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1235'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-19 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/ar.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1236'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-20 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/bar/bla.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$aoExpected = array(new MergeHelper_Revision('1236'), new MergeHelper_Revision('1234'));
+		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetRevisionsWithPathEndingOn('a.php'));
+	}
+
+	public function test_findRevisionsWithMessageContainingText() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1234'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/a.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1235'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-19 22:56:00');
+		$oChangeset->setMessage('Helloworlds');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/ar.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1236'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-20 22:56:00');
+		$oChangeset->setMessage('Hello W orld');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/bar/bla.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$aoExpected = array(new MergeHelper_Revision('1235'), new MergeHelper_Revision('1234'));
+		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetRevisionsWithMessageContainingText('world'));
 	}
 
 	/**
 	 * @expectedException MergeHelper_RepoCacheRevisionAlreadyInCacheException
 	 */
 	public function test_cantAddSameRevisionTwice() {
-		$this->oRepoCache->addRevision(1234, 'Hello World', array('/trunk/source/a.php', '/branches/foo/b.php'));
-		$this->oRepoCache->addRevision(1234, 'Hello World', array('/trunk/source/c.php', '/branches/foo/d.php'));
-	}
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/bar.php'));
 
-	public function test_findRevisionsWithPathEndingOn() {
-		$this->oRepoCache->addRevision(1234, 'Hello World', array('/trunk/source/a.php', '/branches/foo/b.php'));
-		$this->oRepoCache->addRevision(1235, 'Hello World', array('/trunk/source/a.php', '/branches/foo/c.php', '/branches/foo/a.php'));
-		$this->oRepoCache->addRevision(1236, 'Hello World', array('/trunk/source/d.php', '/branches/foo/b.php', '/branches/bar/a.php'));
-		$this->oRepoCache->addRevision(1237, 'Hello World', array('/totally/different.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
 
-		$aExpected = array(1236, 1235, 1234);
-		$this->assertSame($aExpected, $this->oRepoCache->aiGetRevisionsWithPathEndingOn('a.php'));
-	}
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Leia Skywalker');
+		$oChangeset->setDateTime('2011-02-19 22:57:00');
+		$oChangeset->setMessage('...');
+		$oChangeset->addPathOperation('A', new MergeHelper_RepoPath('/bar/foo.php'));
 
-	public function test_findRevisionsWithMessageContainingText() {
-		$this->oRepoCache->addRevision(1234, '', array('/trunk/source/a.php', '/branches/foo/b.php'));
-		$this->oRepoCache->addRevision(1235, 'Hello World', array('/trunk/source/a.php', '/branches/foo/b.php'));
-		$this->oRepoCache->addRevision(1236, 'Hello Other World', array('/trunk/source/a.php', '/branches/foo/b.php'));
-
-		$aExpected = array(1236, 1235);
-		$this->assertSame($aExpected, $this->oRepoCache->aiGetRevisionsWithMessageContainingText('world'));
+		$this->oRepoCache->addChangeset($oChangeset);
 	}
 
 }
