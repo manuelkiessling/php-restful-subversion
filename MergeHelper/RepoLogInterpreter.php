@@ -40,7 +40,7 @@
  */
 
 /**
- * Class that can interprete the XML output of svn log
+ * Class that can interprete the XML output of svn log to create Changeset objects from it
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
@@ -52,26 +52,31 @@
  */
 class MergeHelper_RepoLogInterpreter {
 
-	public function oGetChangesetFromXml($sXml) {
+	public function aoCreateChangesetsFromVerboseXml($sXml) {
+		$aoChangesets = array();
+
 		$oXml = new SimpleXMLElement($sXml);
+		foreach ($oXml->logentry as $oLogentry) {
+			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$oLogentry['revision']));
+			$oChangeset->setAuthor((string)$oLogentry->author);
+			$oChangeset->setDateTime(date('Y-m-d H:i:s', strtotime($oLogentry->date)));
+			$oChangeset->setMessage((string)$oLogentry->msg);
 
-		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$oXml->logentry[0]['revision']));
-		$oChangeset->setAuthor((string)$oXml->logentry[0]->author);
-		$oChangeset->setDateTime(date('Y-m-d H:i:s', strtotime($oXml->logentry[0]->date)));
-		$oChangeset->setMessage((string)$oXml->logentry[0]->msg);
+			foreach ($oLogentry->paths[0] as $oPath) {
+				$oCopyfromPath = NULL;
+				$oCopyfromRev = NULL;
+				if ($oPath['copyfrom-path']) $oCopyfromPath = new MergeHelper_RepoPath((string)$oPath['copyfrom-path']);
+				if ($oPath['copyfrom-rev']) $oCopyfromRev = new MergeHelper_Revision((string)$oPath['copyfrom-rev']);
+				$oChangeset->addPathOperation((string)$oPath['action'],
+											  new MergeHelper_RepoPath((string)$oPath),
+											  $oCopyfromPath,
+											  $oCopyfromRev);
+			}
 
-		foreach ($oXml->logentry[0]->paths[0] as $oPath) {
-			$oCopyfromPath = NULL;
-			$oCopyfromRev = NULL;
-			if ($oPath['copyfrom-path']) $oCopyfromPath = new MergeHelper_RepoPath((string)$oPath['copyfrom-path']);
-			if ($oPath['copyfrom-rev']) $oCopyfromRev = new MergeHelper_Revision((string)$oPath['copyfrom-rev']);
-			$oChangeset->addPathOperation((string)$oPath['action'],
-			                              new MergeHelper_RepoPath((string)$oPath),
-			                              $oCopyfromPath,
-			                              $oCopyfromRev);
+			$aoChangesets[] = $oChangeset;
 		}
 
-		return $oChangeset;
+		return $aoChangesets;
 	}
 
 }
