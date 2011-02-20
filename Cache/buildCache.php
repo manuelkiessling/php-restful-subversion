@@ -33,41 +33,47 @@ $oRepo->setType(MergeHelper_Repo::TYPE_SVN);
 $oRepo->setLocation($sRepoUri);
 $oRepo->setAuthinfo($sRepoUsername, $sRepoPassword);
 
+$oCommandLineExecutor = MergeHelper_CommandLineExecutor::oGetInstance();
+$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+$oLogInterpreter = new MergeHelper_RepoLogInterpreter();
+
 $oRepoCache = new MergeHelper_RepoCache(new PDO('sqlite:'.$sCacheDbFilename, NULL, NULL));
 
-$iHighestRevision = $oRepoCache->iGetHighestRevision();
+$sHighestRevision = $oRepoCache->sGetHighestRevision();
 
-if (!$iHighestRevision) {
+if (!$sHighestRevision) {
 	echo 'Database is empty, starting from scratch'."\n";
 } else {
-	echo 'Highest revision found in database: '.$iHighestRevision."\n";
+	echo 'Highest revision found in database: '.$sHighestRevision."\n";
 }
-$iCurrentRevision = $iHighestRevision + 1;
+$sCurrentRevision = (string)((int)$sHighestRevision + 1);
 
 $bFinished = FALSE;
-$oMergeHelper = new MergeHelper_Manager();
 
 while (!$bFinished) {
 	echo "\n";
-	echo 'Revision '.$iCurrentRevision.":\n";
+	echo 'Revision '.$sCurrentRevision.":\n";
 
-	$oRevision = new MergeHelper_Revision($iCurrentRevision);
+	$oRevision = new MergeHelper_Revision($sCurrentRevision);
 
 	try {
-		$aoPaths = MergeHelper_Manager::aoGetPathsForRevisions($oRepo, array($oRevision));
-	} catch (MergeHelper_RepoCommandLogNoSuchRevisionException $e)  {
+		$oCommandLog = new MergeHelper_RepoCommandLog($oRepo, $oCommandLineBuilder);
+		$oCommandLog->enableVerbose();
+		$oCommandLog->enableXml();
+		$oCommandLog->addRevision(new MergeHelper_Revision($sCurrentRevision));
+		$aoCommandlines = $oCommandLog->asGetCommandlines();
+		$sLogOutput = $oCommandLineExecutor->sGetCommandResult($aoCommandlines[0]);
+		$aoChangesets = $oLogInterpreter->aoCreateChangesetsFromVerboseXml($sLogOutput);
+	} catch (MergeHelper_RepoCommandLogNoSuchRevisionException $e) {
 		echo "All revisions imported to cache.\n";
 		exit(0);
 	}
-	if (sizeof($aoPaths) > 0) {
-		$sPaths = array();
-		foreach ($aoPaths as $oPath) {
-			$sPaths[] = $oPath->sGetAsString();
-			echo ' '.$oPath->sGetAsString()."\n";
+	if (sizeof($aoChangesets) > 0) {
+		foreach ($aoChangesets as $oChangeset) {
+			$oRepoCache->addChangeset($oChangeset);
+			print_r($oChangeset)."\n";
+			$sCurrentRevision = (string)((int)$sCurrentRevision + 1);
 		}
-		$asMessages = MergeHelper_Manager::asGetMessagesForRevisions($oRepo, array($oRevision));
-		$oRepoCache->addRevision($oRevision->sGetNumber(), $asMessages[0], $sPaths);
-		$iCurrentRevision++;
 	} else {
 		echo "All revisions imported to cache.\n";
 		exit(0);
