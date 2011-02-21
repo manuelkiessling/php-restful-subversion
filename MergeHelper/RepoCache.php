@@ -103,13 +103,13 @@ class MergeHelper_RepoCache {
 		}
 	}
 
-	public function sGetHighestRevision() {
+	public function oGetHighestRevision() {
 		foreach ($this->oDb->query('SELECT revision
 		                            FROM revisions
 		                            ORDER BY revision DESC
 		                            LIMIT 1')
 				 as $asRow) {
-			return (string)$asRow['revision'];
+			return new MergeHelper_Revision($asRow['revision']);
 		}
 		return FALSE;
 	}
@@ -156,7 +156,8 @@ class MergeHelper_RepoCache {
 		return $asReturn;
 	}
 
-	public function aoGetRevisionsWithMessageContainingText($sText) {
+	public function aoGetChangesetsWithMessageContainingText($sText) {
+		if ((string)$sText === '') return array();
 		$asReturn = array();
 		$oStatement = $this->oDb->prepare('SELECT revision
 		                                     FROM revisions

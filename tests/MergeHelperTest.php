@@ -1,6 +1,5 @@
 <?php
-
-class MergeHelper_ManagerTest extends PHPUnit_Framework_TestCase {
+class MergeHelperTest extends PHPUnit_Framework_TestCase {
 
 	public function setUp() {
 		$oRepo = new MergeHelper_Repo();
@@ -13,169 +12,389 @@ class MergeHelper_ManagerTest extends PHPUnit_Framework_TestCase {
 		$oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/my-hammer2/_approval'));
 
 		$this->oRepo = $oRepo;
-	}
 
-	public function test_getRevisionsForString() {
 		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
 		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
 		$oRepoCache->resetCache();
-		$oRepoCache->addRevision(1234, '', array('/trunk/source/a.php', '/branches/foo/b.php'));
-		$oRepoCache->addRevision(1235, 'Hello World', array('/trunk/source/a.php', '/branches/foo/b.php'));
-		$oRepoCache->addRevision(1236, 'Hello Other World', array('/trunk/source/a.php', '/branches/foo/b.php'));
-		$aoRevisions = MergeHelper::aoGetRevisionsForString($oRepoCache, 'World');
 
-		$this->assertSame(2, sizeof($aoRevisions));
-		$this->assertSame('1236', $aoRevisions[0]->sGetNumber());
-		$this->assertSame('1235', $aoRevisions[1]->sGetNumber());
-	}
-	
-	public function test_getRevisionsForStringNoStringGiven() {
-		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
-		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
-		$aoRevisions = MergeHelper::aoGetRevisionsForString($oRepoCache, '');
+		$this->oRepoCache = $oRepoCache;
 
-		$this->assertSame(0, sizeof($aoRevisions));
+		$this->oMergeHelper = new MergeHelper($this->oRepo, $this->oRepoCache);
 	}
 
-	public function test_getRevisionsInRange() {
-		$aoRevisions = MergeHelper::aoGetRevisionsInRange($this->oRepo, 'HEAD', 5);
-
-		$this->assertSame(4, sizeof($aoRevisions));
-		$this->assertSame('8', $aoRevisions[0]->sGetNumber());
-		$this->assertSame('7', $aoRevisions[1]->sGetNumber());
-		$this->assertSame('6', $aoRevisions[2]->sGetNumber());
-		$this->assertSame('5', $aoRevisions[3]->sGetNumber());
+	public function tearDown() {
+		$this->oRepoCache->resetCache();
 	}
 
-	public function test_checkIfRevisionsAreInSameSourcePath() {
-		$aoRevisions = array(new MergeHelper_Revision('3'), new MergeHelper_Revision('5'));
-		$this->assertTrue(MergeHelper::bRevisionsAreInSameSourcePath($this->oRepo, $aoRevisions));
-		
-		$aoRevisions = array(new MergeHelper_Revision('5'), new MergeHelper_Revision('6'));
-		$this->assertFalse(MergeHelper::bRevisionsAreInSameSourcePath($this->oRepo, $aoRevisions));
+	public function test_getHighestRevisionInRepo() {
+		$this->assertSame('8', $this->oMergeHelper->oGetHighestRevisionInRepo()->sGetAsString());
+	}
+
+	public function test_getHighestRevisionInRepoCache() {
+		$this->assertEquals($this->oRepoCache->oGetHighestRevision(), $this->oMergeHelper->oGetHighestRevisionInRepoCache());
+	}
+
+	public function test_areRepoAndRepoCacheInSync() {
+		for ($i = 1; $i < 9; $i++) {
+			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$i));
+			$oChangeset->setAuthor('Han Solo');
+			$oChangeset->setDateTime('2011-02-18 22:56:0'.$i);
+			$oChangeset->setMessage('Hello World '.$i);
+			$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/bar.php'));
+			$this->oRepoCache->addChangeset($oChangeset);
+		}
+
+		$this->assertTrue($this->oMergeHelper->bAreRepoAndRepoCacheInSync());
+	}
+
+	public function test_areRepoAndRepoCacheInSyncNotSynced() {
+		for ($i = 1; $i < 8; $i++) {
+			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$i));
+			$oChangeset->setAuthor('Han Solo');
+			$oChangeset->setDateTime('2011-02-18 22:56:0'.$i);
+			$oChangeset->setMessage('Hello World '.$i);
+			$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/bar.php'));
+			$this->oRepoCache->addChangeset($oChangeset);
+		}
+
+		$this->assertFalse($this->oMergeHelper->bAreRepoAndRepoCacheInSync());
+	}
+
+	public function test_revisionsAreInSameSourcePath() {
+		for ($i = 1; $i < 3; $i++) {
+			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$i));
+			$oChangeset->setAuthor('Han Solo');
+			$oChangeset->setDateTime('2011-02-18 22:56:0'.$i);
+			$oChangeset->setMessage('Hello World '.$i);
+			$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar'.$i.'.php'));
+			$this->oRepoCache->addChangeset($oChangeset);
+		}
+
+		$this->assertTrue($this->oMergeHelper->bRevisionsAreInSameSourcePath(array(new MergeHelper_Revision('1'), new MergeHelper_Revision('2'))));
+	}
+
+	public function test_revisionsAreInSameSourcePathFailsIfOneRevisionIsOnDifferentSourcePaths() {
+		for ($i = 1; $i < 3; $i++) {
+			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$i));
+			$oChangeset->setAuthor('Han Solo');
+			$oChangeset->setDateTime('2011-02-18 22:56:0'.$i);
+			$oChangeset->setMessage('Hello World '.$i);
+			$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/'.$i.'/my-hammer2/_production/test/foobar'.$i.'.php'));
+			$this->oRepoCache->addChangeset($oChangeset);
+		}
+
+		$this->assertFalse($this->oMergeHelper->bRevisionsAreInSameSourcePath(array(new MergeHelper_Revision('1'), new MergeHelper_Revision('2'))));
+	}
+
+	public function test_revisionsAreInSameSourcePathFailsIfOnePathInOneRevisionIsOnDifferentSourcePaths() {
+		for ($i = 1; $i < 3; $i++) {
+			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$i));
+			$oChangeset->setAuthor('Han Solo');
+			$oChangeset->setDateTime('2011-02-18 22:56:0'.$i);
+			$oChangeset->setMessage('Hello World '.$i);
+			$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar'.$i.'.php'));
+			$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar2'.$i.'.php'));
+			$this->oRepoCache->addChangeset($oChangeset);
+		}
+
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('3'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:03');
+		$oChangeset->setMessage('Hello World 3');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_project/test/foobar23.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertFalse($this->oMergeHelper->bRevisionsAreInSameSourcePath(array(new MergeHelper_Revision('1'), new MergeHelper_Revision('2'), new MergeHelper_Revision('3'))));
 	}
 	
 	public function test_checkIfRevisionsAreInSameSourcePathNoRevisionsGiven() {
-		$aoRevisions = array();
-		$this->assertFalse(MergeHelper::bRevisionsAreInSameSourcePath($this->oRepo, $aoRevisions));
+		$this->assertFalse($this->oMergeHelper->bRevisionsAreInSameSourcePath(array()));
+	}
+
+	public function test_pathIsOnAtLeastOneSourcePath() {
+		$this->assertTrue($this->oMergeHelper->bPathIsOnAtLeastOneSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_project/deathstar/cannon.php')));
+	}
+
+	public function test_getCommonSourcePathOfRevision() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/test'),
+		                    $this->oMergeHelper->oGetCommonSourcePathOfRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getCommonSourcePathOfRevisionSourcePathIsTreatedWithOneLevelDown() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test2/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertNull($this->oMergeHelper->oGetCommonSourcePathOfRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getCommonSourcePathOfRevisionFailsIfNotAllOnSameSourcePath() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_project/test/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertNull($this->oMergeHelper->oGetCommonSourcePathOfRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getCommonSourcePathOfRevisionFailsIfRevisionIsOnTargetPath() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertNull($this->oMergeHelper->oGetCommonSourcePathOfRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getCommonSourcePathOfRevisionFailsIfRevisionIsOnNoSourcePathAtAll() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertNull($this->oMergeHelper->oGetCommonSourcePathOfRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getCommonBasePathOfRevision() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test'),
+		                    $this->oMergeHelper->oGetCommonBasePathOfRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getCommonBasePathOfRevisionFailsIfNotAllOnSameBasePathBecauseThereIsOneSourcePath() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_project/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertNull($this->oMergeHelper->oGetCommonBasePathOfRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getCommonBasePathOfRevisionFailsIfNotAllOnSameBasePathBecauseThereIsOneDifferentTargetPath() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test2/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_approval/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertNull($this->oMergeHelper->oGetCommonBasePathOfRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getCommonBasePathOfRevisionFailsIfRevisionIsOnNoBasePathAtAll() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertNull($this->oMergeHelper->oGetCommonBasePathOfRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getChangesetForRevision() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/trunk/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$this->assertEquals($this->oRepoCache->oGetChangesetForRevision(new MergeHelper_Revision('12345')),
+		                    $this->oMergeHelper->oGetChangesetForRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getMergeCommandlineForRevisionNoDryrun() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/other/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$sExpected = 'svn merge -c 12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/test .';
+		$this->assertSame($sExpected, $this->oMergeHelper->sGetMergeCommandlineForRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getMergeCommandlineForRevisionDryrun() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/other/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$sExpected = 'svn merge --dry-run -c 12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/test .';
+		$this->assertSame($sExpected, $this->oMergeHelper->sGetMergeCommandlineForRevision(new MergeHelper_Revision('12345'), TRUE));
+	}
+
+	public function test_getRollbackMergeCommandlineForRevisionNoDryrun() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/other/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$sExpected = 'svn merge -c -12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/test .';
+		$this->assertSame($sExpected, $this->oMergeHelper->sGetRollbackMergeCommandlineForRevision(new MergeHelper_Revision('12345')));
+	}
+
+	public function test_getRollbackMergeCommandlineForRevisionDryrun() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar2.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/other/foobar3.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar4.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$sExpected = 'svn merge --dry-run -c -12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/test .';
+		$this->assertSame($sExpected, $this->oMergeHelper->sGetRollbackMergeCommandlineForRevision(new MergeHelper_Revision('12345'), TRUE));
 	}
 	
-	public function test_getCommonSourcePathForFullPath() {
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01'), MergeHelper::oGetCommonSourcePathForFullPath($this->oRepo, new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/lala/lulu/blah.txt')));
-	}
-	
-	public function test_getCommonSourcePathForFullPathNoSourcePaths() {
-		$oRepo = new MergeHelper_Repo();
-		$oRepo->setType(MergeHelper_Repo::TYPE_SVN);
-		$oRepo->setLocation('file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'));
-		$oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/my-hammer2/_approval'));
+	public function test_getRevisionsWithMessageContainingText() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:01');
+		$oChangeset->setMessage('Helloworld');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
 
-		$this->assertEquals(NULL, MergeHelper::oGetCommonSourcePathForFullPath($oRepo, new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/lala/lulu/blah.txt')));
-	}
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12346'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:02');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
 
-	public function test_getCommonBasePathForFullPathNoSourcePaths() {
-		$oRepo = new MergeHelper_Repo();
-		$oRepo->setType(MergeHelper_Repo::TYPE_SVN);
-		$oRepo->setLocation('file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'));
-		$oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/my-hammer2/_approval'));
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12347'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:03');
+		$oChangeset->setMessage('Hello W orld');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
 
-		$this->assertEquals(NULL, MergeHelper::oGetCommonBasePathForFullPath($oRepo, new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/lala/lulu/blah.txt')));
-	}
-	
-	public function test_getPathsForRevisions() {
-		$aoRevisions = array(new MergeHelper_Revision('3'), new MergeHelper_Revision('4'));
-		$aoPaths = MergeHelper::aoGetPathsForRevisions($this->oRepo, $aoRevisions);
-
-		$this->assertSame(3, sizeof($aoPaths));
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'), $aoPaths[0]);
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/a.php'), $aoPaths[1]);
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_project/TF-0001/a.php'), $aoPaths[2]);
+		$aoExpected = array(new MergeHelper_Revision('12345'), new MergeHelper_Revision('12346'));
+		$this->assertEquals($aoExpected, $this->oMergeHelper->aoGetRevisionsWithMessageContainingText('world'));
 	}
 
-	public function test_getMessagesForRevisions() {
-		$aoRevisions = array(new MergeHelper_Revision('3'), new MergeHelper_Revision('5'));
-		$asMessages = MergeHelper::asGetMessagesForRevisions($this->oRepo, $aoRevisions);
+	public function test_getRevisionsWithMessageContainingTextNoTextGiven() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:01');
+		$oChangeset->setMessage('Helloworld');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
 
-		$this->assertSame(2, sizeof($asMessages));
-		$this->assertSame('TF-4001', $asMessages[0]);
-		$this->assertSame("TF-4001\n- added jabbadabbadoo", $asMessages[1]);
-	}
-	
-	public function test_getMergeCommandlineForRevisionAndPath() {
-		$asCommandlines = MergeHelper::asGetMergeCommandlinesForRevisionsAndPaths($this->oRepo,
-		                                                                                      array(
-		                                                                                       array(
-		                                                                                        new MergeHelper_Revision('4'),
-		                                                                                        new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'),
-		                                                                                        '.',
-		                                                                                        FALSE
-		                                                                                       ),
-		                                                                                       array(
-		                                                                                        new MergeHelper_Revision('3'),
-		                                                                                        new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-01/c/d.php'),
-		                                                                                        '.',
-		                                                                                        TRUE
-		                                                                                       )
-		                                                                                      ));
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12346'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:02');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
 
-		$this->assertSame('svn merge -c -3 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/2010-01-01/c/d.php ./c/d.php',
-		                  $asCommandlines[0]);
-		$this->assertSame('svn merge -c 4 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/2010-01-01/c/d.php ./c/d.php',
-		                  $asCommandlines[1]);
-	}
-	
-	public function test_getCommonSourcePathForRevision() {
-			$this->assertSame('/branches/my-hammer2/_project/TF-0001', (string)MergeHelper::oGetCommonSourcePathForRevision($this->oRepo, new MergeHelper_Revision('4')));
-			$this->assertNull(MergeHelper::oGetCommonSourcePathForRevision($this->oRepo, new MergeHelper_Revision('8')));
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12347'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:03');
+		$oChangeset->setMessage('Hello W orld');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$aoExpected = array();
+		$this->assertEquals($aoExpected, $this->oMergeHelper->aoGetRevisionsWithMessageContainingText(''));
 	}
 
-	public function test_getCommonBasePathForRevision() {
-			$this->assertSame('/branches/my-hammer2/_approval/2010-01-03_TF-3000', (string)MergeHelper::oGetCommonBasePathForRevision($this->oRepo, new MergeHelper_Revision('8')));
-	}
+	public function test_getRevisionsWithPathsEndingOn() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:01');
+		$oChangeset->setMessage('Helloworld');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar1.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
 
-	public function test_getHighestRevision() {
-		$oHighestRevision = MergeHelper::oGetHighestRevision($this->oRepo);
-		$this->assertSame('8', $oHighestRevision->sGetNumber());
-	}
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12346'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:02');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobbbbar1.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
 
-	public function test_bCacheIsUpToDate() {
-		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
-		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
-		$oRepoCache->resetCache();
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12347'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:03');
+		$oChangeset->setMessage('Hello W orld');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar2.php'));
+		$this->oRepoCache->addChangeset($oChangeset);
 
-		$oHighestRevision = MergeHelper::oGetHighestRevision($this->oRepo);
-		$oRepoCache->addRevision($oHighestRevision->sGetNumber(), '', array());
-
-		$this->assertTrue(MergeHelper::bCacheIsUpToDate($this->oRepo, $oRepoCache));
-	}
-
-	public function test_bCacheIsNotUpToDate() {
-		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
-		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
-		$oRepoCache->resetCache();
-
-		$oHighestRevision = MergeHelper::oGetHighestRevision($this->oRepo);
-		$oRepoCache->addRevision($oHighestRevision->sGetNumber() - 1, '', array());
-
-		$this->assertFalse(MergeHelper::bCacheIsUpToDate($this->oRepo, $oRepoCache));
-	}
-
-	public function test_aoGetRevisionsWithPathEndingOn() {
-		$oCacheDb = new PDO('sqlite:/var/tmp/PHPMergeHelper_TestDb.sqlite', NULL, NULL);
-		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
-		$oRepoCache->resetCache();
-
-		$oRepoCache->addRevision(1234, 'Hello World', array('/trunk/source/a.php', '/branches/foo/b.php'));
-		$oRepoCache->addRevision(1235, 'Hello World', array('/trunk/source/a.php', '/branches/foo/c.php', '/branches/foo/a.php'));
-		$oRepoCache->addRevision(1236, 'Hello World', array('/trunk/source/d.php', '/branches/foo/b.php', '/branches/bar/a.php'));
-		$oRepoCache->addRevision(1237, 'Hello World', array('/totally/different.php'));
-
-		$aoActual = MergeHelper::aoGetRevisionsWithPathEndingOn($oRepoCache, 'a.php');
-		$aoExpected = array(new MergeHelper_Revision(1236),
-		                    new MergeHelper_Revision(1235),
-		                    new MergeHelper_Revision(1234));
-
-		$this->assertEquals($aoExpected, $aoActual);
+		$aoExpected = array(new MergeHelper_Revision('12345'), new MergeHelper_Revision('12346'));
+		$this->assertEquals($aoExpected, $this->oMergeHelper->aoGetRevisionsWithPathsEndingOn('bar1.php'));
 	}
 
 }

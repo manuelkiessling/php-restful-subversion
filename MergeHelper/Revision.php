@@ -55,6 +55,11 @@ class MergeHelper_Revision {
 	protected $sRevisionNumber = NULL;
 	
 	public function __construct($sRevisionNumber) {
+		if ($sRevisionNumber == 'HEAD') {
+			$this->sRevisionNumber = $sRevisionNumber;
+			return;
+		}
+
 		if ((int)$sRevisionNumber < 0) {
 			throw new MergeHelper_RevisionInvalidRevisionNumberException('Revision number must be positive.');
 		}

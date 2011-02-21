@@ -20,11 +20,11 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 
 		$this->oRepoCache->addChangeset($oChangeset);
 
-		$this->assertSame('12345', $this->oRepoCache->sGetHighestRevision());
+		$this->assertEquals(new MergeHelper_Revision('12345'), $this->oRepoCache->oGetHighestRevision());
 	}
 
 	public function test_getHighestRevisionInCacheForEmptyCache() {
-		$this->assertFalse($this->oRepoCache->sGetHighestRevision());
+		$this->assertFalse($this->oRepoCache->oGetHighestRevision());
 	}
 
 	public function test_getChangesetForRevision() {
@@ -73,7 +73,7 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithPathEndingOn('a.php'));
 	}
 
-	public function test_getRevisionsWithMessageContainingText() {
+	public function test_getChangesetsWithMessageContainingText() {
 		$aoExpected = array();
 		
 		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1234'));
@@ -102,7 +102,36 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 
 		$this->oRepoCache->addChangeset($oChangeset);
 
-		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetRevisionsWithMessageContainingText('world'));
+		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithMessageContainingText('world'));
+	}
+
+	public function test_getChangesetsWithMessageContainingTextNoTextGiven() {
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1234'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/a.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1235'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-19 22:56:00');
+		$oChangeset->setMessage('Helloworlds');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/ar.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1236'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-20 22:56:00');
+		$oChangeset->setMessage('Hello W orld');
+		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/bar/bla.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$aoExpected = array();
+		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithMessageContainingText(''));
 	}
 
 	/**

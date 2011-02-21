@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
 
+require_once realpath(dirname(__FILE__)).'/MergeHelper/Bootstrap.php';
+
 /**
  * Class implementing a Mediator pattern to allow effective use of the library
  *
@@ -57,38 +59,172 @@
  */
 class MergeHelper {
 
-	/**
-	 * @return array Array of MergeHelper_Revision objects
-	 */
-	public static function aoGetRevisionsForString(MergeHelper_RepoCache $oRepoCache, $sString) {
-		if ($sString == '') return array();
+	protected $oRepo = NULL;
+	protected $oRepoCache = NULL;
 
-		$iRevisions = $oRepoCache->aiGetRevisionsWithMessageContainingText($sString);
-		foreach ($iRevisions as $iRevision) {
-			$return[] = new MergeHelper_Revision($iRevision);
+	public function __construct(MergeHelper_Repo $oRepo, MergeHelper_RepoCache $oRepoCache) {
+		$this->oRepo = $oRepo;
+		$this->oRepoCache = $oRepoCache;
+	}
+
+	public function oGetHighestRevisionInRepo() {
+		$oCommandLineExecutor = MergeHelper_CommandLineExecutor::oGetInstance();
+		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+		$oLogInterpreter = new MergeHelper_RepoLogInterpreter();
+
+		$oCommandLog = new MergeHelper_RepoCommandLog($this->oRepo, $oCommandLineBuilder);
+		$oCommandLog->enableVerbose();
+		$oCommandLog->enableXml();
+		$oCommandLog->addRevision(new MergeHelper_Revision('HEAD'));
+		$aoCommandlines = $oCommandLog->asGetCommandlines();
+		$sLogOutput = $oCommandLineExecutor->sGetCommandResult($aoCommandlines[0]);
+
+		$aoChangesets = $oLogInterpreter->aoCreateChangesetsFromVerboseXml($sLogOutput);
+
+		foreach ($aoChangesets as $oChangeset) {
+			return $oChangeset->oGetRevision();
+		}
+	}
+
+	public function oGetHighestRevisionInRepoCache() {
+		return $this->oRepoCache->oGetHighestRevision();
+	}
+
+	public function bAreRepoAndRepoCacheInSync() {
+		return ($this->oGetHighestRevisionInRepo() == $this->oGetHighestRevisionInRepoCache());
+	}
+
+	public function bPathIsOnAtLeastOneSourcePath(MergeHelper_RepoPath $oPath) {
+		return (!is_null($this->oGetCommonSourcePathForFullPath($oPath)));
+	}
+
+	public function oGetCommonSourcePathOfRevision(MergeHelper_Revision $oRevision) {
+		$aoPaths = $this->aoGetPathsForRevision($oRevision);
+		$oExpectedCommonSourcePath = $this->oGetCommonSourcePathForFullPath($aoPaths[0]);
+		if (is_null($oExpectedCommonSourcePath)) return NULL;
+		foreach ($aoPaths as $oPath) {
+			$oCommonSourcePath = $this->oGetCommonSourcePathForFullPath($oPath);
+			if (is_null($oCommonSourcePath)) return NULL;
+			if ($oExpectedCommonSourcePath->sGetAsString() != $oCommonSourcePath->sGetAsString()) {
+				return NULL;
+			}
+		}
+		return $oExpectedCommonSourcePath;
+	}
+
+	public function oGetCommonBasePathOfRevision(MergeHelper_Revision $oRevision) {
+		$aoPaths = $this->aoGetPathsForRevision($oRevision);
+		$oExpectedCommonBasePath = $this->oGetCommonBasePathForFullPath($aoPaths[0]);
+		if (is_null($oExpectedCommonBasePath)) return NULL;
+		foreach ($aoPaths as $oPath) {
+			$oCommonBasePath = $this->oGetCommonBasePathForFullPath($oPath);
+			if (is_null($oCommonBasePath)) return NULL;
+			if ($oExpectedCommonBasePath->sGetAsString() != $oCommonBasePath->sGetAsString()) {
+				return NULL;
+			}
+		}
+		return $oExpectedCommonBasePath;
+	}
+
+	/**
+	 * Check if all files of a list of revisions share the same Repo source path
+	 *
+	 * @return bool TRUE if all paths of all $aoRevisions are on the same Repo source path, FALSE if not
+	 */
+	public function bRevisionsAreInSameSourcePath(Array $aoRevisions) {
+		if (sizeof($aoRevisions) === 0) return FALSE;
+
+		$aoPaths = array();
+		foreach ($aoRevisions as $oRevision) {
+			$aoPathsForRevision = $this->aoGetPathsForRevision($oRevision);
+			foreach ($aoPathsForRevision as $oPath) {
+				$aoPaths[] = $oPath;
+			}
 		}
 
-		return $return;
+		if (sizeof($aoPaths) === 0) return FALSE; // no paths, no matches
+
+		$oSourcePath = $this->oGetCommonSourcePathForFullPath($aoPaths[0]);
+		if ($oSourcePath === NULL) return FALSE; // first path of first revision did not match any source path
+
+		foreach ($aoPaths as $oPath) {
+			if (mb_substr("$oPath", 0, mb_strlen("$oSourcePath")) !== "$oSourcePath") return FALSE;
+		}
+
+		return TRUE;
 	}
 
-	public static function aoGetRevisionsInRange(MergeHelper_Repo $oRepo, $sRangeStart, $sRangeEnd) {
-		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
-		return $oLogCommand->aoGetRevisionsInRange($sRangeStart, $sRangeEnd);
+	public function oGetChangesetForRevision(MergeHelper_Revision $oRevision) {
+		return $this->oRepoCache->oGetChangesetForRevision($oRevision);
 	}
 
-	public static function oGetHighestRevision(MergeHelper_Repo $oRepo) {
-		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
-		$oHighestRevision = $oLogCommand->aoGetRevisionsInRange('HEAD', 'HEAD');
-		return $oHighestRevision[0];
+	public function sGetMergeCommandlineForRevision(MergeHelper_Revision $oRevision, $bDryrun = FALSE) {
+		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo, new MergeHelper_CommandLineBuilder());
+
+		$oSourcePath = $this->oGetCommonBasePathOfRevision($oRevision);
+		if (is_null($oSourcePath)) {
+			throw new MergeHelper_CannotMergeRevisionWithMixedPathsException();
+		}
+		$oMergeCommand->addMerge($oRevision, $oSourcePath, '.', FALSE);
+		if ($bDryrun) $oMergeCommand->enableDryrun();
+
+		$asCommandlines = $oMergeCommand->asGetCommandlines();
+		foreach ($asCommandlines as $sCommandline) {
+			return $sCommandline;
+		}
 	}
 
-	public static function bCacheIsUpToDate(MergeHelper_Repo $oRepo, MergeHelper_RepoCache $oRepoCache) {
-		return (self::oGetHighestRevision($oRepo)->sGetNumber() == $oRepoCache->iGetHighestRevision());
+	public function sGetRollbackMergeCommandlineForRevision(MergeHelper_Revision $oRevision, $bDryrun = FALSE) {
+		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo, new MergeHelper_CommandLineBuilder());
+
+		$oSourcePath = $this->oGetCommonBasePathOfRevision($oRevision);
+		if (is_null($oSourcePath)) {
+			throw new MergeHelper_CannotMergeRevisionWithMixedPathsException();
+		}
+		$oMergeCommand->addMerge($oRevision, $oSourcePath, '.', TRUE);
+		if ($bDryrun) $oMergeCommand->enableDryrun();
+
+		$asCommandlines = $oMergeCommand->asGetCommandlines();
+		foreach ($asCommandlines as $sCommandline) {
+			return $sCommandline;
+		}
 	}
 
-	public static function oGetCommonBasePathForFullPath(MergeHelper_Repo $oRepo, MergeHelper_RepoPath $oPath) {
-		$aoSourcePaths = $oRepo->aoGetSourcePaths();
-		$aoSourcePaths[] = $oRepo->oGetTargetPath();
+	public function aoGetRevisionsWithMessageContainingText($sText) {
+		$aoRevisions = array();
+		$aoChangesets = $this->oRepoCache->aoGetChangesetsWithMessageContainingText($sText);
+		foreach ($aoChangesets as $oChangeset) {
+			$aoRevisions[] = $oChangeset->oGetRevision();
+		}
+		return $aoRevisions;
+	}
+
+	public function aoGetRevisionsWithPathsEndingOn($sString) {
+		$aoRevisions = array();
+		$aoChangesets = $this->oRepoCache->aoGetChangesetsWithPathEndingOn($sString);
+		foreach ($aoChangesets as $oChangeset) {
+			$aoRevisions[] = $oChangeset->oGetRevision();
+		}
+		return $aoRevisions;
+	}
+
+	/**
+	 * Get all file and directory paths for a given revision
+	 *
+	 * @return array Array of MergeHelper_RepoPath objects representing the paths of all elements of the given revision
+	 */
+	protected function aoGetPathsForRevision(MergeHelper_Revision $oRevision) {
+		$aoPaths = array();
+		$oChangeset = $this->oRepoCache->oGetChangesetForRevision($oRevision);
+		foreach ($oChangeset->aaGetPathOperations() as $aPathOperation) {
+			$aoPaths[] = $aPathOperation['oPath'];
+		}
+		return $aoPaths;
+	}
+
+	protected function oGetCommonBasePathForFullPath(MergeHelper_RepoPath $oPath) {
+		$aoSourcePaths = $this->oRepo->aoGetSourcePaths();
+		$aoSourcePaths[] = $this->oRepo->oGetTargetPath();
 
 		foreach ($aoSourcePaths as $oSourcePath) {
 			if (mb_substr("$oPath", 0, mb_strlen("$oSourcePath")) === "$oSourcePath") {
@@ -103,16 +239,8 @@ class MergeHelper {
 		return NULL;
 	}
 
-	public static function oGetCommonBasePathForRevision(MergeHelper_Repo $oRepo, MergeHelper_Revision $oRevision) {
-		$aoPaths = self::aoGetPathsForRevisions($oRepo, array($oRevision));
-
-		if (!isset($aoPaths[0])) return NULL;
-
-		return self::oGetCommonBasePathForFullPath($oRepo, $aoPaths[0]);
-	}
-
 	/**
-	 * Returns the common path all paths on the given path will share
+	 * Returns the source path all files on the given path would share
 	 *
 	 * Example: If the full path is
 	 * <pre>/branches/_production/2010-04-15/cooperations/logo_acme_123x30.gif</pre>
@@ -126,8 +254,8 @@ class MergeHelper {
 	 * @return MergeHelper_RepoPath|NULL MergeHelper_RepoPath if a common path could be found, NULL if none of the $oRepo source paths matched the given path
 	 * @todo Source paths should know themselves at which level the common path starts, we currently assume sourcepath + 1
 	 */
-	public static function oGetCommonSourcePathForFullPath(MergeHelper_Repo $oRepo, MergeHelper_RepoPath $oPath) {
-		$aoSourcePaths = $oRepo->aoGetSourcePaths();
+	protected function oGetCommonSourcePathForFullPath(MergeHelper_RepoPath $oPath) {
+		$aoSourcePaths = $this->oRepo->aoGetSourcePaths();
 		foreach ($aoSourcePaths as $oSourcePath) {
 			if (mb_substr("$oPath", 0, mb_strlen("$oSourcePath")) === "$oSourcePath") {
 				// find next directory level name and add it
@@ -138,87 +266,6 @@ class MergeHelper {
 			}
 		}
 		return NULL;
-	}
-
-	public static function oGetCommonSourcePathForRevision(MergeHelper_Repo $oRepo, MergeHelper_Revision $oRevision) {
-		$aoPaths = self::aoGetPathsForRevisions($oRepo, array($oRevision));
-		return self::oGetCommonSourcePathForFullPath($oRepo, $aoPaths[0]);
-	}
-
-	/**
-	 * Check if a list of revisions share the same $oRepo source path
-	 *
-	 * @return bool TRUE if all $aoRevisions are on the one $oRepo source path, FALSE if not
-	 */
-	public static function bRevisionsAreInSameSourcePath(MergeHelper_Repo $oRepo, Array $aoRevisions) {
-		if (sizeof($aoRevisions) === 0) return FALSE;
-
-		$aoPaths = self::aoGetPathsForRevisions($oRepo, $aoRevisions);
-		if (sizeof($aoPaths) === 0) return FALSE; // no paths, no matches
-
-		$oSourcePath = self::oGetCommonSourcePathForFullPath($oRepo, $aoPaths[0]);
-		if ($oSourcePath === NULL) return FALSE; // first path of first revision did not match any source path
-
-		foreach ($aoPaths as $oPath) {
-			if (mb_substr("$oPath", 0, mb_strlen("$oSourcePath")) !== "$oSourcePath") return FALSE;
-		}
-
-		return TRUE;
-	}
-
-	/**
-	 * Get all file and directory paths for given list of revisions
-	 *
-	 * @return array Array of MergeHelper_RepoPath objects representing the paths of all elements of the given revisions
-	 */
-	public static function aoGetPathsForRevisions(MergeHelper_Repo $oRepo, Array $aoRevisions) {
-		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
-
-		foreach ($aoRevisions as $oRevision) {
-			$oLogCommand->addRevision($oRevision);
-		}
-
-		return $oLogCommand->aoGetPaths();
-	}
-
-	public static function asGetMessagesForRevisions(MergeHelper_Repo $oRepo, Array $aoRevisions) {
-		$oLogCommand = new MergeHelper_RepoCommandLog($oRepo, new MergeHelper_CommandLineFactory);
-
-		foreach ($aoRevisions as $oRevision) {
-			$oLogCommand->addRevision($oRevision);
-		}
-
-		return $oLogCommand->asGetMessages();
-	}
-
-	public static function asGetMergeCommandlinesForRevisionsAndPaths(MergeHelper_Repo $oRepo, Array $aaRevisionsAndPaths, $bDryrun = FALSE, $bIsRollback = FALSE) {
-		$oMergeCommand = new MergeHelper_RepoCommandMerge($oRepo);
-
-		if ($bDryrun) $oMergeCommand->enableDryrun();
-
-		foreach ($aaRevisionsAndPaths as $amRevisionAndPath) {
-			$oRevision = $amRevisionAndPath[0];
-			$oSourcePath = $amRevisionAndPath[1];
-			$sTargetBasePath = $amRevisionAndPath[2];
-			if ($amRevisionAndPath[3] === TRUE) {
-				$oRevision = new MergeHelper_Revision($oRevision->sGetNumberInverted());
-			}
-			$sTargetPath = $sTargetBasePath . mb_substr($oSourcePath, mb_strlen(MergeHelper::oGetCommonBasePathForFullPath($oRepo, $oSourcePath)));
-			$oMergeCommand->addMerge($oRevision, $oSourcePath, $sTargetPath, $bIsRollback);
-		}
-
-		return $oMergeCommand->asGetCommandlines();
-	}
-
-	public static function aoGetRevisionsWithPathEndingOn(MergeHelper_RepoCache $oRepoCache, $sString) {
-		$aoRevisions = array();
-		$aiRevisions = $oRepoCache->aiGetRevisionsWithPathEndingOn($sString);
-
-		foreach ($aiRevisions as $iRevision) {
-			$aoRevisions[] = new MergeHelper_Revision((string)$iRevision);
-		}
-
-		return $aoRevisions;
 	}
 
 }
