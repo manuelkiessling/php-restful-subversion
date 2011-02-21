@@ -55,7 +55,7 @@
  * @uses       MergeHelper_RepoCommandLog
  * @uses       MergeHelper_RepoCommandMerge
  */
-class MergeHelper_Manager {
+class MergeHelper {
 
 	/**
 	 * @return array Array of MergeHelper_Revision objects
@@ -203,7 +203,7 @@ class MergeHelper_Manager {
 			if ($amRevisionAndPath[3] === TRUE) {
 				$oRevision = new MergeHelper_Revision($oRevision->sGetNumberInverted());
 			}
-			$sTargetPath = $sTargetBasePath . mb_substr($oSourcePath, mb_strlen(MergeHelper_Manager::oGetCommonBasePathForFullPath($oRepo, $oSourcePath)));
+			$sTargetPath = $sTargetBasePath . mb_substr($oSourcePath, mb_strlen(MergeHelper::oGetCommonBasePathForFullPath($oRepo, $oSourcePath)));
 			$oMergeCommand->addMerge($oRevision, $oSourcePath, $sTargetPath, $bIsRollback);
 		}
 
