@@ -60,9 +60,11 @@ class MergeHelper_RepoCommandMerge {
 	protected $oRepo = NULL;
 	protected $aaMerges = NULL;
 	protected $bDryrun = FALSE;
-	
-	public function __construct(MergeHelper_Repo $oRepo) {
+	protected $oCommandLineBuilderBuilder = NULL;
+
+	public function __construct(MergeHelper_Repo $oRepo, MergeHelper_CommandLineBuilderInterface $oCommandLineBuilderBuilder) {
 		$this->oRepo = $oRepo;
+		$this->oCommandLineBuilder = $oCommandLineBuilderBuilder;
 	}
 	
 	public function addMerge(MergeHelper_Revision $oRevision, MergeHelper_RepoPath $oSourcePath, $sTargetPath, $bIsRollback = FALSE) {
@@ -70,9 +72,9 @@ class MergeHelper_RepoCommandMerge {
 		$amMergeParts = array();
 
 		if ($bIsRollback) {
-			$amMergeParts['oRevision'] = $oRevision->getRevertedRevisionAsObject();
+			$amMergeParts['sRevision'] = $oRevision->sGetRevertedAsString();
 		} else {
-			$amMergeParts['oRevision'] = $oRevision;
+			$amMergeParts['sRevision'] = $oRevision->sGetAsString();
 		}
 
 		$amMergeParts['oSourcePath'] = $oSourcePath;
@@ -94,7 +96,7 @@ class MergeHelper_RepoCommandMerge {
 
 		if (is_array($this->aaMerges) && sizeof($this->aaMerges) > 0) {
 			foreach ($this->aaMerges as $amMerge) {
-				$asCommandlines[$amMerge['oRevision']->sGetNumber()] = $this->asGetCommandLine($amMerge, $amMerge['oRevision']->sGetNumber());
+				$asCommandlines[$amMerge['sRevision']] = $this->asGetCommandLine($amMerge, $amMerge['sRevision']);
 			}
 		} else {
 			return NULL;
@@ -113,27 +115,21 @@ class MergeHelper_RepoCommandMerge {
 	 * @return varchar
 	 */
 	protected function asGetCommandLine($amMerge, $sRevisions) {
-		$oCommandLineFactory = new MergeHelper_CommandLineFactory();
-		$oCommandLine = $oCommandLineFactory->instantiate();
-
-		$oCommandLine->addParameter('merge');
-		$oCommandLine->setCommand('svn');
+		$this->oCommandLineBuilder->reset();
+		$this->oCommandLineBuilder->setCommand('svn');
+		$this->oCommandLineBuilder->addParameter('merge');
 
 		if ($this->bDryrun) {
-			$oCommandLine->addLongSwitch('dry-run');
+			$this->oCommandLineBuilder->addLongSwitch('dry-run');
 		}
 
-		if ($amMerge['oRevision']->bIsRange()) {
-			$oCommandLine->addShortSwitch('r');
-		} else {
-			$oCommandLine->addShortSwitch('c');
-		}
+		$this->oCommandLineBuilder->addShortSwitch('c');
 
-		$oCommandLine->addParameter($sRevisions);
-		$oCommandLine->addParameter($this->oRepo->sGetLocation() . $amMerge['oSourcePath']);
-		$oCommandLine->addParameter($amMerge['sTargetPath']);
+		$this->oCommandLineBuilder->addParameter($sRevisions);
+		$this->oCommandLineBuilder->addParameter($this->oRepo->sGetLocation() . $amMerge['oSourcePath']);
+		$this->oCommandLineBuilder->addParameter($amMerge['sTargetPath']);
 
-		return $oCommandLine->sGetCommandLine();
+		return $this->oCommandLineBuilder->sGetCommandLine();
 	}
 
 }

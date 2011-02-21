@@ -39,15 +39,6 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		                  $asCommandlines);
 	}
 
-	public function test_getLogCommandsForRevisionRange() {
-		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineBuilder());
-		$oLogCommand->addRevision(new MergeHelper_Revision('1', '2'));
-		$asCommandlines = $oLogCommand->asGetCommandlines();
-
-		$this->assertSame(array('svn log --no-auth-cache --username=user.name --password=secret -r 1:2 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo')),
-		                  $asCommandlines);
-	}
-
 	public function test_getLogCommandsNoRevisions() {
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineBuilder());
 
