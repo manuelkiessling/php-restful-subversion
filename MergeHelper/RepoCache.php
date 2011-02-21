@@ -143,22 +143,29 @@ class MergeHelper_RepoCache {
 
 	public function aoGetChangesetsWithPathEndingOn($sString) {
 		$asReturn = array();
-		foreach ($this->oDb->query('SELECT revision
-		                            FROM pathoperations
-		                            WHERE revertedpath LIKE "'.strrev($sString).'%" GROUP BY revision ORDER BY revision ASC')
-		         as $asRow) {
-			$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Revision($asRow['revision']));
+		$oStatement = $this->oDb->prepare('SELECT revision
+		                                     FROM pathoperations
+		                                    WHERE revertedpath LIKE ?
+		                                 GROUP BY revision
+		                                 ORDER BY revision ASC');
+		if ($oStatement->execute(array(strrev($sString).'%'))) {
+			while ($asRow = $oStatement->fetch()) {
+				$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Revision($asRow['revision']));
+			}
 		}
 		return $asReturn;
 	}
 
 	public function aoGetRevisionsWithMessageContainingText($sText) {
 		$asReturn = array();
-		foreach ($this->oDb->query('SELECT revision
-		                            FROM revisions
-		                            WHERE message LIKE "%'.$sText.'%" ORDER BY revision ASC')
-		         as $asRow) {
-			$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Revision($asRow['revision']));
+		$oStatement = $this->oDb->prepare('SELECT revision
+		                                     FROM revisions
+		                                    WHERE message LIKE ?
+		                                 ORDER BY revision ASC');
+		if ($oStatement->execute(array('%'.$sText.'%'))) {
+			while ($asRow = $oStatement->fetch()) {
+				$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Revision($asRow['revision']));
+			}
 		}
 		return $asReturn;
 	}
