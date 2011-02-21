@@ -1,8 +1,5 @@
 <?php
 
-/**
- * @todo Flexible solution for the repo cache filenames needed
- */
 class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 
 	public function setUp() {
