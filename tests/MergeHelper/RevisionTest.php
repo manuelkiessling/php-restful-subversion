@@ -4,7 +4,7 @@ class MergeHelper_RevisionTest extends PHPUnit_Framework_TestCase {
 
 	public function test_setAndGetRevision() {
 		$oRevision = new MergeHelper_Revision('12345');
-		$this->assertSame('12345', $oRevision->sGetNumber());
+		$this->assertSame('12345', $oRevision->sGetAsString());
 	}
 
 	/**
@@ -21,14 +21,19 @@ class MergeHelper_RevisionTest extends PHPUnit_Framework_TestCase {
 		$oRevision = new MergeHelper_Revision('-12345');
 	}
 
-	public function test_setAndGetRevisionReverted() {
+	public function test_getRevertedAsString() {
 		$oRevision = new MergeHelper_Revision('12345');
-		$this->assertSame('-12345', $oRevision->sGetNumberInverted());
+		$this->assertSame('-12345', $oRevision->sGetRevertedAsString());
+	}
+
+	public function test_getAsString() {
+		$oRevision = new MergeHelper_Revision('12345');
+		$this->assertSame('12345', $oRevision->sGetAsString());
 	}
 
 	public function test_toString() {
 		$oRevision = new MergeHelper_Revision('12345');
-		$this->assertSame($oRevision->sGetNumber(), "$oRevision");
+		$this->assertSame('12345', "$oRevision");
 	}
 	
 }

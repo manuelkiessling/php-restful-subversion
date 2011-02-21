@@ -64,16 +64,16 @@ class MergeHelper_Revision {
 		$this->sRevisionNumber = $sRevisionNumber;
 	}
 	
-	public function sGetNumber() {
+	public function sGetAsString() {
 		return (string)($this->sRevisionNumber);
 	}
 	
-	public function sGetNumberInverted() {
-		return '-'.$this->sRevisionNumber;
+	public function sGetRevertedAsString() {
+		return '-'.$this->sGetAsString();
 	}
 	
 	public function __toString() {
-		return (string)$this->sGetNumber();
+		return (string)$this->sGetAsString();
 	}
 	
 }
