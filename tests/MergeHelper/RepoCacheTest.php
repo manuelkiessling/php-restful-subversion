@@ -27,7 +27,7 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($this->oRepoCache->sGetHighestRevision());
 	}
 
-	public function test_retrieveChangesetFromCache() {
+	public function test_getChangesetForRevision() {
 		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
 		$oChangeset->setAuthor('Han Solo');
 		$oChangeset->setDateTime('2011-02-18 22:56:00');
@@ -41,7 +41,9 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($oChangeset, $this->oRepoCache->oGetChangesetForRevision(new MergeHelper_Revision('12345')));
 	}
 
-	public function test_findRevisionsWithPathEndingOn() {
+	public function test_getChangesetsWithPathEndingOn() {
+		$aoExpected = array();
+
 		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1234'));
 		$oChangeset->setAuthor('Han Solo');
 		$oChangeset->setDateTime('2011-02-18 22:56:00');
@@ -49,6 +51,7 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/a.php'));
 
 		$this->oRepoCache->addChangeset($oChangeset);
+		$aoExpected[] = $oChangeset;
 
 		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1235'));
 		$oChangeset->setAuthor('Han Solo');
@@ -65,12 +68,14 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/bar/bla.php'));
 
 		$this->oRepoCache->addChangeset($oChangeset);
+		$aoExpected[] = $oChangeset;
 
-		$aoExpected = array(new MergeHelper_Revision('1236'), new MergeHelper_Revision('1234'));
-		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetRevisionsWithPathEndingOn('a.php'));
+		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithPathEndingOn('a.php'));
 	}
 
-	public function test_findRevisionsWithMessageContainingText() {
+	public function test_getRevisionsWithMessageContainingText() {
+		$aoExpected = array();
+		
 		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1234'));
 		$oChangeset->setAuthor('Han Solo');
 		$oChangeset->setDateTime('2011-02-18 22:56:00');
@@ -78,6 +83,7 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/a.php'));
 
 		$this->oRepoCache->addChangeset($oChangeset);
+		$aoExpected[] = $oChangeset;
 
 		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1235'));
 		$oChangeset->setAuthor('Han Solo');
@@ -86,6 +92,7 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/foo/ar.php'));
 
 		$this->oRepoCache->addChangeset($oChangeset);
+		$aoExpected[] = $oChangeset;
 
 		$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision('1236'));
 		$oChangeset->setAuthor('Han Solo');
@@ -95,7 +102,6 @@ class MergeHelper_RepoCacheTest extends PHPUnit_Framework_TestCase {
 
 		$this->oRepoCache->addChangeset($oChangeset);
 
-		$aoExpected = array(new MergeHelper_Revision('1235'), new MergeHelper_Revision('1234'));
 		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetRevisionsWithMessageContainingText('world'));
 	}
 

@@ -141,13 +141,13 @@ class MergeHelper_RepoCache {
 		return $oChangeset;
 	}
 
-	public function aoGetRevisionsWithPathEndingOn($sString) {
+	public function aoGetChangesetsWithPathEndingOn($sString) {
 		$asReturn = array();
 		foreach ($this->oDb->query('SELECT revision
 		                            FROM pathoperations
-		                            WHERE revertedpath LIKE "'.strrev($sString).'%" GROUP BY revision ORDER BY revision DESC')
+		                            WHERE revertedpath LIKE "'.strrev($sString).'%" GROUP BY revision ORDER BY revision ASC')
 		         as $asRow) {
-			$asReturn[] = new MergeHelper_Revision($asRow['revision']);
+			$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Revision($asRow['revision']));
 		}
 		return $asReturn;
 	}
@@ -156,9 +156,9 @@ class MergeHelper_RepoCache {
 		$asReturn = array();
 		foreach ($this->oDb->query('SELECT revision
 		                            FROM revisions
-		                            WHERE message LIKE "%'.$sText.'%" ORDER BY revision DESC')
+		                            WHERE message LIKE "%'.$sText.'%" ORDER BY revision ASC')
 		         as $asRow) {
-			$asReturn[] = new MergeHelper_Revision($asRow['revision']);
+			$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Revision($asRow['revision']));
 		}
 		return $asReturn;
 	}
