@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require_once('../MergeHelper/Bootstrap.php');
+require_once('../MergeHelper.php');
 
 $sRepoUri = $argv[1];
 $sRepoUsername = $argv[2];
@@ -38,46 +38,43 @@ $oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
 $oLogInterpreter = new MergeHelper_RepoLogInterpreter();
 
 $oRepoCache = new MergeHelper_RepoCache(new PDO('sqlite:'.$sCacheDbFilename, NULL, NULL));
+$oMergeHelper = new MergeHelper($oRepo, $oRepoCache);
 
-$sHighestRevision = $oRepoCache->sGetHighestRevision();
+$iHighestRevisionInRepo = (int)$oMergeHelper->oGetHighestRevisionInRepo()->sGetAsString();
 
-if (!$sHighestRevision) {
-	echo 'Database is empty, starting from scratch'."\n";
+$iHighestRevisionInRepoCache = 0;
+$oRevision = $oMergeHelper->oGetHighestRevisionInRepoCache();
+if (is_object($oRevision)) $iHighestRevisionInRepoCache = (int)$oRevision->sGetAsString();
+
+echo 'Highest revision found in repository: '.$iHighestRevisionInRepo."\n";
+if ($iHighestRevisionInRepoCache == 0) {
+	echo 'Cache database is empty, starting from scratch'."\n";
+	$iCurrentRevision = 1;
 } else {
-	echo 'Highest revision found in database: '.$sHighestRevision."\n";
+	echo 'Highest revision found in cache database: '.$iHighestRevisionInRepoCache."\n";
+	$iCurrentRevision = $iHighestRevisionInRepoCache + 1;
 }
-$sCurrentRevision = (string)((int)$sHighestRevision + 1);
 
-$bFinished = FALSE;
-
-while (!$bFinished) {
+while ($iCurrentRevision <= $iHighestRevisionInRepo) {
 	echo "\n";
-	echo 'Revision '.$sCurrentRevision.":\n";
+	echo 'About to import revision '.$iCurrentRevision.":\n";
 
-	$oRevision = new MergeHelper_Revision($sCurrentRevision);
+	$oRevision = new MergeHelper_Revision((string)$iCurrentRevision);
 
 	$oCommandLog = new MergeHelper_RepoCommandLog($oRepo, $oCommandLineBuilder);
 	$oCommandLog->enableVerbose();
 	$oCommandLog->enableXml();
-	$oCommandLog->addRevision(new MergeHelper_Revision($sCurrentRevision));
+	$oCommandLog->addRevision(new MergeHelper_Revision((string)$iCurrentRevision));
 	$aoCommandlines = $oCommandLog->asGetCommandlines();
 	$sLogOutput = $oCommandLineExecutor->sGetCommandResult($aoCommandlines[0]);
 
-	try { // TODO: We are only guessing here...
-		$aoChangesets = $oLogInterpreter->aoCreateChangesetsFromVerboseXml($sLogOutput);
-	} catch (Exception $e) {
-		echo "All revisions imported to cache.\n";
-		exit(0);
-	}
+	$aoChangesets = $oLogInterpreter->aoCreateChangesetsFromVerboseXml($sLogOutput);
 
-	if (sizeof($aoChangesets) > 0) {
-		foreach ($aoChangesets as $oChangeset) {
-			$oRepoCache->addChangeset($oChangeset);
-			print_r($oChangeset)."\n";
-			$sCurrentRevision = (string)((int)$sCurrentRevision + 1);
-		}
-	} else {
-		echo "All revisions imported to cache.\n";
-		exit(0);
+	foreach ($aoChangesets as $oChangeset) {
+		$oRepoCache->addChangeset($oChangeset);
+		$iCurrentRevision++;
 	}
 }
+
+echo "All revisions imported to cache.\n";
+exit(0);
