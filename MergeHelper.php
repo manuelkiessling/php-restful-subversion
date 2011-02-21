@@ -90,7 +90,7 @@ class MergeHelper {
 		return $this->oRepoCache->oGetHighestRevision();
 	}
 
-	public function bAreRepoAndRepoCacheInSync() {
+	public function bRepoAndRepoCacheAreInSync() {
 		return ($this->oGetHighestRevisionInRepo() == $this->oGetHighestRevisionInRepoCache());
 	}
 
@@ -131,7 +131,7 @@ class MergeHelper {
 	 *
 	 * @return bool TRUE if all paths of all $aoRevisions are on the same Repo source path, FALSE if not
 	 */
-	public function bRevisionsAreInSameSourcePath(Array $aoRevisions) {
+	public function bRevisionsAreOnSameSourcePath(Array $aoRevisions) {
 		if (sizeof($aoRevisions) === 0) return FALSE;
 
 		$aoPaths = array();

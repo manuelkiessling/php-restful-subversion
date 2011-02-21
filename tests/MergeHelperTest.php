@@ -34,7 +34,7 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($this->oRepoCache->oGetHighestRevision(), $this->oMergeHelper->oGetHighestRevisionInRepoCache());
 	}
 
-	public function test_areRepoAndRepoCacheInSync() {
+	public function test_repoAndRepoCacheAreInSync() {
 		for ($i = 1; $i < 9; $i++) {
 			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$i));
 			$oChangeset->setAuthor('Han Solo');
@@ -44,10 +44,10 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 			$this->oRepoCache->addChangeset($oChangeset);
 		}
 
-		$this->assertTrue($this->oMergeHelper->bAreRepoAndRepoCacheInSync());
+		$this->assertTrue($this->oMergeHelper->bRepoAndRepoCacheAreInSync());
 	}
 
-	public function test_areRepoAndRepoCacheInSyncNotSynced() {
+	public function test_repoAndRepoCacheAreInSyncFailsIfNotInSync() {
 		for ($i = 1; $i < 8; $i++) {
 			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$i));
 			$oChangeset->setAuthor('Han Solo');
@@ -57,10 +57,10 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 			$this->oRepoCache->addChangeset($oChangeset);
 		}
 
-		$this->assertFalse($this->oMergeHelper->bAreRepoAndRepoCacheInSync());
+		$this->assertFalse($this->oMergeHelper->bRepoAndRepoCacheAreInSync());
 	}
 
-	public function test_revisionsAreInSameSourcePath() {
+	public function test_revisionsAreOInSameSourcePath() {
 		for ($i = 1; $i < 3; $i++) {
 			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$i));
 			$oChangeset->setAuthor('Han Solo');
@@ -70,10 +70,10 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 			$this->oRepoCache->addChangeset($oChangeset);
 		}
 
-		$this->assertTrue($this->oMergeHelper->bRevisionsAreInSameSourcePath(array(new MergeHelper_Revision('1'), new MergeHelper_Revision('2'))));
+		$this->assertTrue($this->oMergeHelper->bRevisionsAreOnSameSourcePath(array(new MergeHelper_Revision('1'), new MergeHelper_Revision('2'))));
 	}
 
-	public function test_revisionsAreInSameSourcePathFailsIfOneRevisionIsOnDifferentSourcePaths() {
+	public function test_revisionsAreOnSameSourcePathFailsIfOneRevisionIsOnDifferentSourcePaths() {
 		for ($i = 1; $i < 3; $i++) {
 			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$i));
 			$oChangeset->setAuthor('Han Solo');
@@ -83,10 +83,10 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 			$this->oRepoCache->addChangeset($oChangeset);
 		}
 
-		$this->assertFalse($this->oMergeHelper->bRevisionsAreInSameSourcePath(array(new MergeHelper_Revision('1'), new MergeHelper_Revision('2'))));
+		$this->assertFalse($this->oMergeHelper->bRevisionsAreOnSameSourcePath(array(new MergeHelper_Revision('1'), new MergeHelper_Revision('2'))));
 	}
 
-	public function test_revisionsAreInSameSourcePathFailsIfOnePathInOneRevisionIsOnDifferentSourcePaths() {
+	public function test_revisionsAreOnSameSourcePathFailsIfOnePathInOneRevisionIsOnDifferentSourcePaths() {
 		for ($i = 1; $i < 3; $i++) {
 			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$i));
 			$oChangeset->setAuthor('Han Solo');
@@ -105,11 +105,11 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_project/test/foobar23.php'));
 		$this->oRepoCache->addChangeset($oChangeset);
 
-		$this->assertFalse($this->oMergeHelper->bRevisionsAreInSameSourcePath(array(new MergeHelper_Revision('1'), new MergeHelper_Revision('2'), new MergeHelper_Revision('3'))));
+		$this->assertFalse($this->oMergeHelper->bRevisionsAreOnSameSourcePath(array(new MergeHelper_Revision('1'), new MergeHelper_Revision('2'), new MergeHelper_Revision('3'))));
 	}
 	
-	public function test_checkIfRevisionsAreInSameSourcePathNoRevisionsGiven() {
-		$this->assertFalse($this->oMergeHelper->bRevisionsAreInSameSourcePath(array()));
+	public function test_revisionsAreOnSameSourcePathFailsIfNoRevisionsGiven() {
+		$this->assertFalse($this->oMergeHelper->bRevisionsAreOnSameSourcePath(array()));
 	}
 
 	public function test_pathIsOnAtLeastOneSourcePath() {
