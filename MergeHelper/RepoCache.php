@@ -83,7 +83,7 @@ class MergeHelper_RepoCache {
 	public function addChangeset(MergeHelper_Changeset $oChangeset) {
 		$oStatement = $this->oDb->prepare('INSERT INTO revisions (revision, author, datetime, message) VALUES (?, ?, ?, ?)');
 
-		$bSuccessful = $oStatement->execute(array($oChangeset->oGetRevision()->sGetNumber(),
+		$bSuccessful = $oStatement->execute(array($oChangeset->oGetRevision()->sGetAsString(),
 		                                          $oChangeset->sGetAuthor(),
 		                                          $oChangeset->sGetDateTime(),
 		                                          $oChangeset->sGetMessage()));
@@ -94,7 +94,7 @@ class MergeHelper_RepoCache {
 		$aaPathOperations = $oChangeset->aaGetPathOperations();
 		foreach($aaPathOperations as $aPathOperation) {
 			$oStatement = $this->oDb->prepare('INSERT INTO pathoperations (revision, action, path, revertedpath, copyfrompath, copyfromrev) VALUES (?, ?, ?, ?, ?, ?)');
-			$oStatement->execute(array($oChangeset->oGetRevision()->sGetNumber(),
+			$oStatement->execute(array($oChangeset->oGetRevision()->sGetAsString(),
 			                           $aPathOperation['sAction'],
 			                           $aPathOperation['oPath']->sGetAsString(),
 			                           strrev($aPathOperation['oPath']->sGetAsString()),
@@ -118,7 +118,7 @@ class MergeHelper_RepoCache {
 		$oChangeset = new MergeHelper_Changeset($oRevision);
 
 		$oStatement = $this->oDb->prepare('SELECT author, datetime, message FROM revisions WHERE revision = ?');
-		$oStatement->execute(array($oRevision->sGetNumber()));
+		$oStatement->execute(array($oRevision->sGetAsString()));
 
 		$oRows = $oStatement->fetchAll();
 		foreach ($oRows as $asRow) {
@@ -128,7 +128,7 @@ class MergeHelper_RepoCache {
 		}
 
 		$oStatement = $this->oDb->prepare('SELECT action, path, copyfrompath, copyfromrev FROM pathoperations WHERE revision = ?');
-		$oStatement->execute(array($oRevision->sGetNumber()));
+		$oStatement->execute(array($oRevision->sGetAsString()));
 
 		$oRows = $oStatement->fetchAll();
 		foreach ($oRows as $asRow) {

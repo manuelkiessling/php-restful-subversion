@@ -109,7 +109,7 @@ class MergeHelper_RepoCommandLog {
 		$this->oCommandLineBuilder->addLongSwitch('no-auth-cache');
 		$this->oCommandLineBuilder->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
 		$this->oCommandLineBuilder->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
-		$this->oCommandLineBuilder->addShortSwitchWithValue('r', $oRevision->sGetNumber());
+		$this->oCommandLineBuilder->addShortSwitchWithValue('r', $oRevision->sGetAsString());
 
 		if ($this->bVerbose) $this->oCommandLineBuilder->addShortSwitch('v');
 		if ($this->bXml) $this->oCommandLineBuilder->addLongSwitch('xml');
