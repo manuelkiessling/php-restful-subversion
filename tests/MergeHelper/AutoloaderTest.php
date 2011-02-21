@@ -3,7 +3,7 @@
 class MergeHelper_AutoloaderTest extends PHPUnit_Framework_TestCase {
 
 	public function test_existingFile() {
-		$this->assertSame('RepoCache.php', MergeHelper_Autoloader::load('RepoCache'));
+		$this->assertSame('RepoCache.php', MergeHelper_Autoloader::load('MergeHelper_RepoCache'));
 	}
 
 	public function test_nonExistantFile() {

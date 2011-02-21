@@ -59,7 +59,7 @@ date_default_timezone_set('Europe/Berlin');
 class MergeHelper_Bootstrap {
 
 	public static function sGetPackageRoot() {
-		return realpath(dirname(__FILE__).'/MergeHelper');
+		return realpath(dirname(__FILE__));
 	}
 
 }
