@@ -56,18 +56,20 @@ while (!$bFinished) {
 
 	$oRevision = new MergeHelper_Revision($sCurrentRevision);
 
-	try {
-		$oCommandLog = new MergeHelper_RepoCommandLog($oRepo, $oCommandLineBuilder);
-		$oCommandLog->enableVerbose();
-		$oCommandLog->enableXml();
-		$oCommandLog->addRevision(new MergeHelper_Revision($sCurrentRevision));
-		$aoCommandlines = $oCommandLog->asGetCommandlines();
-		$sLogOutput = $oCommandLineExecutor->sGetCommandResult($aoCommandlines[0]);
+	$oCommandLog = new MergeHelper_RepoCommandLog($oRepo, $oCommandLineBuilder);
+	$oCommandLog->enableVerbose();
+	$oCommandLog->enableXml();
+	$oCommandLog->addRevision(new MergeHelper_Revision($sCurrentRevision));
+	$aoCommandlines = $oCommandLog->asGetCommandlines();
+	$sLogOutput = $oCommandLineExecutor->sGetCommandResult($aoCommandlines[0]);
+
+	try { // TODO: We are only guessing here...
 		$aoChangesets = $oLogInterpreter->aoCreateChangesetsFromVerboseXml($sLogOutput);
-	} catch (MergeHelper_RepoCommandLogNoSuchRevisionException $e) {
+	} catch (Exception $e) {
 		echo "All revisions imported to cache.\n";
 		exit(0);
 	}
+
 	if (sizeof($aoChangesets) > 0) {
 		foreach ($aoChangesets as $oChangeset) {
 			$oRepoCache->addChangeset($oChangeset);
