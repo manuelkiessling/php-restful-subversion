@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require_once('../MergeHelper.php');
+require_once('../lib/MergeHelper.php');
 
 $sRepoUri = $argv[1];
 $sRepoUsername = $argv[2];
@@ -63,7 +63,7 @@ while ($iCurrentRevision <= $iHighestRevisionInRepo) {
 	$oCommandLog = new MergeHelper_RepoCommandLog($oRepo, $oCommandLineBuilder);
 	$oCommandLog->enableVerbose();
 	$oCommandLog->enableXml();
-	$oCommandLog->addRevision(new MergeHelper_Revision((string)$iCurrentRevision));
+	$oCommandLog->setRevision(new MergeHelper_Revision((string)$iCurrentRevision));
 	$sCommandline = $oCommandLog->sGetCommandline();
 	$sLogOutput = $oCommandLineExecutor->sGetCommandResult($sCommandline);
 
