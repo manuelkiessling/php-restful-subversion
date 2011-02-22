@@ -98,8 +98,8 @@ class MergeHelper_RepoCache {
 			                           $aPathOperation['sAction'],
 			                           $aPathOperation['oPath']->sGetAsString(),
 			                           strrev($aPathOperation['oPath']->sGetAsString()),
-			                           (!is_null($aPathOperation['oCopyfromPath'])) ? $aPathOperation['oCopyfromPath']->sGetAsString() : '',
-			                           (!is_null($aPathOperation['oCopyfromRev'])) ? $aPathOperation['oCopyfromRev']->sGetNumber() : 0));
+			                           (array_key_exists('oCopyfromPath', $aPathOperation)) ? $aPathOperation['oCopyfromPath']->sGetAsString() : '',
+			                           (array_key_exists('oCopyfromRev', $aPathOperation)) ? $aPathOperation['oCopyfromRev']->sGetNumber() : 0));
 		}
 	}
 
