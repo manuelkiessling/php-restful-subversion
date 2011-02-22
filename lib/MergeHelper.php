@@ -165,13 +165,13 @@ class MergeHelper {
 		if (is_null($oSourcePath)) {
 			throw new MergeHelper_CannotMergeRevisionWithMixedPathsException();
 		}
-		$oMergeCommand->addMerge($oRevision, $oSourcePath, '.', FALSE);
+		$oMergeCommand->setRevision($oRevision);
+		$oMergeCommand->setRepoPath($oSourcePath);
+		$oMergeCommand->setWorkingCopyPath('.');
+
 		if ($bDryrun) $oMergeCommand->enableDryrun();
 
-		$asCommandlines = $oMergeCommand->asGetCommandlines();
-		foreach ($asCommandlines as $sCommandline) {
-			return $sCommandline;
-		}
+		return $oMergeCommand->sGetCommandline();
 	}
 
 	public function sGetRollbackMergeCommandlineForRevision(MergeHelper_Revision $oRevision, $bDryrun = FALSE) {
@@ -181,13 +181,14 @@ class MergeHelper {
 		if (is_null($oSourcePath)) {
 			throw new MergeHelper_CannotMergeRevisionWithMixedPathsException();
 		}
-		$oMergeCommand->addMerge($oRevision, $oSourcePath, '.', TRUE);
+		$oMergeCommand->setRevision($oRevision);
+		$oMergeCommand->setRepoPath($oSourcePath);
+		$oMergeCommand->setWorkingCopyPath('.');
+		$oMergeCommand->enableRollback();
+
 		if ($bDryrun) $oMergeCommand->enableDryrun();
 
-		$asCommandlines = $oMergeCommand->asGetCommandlines();
-		foreach ($asCommandlines as $sCommandline) {
-			return $sCommandline;
-		}
+		return $oMergeCommand->sGetCommandline();
 	}
 
 	public function aoGetRevisionsWithMessageContainingText($sText) {

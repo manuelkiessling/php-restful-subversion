@@ -13,37 +13,47 @@ class MergeHelper_RepoCommandMergeTest extends PHPUnit_Framework_TestCase {
 		$this->oRepo = $oRepo;
 	}
 	
-	public function test_getMergeCommandsNothingToMerge() {
+	public function test_getMergeCommandNothingToMerge() {
 		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo, new MergeHelper_CommandLineBuilder());
 		$oMergeCommand->enableDryrun();
-		$asCommandlines = $oMergeCommand->asGetCommandlines();
+		$sCommandline = $oMergeCommand->sGetCommandline();
 
-		$this->assertNull($asCommandlines);
+		$this->assertNull($sCommandline);
 	}
 
-	public function test_getMergeCommandsMultipleRevisions() {
+	public function test_getMergeCommandForRevision() {
 		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo, new MergeHelper_CommandLineBuilder());
-		$oMergeCommand->addMerge(new MergeHelper_Revision('5'),
-		                         new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-04'),
-		                         '/var/tmp/testwc',
-		                         TRUE);
-		$oMergeCommand->addMerge(new MergeHelper_Revision('3'),
-		                         new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-04/a/b.txt'),
-		                         '/var/tmp/testwc/a/b.txt');
-		$oMergeCommand->addMerge(new MergeHelper_Revision('7'),
-		                         new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-04/a/b.txt'),
-		                         '/var/tmp/testwc/a/b.txt',
-		                         TRUE);
+		$oMergeCommand->setRevision(new MergeHelper_Revision('5'));
+		$oMergeCommand->setRepoPath(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-04'));
+		$oMergeCommand->setWorkingCopyPath('/var/tmp/testwc');
+		$sCommandline = $oMergeCommand->sGetCommandline();
 
+		$this->assertSame('svn merge -c 5 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/2010-01-04 /var/tmp/testwc',
+		                  $sCommandline);
+	}
+
+	public function test_getMergeCommandForRevisionDryRun() {
+		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo, new MergeHelper_CommandLineBuilder());
+		$oMergeCommand->setRevision(new MergeHelper_Revision('5'));
+		$oMergeCommand->setRepoPath(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-04'));
+		$oMergeCommand->setWorkingCopyPath('/var/tmp/testwc');
 		$oMergeCommand->enableDryrun();
-		$asCommandlines = $oMergeCommand->asGetCommandlines();
+		$sCommandline = $oMergeCommand->sGetCommandline();
 
-		$this->assertSame(3, sizeof($asCommandlines));
-		// Important implicit assert: the commands must be sorted by revision number, ascending
-		$this->assertSame('svn merge --dry-run -c -7 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/2010-01-04/a/b.txt /var/tmp/testwc/a/b.txt', $asCommandlines[0]);
-		$this->assertSame('svn merge --dry-run -c -5 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/2010-01-04 /var/tmp/testwc', $asCommandlines[1]);
-		$this->assertSame('svn merge --dry-run -c 3 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/2010-01-04/a/b.txt /var/tmp/testwc/a/b.txt', $asCommandlines[2]);
+		$this->assertSame('svn merge --dry-run -c 5 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/2010-01-04 /var/tmp/testwc',
+		                  $sCommandline);
+	}
 
+	public function test_getMergeCommandForRevisionRollback() {
+		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo, new MergeHelper_CommandLineBuilder());
+		$oMergeCommand->setRevision(new MergeHelper_Revision('5'));
+		$oMergeCommand->setRepoPath(new MergeHelper_RepoPath('/branches/my-hammer2/_production/2010-01-04'));
+		$oMergeCommand->setWorkingCopyPath('/var/tmp/testwc');
+		$oMergeCommand->enableRollback();
+		$sCommandline = $oMergeCommand->sGetCommandline();
+
+		$this->assertSame('svn merge -c -5 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/2010-01-04 /var/tmp/testwc',
+		                  $sCommandline);
 	}
 
 }
