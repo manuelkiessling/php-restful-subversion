@@ -83,3 +83,17 @@ class MergeHelper_RepoPath {
 	}
 
 }
+
+/**
+ * Exception for errors in MergeHelper_RepoPath
+ *
+ * @category   VersionControl
+ * @package    PHPMergeHelper
+ * @subpackage Exception
+ * @author     Manuel Kiessling <manuel@kiessling.net>
+ * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
+ * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @link       http://manuelkiessling.github.com/PHPMergeHelper
+ * @uses       MergeHelper_Exception
+ */
+class MergeHelper_RepoPathInvalidPathException extends MergeHelper_Exception {};

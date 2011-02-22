@@ -269,3 +269,17 @@ class MergeHelper {
 	}
 
 }
+
+/**
+ * Exception for a merge tried on a revision that doesn't have all files on the same source path
+ *
+ * @category   VersionControl
+ * @package    PHPMergeHelper
+ * @subpackage Exception
+ * @author     Manuel Kiessling <manuel@kiessling.net>
+ * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
+ * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @link       http://manuelkiessling.github.com/PHPMergeHelper
+ * @uses       MergeHelper_Exception
+ */
+class MergeHelper_CannotMergeRevisionWithMixedPathsException extends MergeHelper_Exception {};
