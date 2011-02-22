@@ -58,8 +58,11 @@ class MergeHelper_RepoCommandMerge {
 	const SVN_CMD_MERGE = 'svn merge';
 	
 	protected $oRepo = NULL;
-	protected $aaMerges = NULL;
+	protected $oRevision = NULL;
+	protected $oRepoPath = NULL;
+	protected $sWorkingCopyPath = NULL;
 	protected $bDryrun = FALSE;
+	protected $bRollback = FALSE;
 	protected $oCommandLineBuilderBuilder = NULL;
 
 	public function __construct(MergeHelper_Repo $oRepo, MergeHelper_CommandLineBuilderInterface $oCommandLineBuilderBuilder) {
@@ -67,44 +70,24 @@ class MergeHelper_RepoCommandMerge {
 		$this->oCommandLineBuilder = $oCommandLineBuilderBuilder;
 	}
 	
-	public function addMerge(MergeHelper_Revision $oRevision, MergeHelper_RepoPath $oSourcePath, $sTargetPath, $bIsRollback = FALSE) {
-		if ($this->aaMerges === NULL) $this->aaMerges = array();
-		$amMergeParts = array();
-
-		if ($bIsRollback) {
-			$amMergeParts['sRevision'] = $oRevision->sGetRevertedAsString();
-		} else {
-			$amMergeParts['sRevision'] = $oRevision->sGetAsString();
-		}
-
-		$amMergeParts['oSourcePath'] = $oSourcePath;
-		$amMergeParts['sTargetPath'] = $sTargetPath;
-		$this->aaMerges[] = $amMergeParts;
+	public function setRevision(MergeHelper_Revision $oRevision) {
+		$this->oRevision = $oRevision;
 	}
-		
+
+	public function setRepoPath(MergeHelper_RepoPath $oRepoPath) {
+		$this->oRepoPath = $oRepoPath;
+	}
+
+	public function setWorkingCopyPath($sWorkingCopyPath) {
+		$this->sWorkingCopyPath = $sWorkingCopyPath;
+	}
+
 	public function enableDryrun() {
 		$this->bDryrun = TRUE;
 	}
 
-	/**
-	 * aggregates commandlines for svn merge
-	 * 
-	 * @return array
-	 */
-	public function asGetCommandlines() {
-		$asCommandlines = array();
-
-		if (is_array($this->aaMerges) && sizeof($this->aaMerges) > 0) {
-			foreach ($this->aaMerges as $amMerge) {
-				$asCommandlines[$amMerge['sRevision']] = $this->asGetCommandLine($amMerge, $amMerge['sRevision']);
-			}
-		} else {
-			return NULL;
-		}
-
-		ksort($asCommandlines); // lower revision numbers must be merged first
-		foreach ($asCommandlines as $sCommandline) $asReturn[] = $sCommandline;
-		return $asReturn;
+	public function enableRollback() {
+		$this->bRollback = TRUE;
 	}
 
 	/**
@@ -114,7 +97,9 @@ class MergeHelper_RepoCommandMerge {
 	 * @param string $sRevisions
 	 * @return varchar
 	 */
-	protected function asGetCommandLine($amMerge, $sRevisions) {
+	public function sGetCommandLine() {
+		if (is_null($this->oRevision)) return NULL;
+
 		$this->oCommandLineBuilder->reset();
 		$this->oCommandLineBuilder->setCommand('svn');
 		$this->oCommandLineBuilder->addParameter('merge');
@@ -125,9 +110,15 @@ class MergeHelper_RepoCommandMerge {
 
 		$this->oCommandLineBuilder->addShortSwitch('c');
 
-		$this->oCommandLineBuilder->addParameter($sRevisions);
-		$this->oCommandLineBuilder->addParameter($this->oRepo->sGetLocation() . $amMerge['oSourcePath']);
-		$this->oCommandLineBuilder->addParameter($amMerge['sTargetPath']);
+		if ($this->bRollback) {
+			$sRevisionNumber = '-'.$this->oRevision->sGetAsString();
+		} else {
+			$sRevisionNumber = $this->oRevision->sGetAsString();
+		}
+
+		$this->oCommandLineBuilder->addParameter($sRevisionNumber);
+		$this->oCommandLineBuilder->addParameter($this->oRepo->sGetLocation() . $this->oRepoPath->sGetAsString());
+		$this->oCommandLineBuilder->addParameter($this->sWorkingCopyPath);
 
 		return $this->oCommandLineBuilder->sGetCommandLine();
 	}
