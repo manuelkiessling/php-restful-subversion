@@ -64,8 +64,8 @@ while ($iCurrentRevision <= $iHighestRevisionInRepo) {
 	$oCommandLog->enableVerbose();
 	$oCommandLog->enableXml();
 	$oCommandLog->addRevision(new MergeHelper_Revision((string)$iCurrentRevision));
-	$aoCommandlines = $oCommandLog->asGetCommandlines();
-	$sLogOutput = $oCommandLineExecutor->sGetCommandResult($aoCommandlines[0]);
+	$sCommandline = $oCommandLog->sGetCommandline();
+	$sLogOutput = $oCommandLineExecutor->sGetCommandResult($sCommandline);
 
 	$aoChangesets = $oLogInterpreter->aoCreateChangesetsFromVerboseXml($sLogOutput);
 
