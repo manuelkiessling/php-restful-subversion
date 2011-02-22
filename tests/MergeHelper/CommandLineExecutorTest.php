@@ -7,7 +7,7 @@ class MergeHelper_RepoCommandExecutorTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_execution() {
-		$sCommand = "svn log -r 6 -v --xml file://".realpath(MergeHelper_Bootstrap::sGetPackageRoot()."/../tests/_testrepo")." | grep -v '<paths>' | grep -v '</paths>' | grep '<path' -A 2 | grep 'action'";
+		$sCommand = "svn log -r 6 -v --xml file://".realpath(MergeHelper_Bootstrap::sGetPackageRoot()."/../../tests/_testrepo")." | grep -v '<paths>' | grep -v '</paths>' | grep '<path' -A 2 | grep 'action'";
 
 		$this->assertSame('   action="M">/branches/my-hammer2/_production/2010-01-02/b.php</path>'."\n",
 		                  MergeHelper_CommandLineExecutor::oGetInstance()->sGetCommandResult($sCommand));

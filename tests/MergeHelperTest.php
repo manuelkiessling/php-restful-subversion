@@ -4,7 +4,7 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 	public function setUp() {
 		$oRepo = new MergeHelper_Repo();
 
-		$oRepo->setLocation('file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'));
+		$oRepo->setLocation('file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../../tests/_testrepo'));
 		$oRepo->setAuthinfo('user.name', 'secret');
 		$oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_production'));
 		$oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_project'));
@@ -269,7 +269,7 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar4.php'));
 		$this->oRepoCache->addChangeset($oChangeset);
 
-		$sExpected = 'svn merge -c 12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/test .';
+		$sExpected = 'svn merge -c 12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../../tests/_testrepo').'/branches/my-hammer2/_production/test .';
 		$this->assertSame($sExpected, $this->oMergeHelper->sGetMergeCommandlineForRevision(new MergeHelper_Revision('12345')));
 	}
 
@@ -284,7 +284,7 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar4.php'));
 		$this->oRepoCache->addChangeset($oChangeset);
 
-		$sExpected = 'svn merge --dry-run -c 12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/test .';
+		$sExpected = 'svn merge --dry-run -c 12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../../tests/_testrepo').'/branches/my-hammer2/_production/test .';
 		$this->assertSame($sExpected, $this->oMergeHelper->sGetMergeCommandlineForRevision(new MergeHelper_Revision('12345'), TRUE));
 	}
 
@@ -299,7 +299,7 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar4.php'));
 		$this->oRepoCache->addChangeset($oChangeset);
 
-		$sExpected = 'svn merge -c -12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/test .';
+		$sExpected = 'svn merge -c -12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../../tests/_testrepo').'/branches/my-hammer2/_production/test .';
 		$this->assertSame($sExpected, $this->oMergeHelper->sGetRollbackMergeCommandlineForRevision(new MergeHelper_Revision('12345')));
 	}
 
@@ -314,7 +314,7 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 		$oChangeset->addPathOperation('M', new MergeHelper_RepoPath('/branches/my-hammer2/_production/test/foobar4.php'));
 		$this->oRepoCache->addChangeset($oChangeset);
 
-		$sExpected = 'svn merge --dry-run -c -12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo').'/branches/my-hammer2/_production/test .';
+		$sExpected = 'svn merge --dry-run -c -12345 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../../tests/_testrepo').'/branches/my-hammer2/_production/test .';
 		$this->assertSame($sExpected, $this->oMergeHelper->sGetRollbackMergeCommandlineForRevision(new MergeHelper_Revision('12345'), TRUE));
 	}
 	
