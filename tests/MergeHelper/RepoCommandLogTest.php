@@ -7,9 +7,9 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 
 		$oRepo->setLocation('file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'));
 		$oRepo->setAuthinfo('user.name', 'secret');
-		$oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_production'));
-		$oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_project'));
-		$oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/my-hammer2/_approval'));
+		$oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/platform/_production'));
+		$oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/platform/_project'));
+		$oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/platform/_approval'));
 
 		$this->oRepo = $oRepo;
 	}

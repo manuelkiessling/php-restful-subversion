@@ -38,14 +38,14 @@ class MergeHelper_RepoTest extends PHPUnit_Framework_TestCase {
 		$this->oRepo->setLocation('http://svn.example.com/repo');
 		$this->oRepo->setAuthinfo('user.name', 'secret');
 
-		$this->oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_production'));
-		$this->oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_project'), 1);
+		$this->oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/platform/_production'));
+		$this->oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/platform/_project'), 1);
 
 		$aoGetSourcePaths = $this->oRepo->aoGetSourcePaths();
 
 		$this->assertEquals(array(
-		                          new MergeHelper_RepoPath('/branches/my-hammer2/_production'),
-		                          new MergeHelper_RepoPath('/branches/my-hammer2/_project')
+		                          new MergeHelper_RepoPath('/branches/platform/_production'),
+		                          new MergeHelper_RepoPath('/branches/platform/_project')
 		                         ), $aoGetSourcePaths);
 	}
 
@@ -53,14 +53,14 @@ class MergeHelper_RepoTest extends PHPUnit_Framework_TestCase {
 		$this->oRepo->setLocation('http://svn.example.com/repo');
 		$this->oRepo->setAuthinfo('user.name', 'secret');
 
-		$this->oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_production'));
-		$this->oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_project'), 1);
+		$this->oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/platform/_production'));
+		$this->oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/platform/_project'), 1);
 
 		$asGetSourceLocations = $this->oRepo->asGetSourceLocations();
 
 		$this->assertSame(array(
-		                        'http://svn.example.com/repo/branches/my-hammer2/_production',
-		                        'http://svn.example.com/repo/branches/my-hammer2/_project'
+		                        'http://svn.example.com/repo/branches/platform/_production',
+		                        'http://svn.example.com/repo/branches/platform/_project'
 		                       ), $asGetSourceLocations);
 	}
 
@@ -68,18 +68,18 @@ class MergeHelper_RepoTest extends PHPUnit_Framework_TestCase {
 		$this->oRepo->setLocation('http://svn.example.com/repo');
 		$this->oRepo->setAuthinfo('user.name', 'secret');
 
-		$this->oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/my-hammer2/_approval'));
+		$this->oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/platform/_approval'));
 
-		$this->assertEquals(new MergeHelper_RepoPath('/branches/my-hammer2/_approval'), $this->oRepo->oGetTargetPath());
+		$this->assertEquals(new MergeHelper_RepoPath('/branches/platform/_approval'), $this->oRepo->oGetTargetPath());
 	}
 
 	public function test_setTargetPathAndGetTargetLocation() {
 		$this->oRepo->setLocation('http://svn.example.com/repo');
 		$this->oRepo->setAuthinfo('user.name', 'secret');
 
-		$this->oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/my-hammer2/_approval'));
+		$this->oRepo->setTargetPath(new MergeHelper_RepoPath('/branches/platform/_approval'));
 
-		$this->assertSame('http://svn.example.com/repo/branches/my-hammer2/_approval', $this->oRepo->sGetTargetLocation());
+		$this->assertSame('http://svn.example.com/repo/branches/platform/_approval', $this->oRepo->sGetTargetLocation());
 	}
 
 }
