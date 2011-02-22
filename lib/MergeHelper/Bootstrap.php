@@ -3,7 +3,7 @@
 /**
  * PHPMergeHelper
  *
- * Copyright (c) 2010, Manuel Kiessling <manuel@kiessling.net>
+ * Copyright (c) 2011, Manuel Kiessling <manuel@kiessling.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@
  * @package    PHPMergeHelper
  * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
- * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
+ * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
@@ -51,7 +51,7 @@ date_default_timezone_set('Europe/Berlin');
  * @package    PHPMergeHelper
  * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
- * @copyright  2010 Manuel Kiessling <manuel@kiessling.net>
+ * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  * @uses       MergeHelper_Autoloader::load
