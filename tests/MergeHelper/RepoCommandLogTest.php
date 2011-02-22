@@ -14,65 +14,60 @@ class MergeHelper_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 		$this->oRepo = $oRepo;
 	}
 
-	public function test_getLogCommandsForOneRevision() {
+	public function test_getLogCommandForRevision() {
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineBuilder());
-		$oLogCommand->addRevision(new MergeHelper_Revision('1'));
-		$asCommandlines = $oLogCommand->asGetCommandlines();
+		$oLogCommand->setRevision(new MergeHelper_Revision('1'));
+		$sCommandline = $oLogCommand->sGetCommandline();
 
-		$this->assertSame(array('svn log --no-auth-cache --username=user.name --password=secret -r 1 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo')),
-		                  $asCommandlines);
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 1 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
+		                  $sCommandline);
 	}
 
-	public function test_getLogCommandsForTwoRevisions() {
+	public function test_getLogCommandForRevisionXmlAndVerbose() {
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineBuilder());
-		$oLogCommand->addRevision(new MergeHelper_Revision('1'));
-		$oLogCommand->addRevision(new MergeHelper_Revision('2'));
-		$asCommandlines = $oLogCommand->asGetCommandlines();
+		$oLogCommand->setRevision(new MergeHelper_Revision('1'));
+		$oLogCommand->enableVerbose();
+		$oLogCommand->enableXml();
+		$sCommandline = $oLogCommand->sGetCommandline();
 
-		$this->assertSame(array('svn log --no-auth-cache --username=user.name --password=secret -r 1 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
-		                        'svn log --no-auth-cache --username=user.name --password=secret -r 2 file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo')
-		                       ),
-		                  $asCommandlines);
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 1 -v --xml file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
+		                  $sCommandline);
 	}
 
-	public function test_getLogCommandsNoRevisions() {
+	public function test_getLogCommandNoRevision() {
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineBuilder());
+		$sCommandline = $oLogCommand->sGetCommandline();
 
-		$asCommandlines = $oLogCommand->asGetCommandlines();
-		$this->assertSame(array('svn log --no-auth-cache --username=user.name --password=secret file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo')),
-		                   $asCommandlines
-		                  );
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
+		                  $sCommandline);
 	}
 
-	public function test_getLogCommandsNoRevisionsVerbose() {
+	public function test_getLogCommandNoRevisionVerbose() {
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineBuilder());
 		$oLogCommand->enableVerbose();
-		$asCommandlines = $oLogCommand->asGetCommandlines();
+		$sCommandline = $oLogCommand->sGetCommandline();
 
-		$this->assertSame(array('svn log --no-auth-cache --username=user.name --password=secret -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo')),
-		                  $asCommandlines
-		                 );
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
+		                  $sCommandline);
 	}
 
-	public function test_getLogCommandsNoRevisionsXml() {
+	public function test_getLogCommandNoRevisionsXml() {
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineBuilder());
 		$oLogCommand->enableXml();
-		$asCommandlines = $oLogCommand->asGetCommandlines();
+		$sCommandline = $oLogCommand->sGetCommandline();
 
-		$this->assertSame(array('svn log --no-auth-cache --username=user.name --password=secret --xml file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo')),
-		                  $asCommandlines
-		                 );
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret --xml file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
+		                  $sCommandline);
 	}
 
-	public function test_getLogCommandsNoRevisionsVerboseAndXml() {
+	public function test_getLogCommandNoRevisionVerboseAndXml() {
 		$oLogCommand = new MergeHelper_RepoCommandLog($this->oRepo, new MergeHelper_CommandLineBuilder());
 		$oLogCommand->enableVerbose();
 		$oLogCommand->enableXml();
-		$asCommandlines = $oLogCommand->asGetCommandlines();
+		$sCommandline = $oLogCommand->sGetCommandline();
 
-		$this->assertSame(array('svn log --no-auth-cache --username=user.name --password=secret -v --xml file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo')),
-		                  $asCommandlines
-		                 );
+		$this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v --xml file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
+		                  $sCommandline);
 	}
 
 }

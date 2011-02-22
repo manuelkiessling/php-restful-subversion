@@ -75,9 +75,9 @@ class MergeHelper {
 		$oCommandLog = new MergeHelper_RepoCommandLog($this->oRepo, $oCommandLineBuilder);
 		$oCommandLog->enableVerbose();
 		$oCommandLog->enableXml();
-		$oCommandLog->addRevision(new MergeHelper_Revision('HEAD'));
-		$aoCommandlines = $oCommandLog->asGetCommandlines();
-		$sLogOutput = $oCommandLineExecutor->sGetCommandResult($aoCommandlines[0]);
+		$oCommandLog->setRevision(new MergeHelper_Revision('HEAD'));
+		$sCommandline = $oCommandLog->sGetCommandline();
+		$sLogOutput = $oCommandLineExecutor->sGetCommandResult($sCommandline);
 
 		$aoChangesets = $oLogInterpreter->aoCreateChangesetsFromVerboseXml($sLogOutput);
 

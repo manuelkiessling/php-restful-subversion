@@ -57,7 +57,7 @@
 class MergeHelper_RepoCommandLog {
 	
 	protected $oRepo = NULL;
-	protected $aoRevisions = NULL;
+	protected $oRevision = NULL;
 	protected $sRange = NULL;
 	protected $bVerbose = FALSE;
 	protected $bXml = FALSE;
@@ -68,8 +68,8 @@ class MergeHelper_RepoCommandLog {
 		$this->oCommandLineBuilder = $oCommandLineBuilder;
 	}
 	
-	public function addRevision(MergeHelper_Revision $oRevision) {
-		$this->aoRevisions[] = $oRevision;
+	public function setRevision(MergeHelper_Revision $oRevision) {
+		$this->oRevision = $oRevision;
 	}
 
 	public function enableVerbose() {
@@ -80,36 +80,17 @@ class MergeHelper_RepoCommandLog {
 		$this->bXml = TRUE;
 	}
 		
-	public function asGetCommandlines() {
-		$asReturn = array();
-
-		if ($this->bRevisionListNotEmpty()) {
-			$asReturn = $this->asGetCommandlinesForRevisions($this->aoRevisions);
-		} else {
-			$asReturn[] = $this->sGetCommandlineWithoutRevisions();
-		}
-
-		return $asReturn;
-	}
-
-	protected function asGetCommandLinesForRevisions(Array $aoRevisions) {
-		$asReturn = array();
-
-		foreach ($aoRevisions as $oRevision) {
-			$asReturn[] = $this->asGetCommandLineForRevision($oRevision);
-		}
-
-		return $asReturn;
-	}
-
-	protected function asGetCommandLineForRevision(MergeHelper_Revision $oRevision) {
+	public function sGetCommandline() {
 		$this->oCommandLineBuilder->reset();
 		$this->oCommandLineBuilder->setCommand('svn');
 		$this->oCommandLineBuilder->addParameter('log');
 		$this->oCommandLineBuilder->addLongSwitch('no-auth-cache');
 		$this->oCommandLineBuilder->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
 		$this->oCommandLineBuilder->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
-		$this->oCommandLineBuilder->addShortSwitchWithValue('r', $oRevision->sGetAsString());
+
+		if (is_object($this->oRevision)) {
+			$this->oCommandLineBuilder->addShortSwitchWithValue('r', $this->oRevision->sGetAsString());
+		}
 
 		if ($this->bVerbose) $this->oCommandLineBuilder->addShortSwitch('v');
 		if ($this->bXml) $this->oCommandLineBuilder->addLongSwitch('xml');
@@ -119,24 +100,4 @@ class MergeHelper_RepoCommandLog {
 		return $this->oCommandLineBuilder->sGetCommandLine();
 	}
 
-	protected function sGetCommandLineWithoutRevisions() {
-		$this->oCommandLineBuilder->reset();
-		$this->oCommandLineBuilder->setCommand('svn');
-		$this->oCommandLineBuilder->addParameter('log');
-		$this->oCommandLineBuilder->addLongSwitch('no-auth-cache');
-		$this->oCommandLineBuilder->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
-		$this->oCommandLineBuilder->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
-
-		if ($this->bVerbose) $this->oCommandLineBuilder->addShortSwitch('v');
-		if ($this->bXml) $this->oCommandLineBuilder->addLongSwitch('xml');
-
-		$this->oCommandLineBuilder->addParameter($this->oRepo->sGetLocation());
-
-		return $this->oCommandLineBuilder->sGetCommandLine();	
-	}
-	
-	protected function bRevisionListNotEmpty() {
-		return is_array($this->aoRevisions) && sizeof($this->aoRevisions) > 0;
-	}
-	
 }
