@@ -29,7 +29,6 @@ if (empty($sCacheDbFilename)) {
 }
 
 $oRepo = new MergeHelper_Repo();
-$oRepo->setType(MergeHelper_Repo::TYPE_SVN);
 $oRepo->setLocation($sRepoUri);
 $oRepo->setAuthinfo($sRepoUsername, $sRepoPassword);
 

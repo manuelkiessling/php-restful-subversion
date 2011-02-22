@@ -4,7 +4,6 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 	public function setUp() {
 		$oRepo = new MergeHelper_Repo();
 
-		$oRepo->setType(MergeHelper_Repo::TYPE_SVN);
 		$oRepo->setLocation('file://'.realpath(MergeHelper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'));
 		$oRepo->setAuthinfo('user.name', 'secret');
 		$oRepo->addSourcePath(new MergeHelper_RepoPath('/branches/my-hammer2/_production'));

@@ -58,17 +58,6 @@ class MergeHelper_Repo {
 	protected $sAuthinfoPassword = NULL;
 	protected $aoSourcePaths = array();
 	protected $oTargetPath = NULL;
-	protected $iType = NULL;
-
-	const TYPE_SVN = 0;
-
-	public function setType($iType) {
-		$this->iType = $iType;
-	}
-	
-	public function iGetType() {
-		return $this->iType;
-	}
 
 	public function setLocation($sLocation) {
 		$this->sLocation = $sLocation;

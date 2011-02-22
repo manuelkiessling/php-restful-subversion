@@ -10,12 +10,6 @@ class MergeHelper_RepoTest extends PHPUnit_Framework_TestCase {
 		$this->assertNull($this->oRepo->sGetLocation());
 	}
 
-	public function test_setAndGetType() {
-		$this->oRepo->setType(MergeHelper_Repo::TYPE_SVN);
-
-		$this->assertSame(MergeHelper_Repo::TYPE_SVN, $this->oRepo->iGetType());
-	}
-	
 	public function test_setAndGetLocation() {
 		$this->oRepo->setLocation('http://svn.example.com/repo');
 
