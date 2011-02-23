@@ -32,7 +32,7 @@
  *
  * @category   VersionControl
  * @package    PHPMergeHelper
- * @subpackage Repository
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
