@@ -1,14 +1,16 @@
 #!/usr/bin/php
 <?php
 
-require_once('../lib/MergeHelper.php');
+if (is_file($argv[1])) {
+	require_once($argv[1]);
+} else {
+	$sRepoLocation = $argv[1];
+	$sRepoUsername = $argv[2];
+	$sRepoPassword = $argv[3];
+	$sRepoCacheConnectionString = $argv[4];
+}
 
-$sRepoUri = $argv[1];
-$sRepoUsername = $argv[2];
-$sRepoPassword = $argv[3];
-$sCacheDbFilename = $argv[4];
-
-if (empty($sRepoUri)) {
+if (empty($sRepoLocation)) {
 	echo "No repository URI given.\n";
 	exit(1);
 }
@@ -23,20 +25,22 @@ if (empty($sRepoPassword)) {
 	exit(1);
 }
 
-if (empty($sCacheDbFilename)) {
-	echo "No cache db filename given.\n";
+if (empty($sRepoCacheConnectionString)) {
+	echo "No cache db connection string given.\n";
 	exit(1);
 }
 
+require_once('../lib/MergeHelper.php');
+
 $oRepo = new MergeHelper_Repo();
-$oRepo->setLocation($sRepoUri);
+$oRepo->setLocation($sRepoLocation);
 $oRepo->setAuthinfo($sRepoUsername, $sRepoPassword);
 
 $oCommandLineExecutor = MergeHelper_CommandLineExecutor::oGetInstance();
 $oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
 $oLogInterpreter = new MergeHelper_RepoLogInterpreter();
 
-$oRepoCache = new MergeHelper_RepoCache(new PDO('sqlite:'.$sCacheDbFilename, NULL, NULL));
+$oRepoCache = new MergeHelper_RepoCache(new PDO($sRepoCacheConnectionString, NULL, NULL));
 $oMergeHelper = new MergeHelper($oRepo, $oRepoCache);
 
 $iHighestRevisionInRepo = (int)$oMergeHelper->oGetHighestRevisionInRepo()->sGetAsString();
