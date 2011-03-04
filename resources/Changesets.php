@@ -2,22 +2,29 @@
 
 /**
  * Changesets resource
- * @uri /changesets/with_text/{sText}
+ * @uri /changesets/{sFirstParam}/{sSecondParam}
  */
 class ChangesetsResource extends MergeHelper_Resource {
 
-	public function get($oRequest) {
+	public function get($request, $sFirstParam = NULL, $sSecondParam = NULL) {
 		$oCacheDb = new PDO($this->aConfig['sRepoCacheConnectionString'], NULL, NULL);
 		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
-
+		$oResponseHelper = new ResponseHelper();
 		$aaChangesets = array();
-		$aoChangesets = $oRepoCache->aoGetChangesetsWithMessageContainingText("$oRequest");
+
+		if ($sFirstParam == 'with_message_containing') {
+			$aoChangesets = $oRepoCache->aoGetChangesetsWithMessageContainingText($sSecondParam);
+		} elseif ($sFirstParam == 'with_path_ending_on') {
+			$aoChangesets = $oRepoCache->aoGetChangesetsWithPathEndingOn($sSecondParam);
+		} else {
+			$oResponseHelper->setFailedResponse(new Response($request));
+		}
+
 		foreach ($aoChangesets as $oChangeset) {
 			$aaChangesets[] = ChangesetResource::aGetChangesetAsArray($oChangeset);
 		}
 
-		$oResponseHelper = new ResponseHelper();
-		return $oResponseHelper->setResponse(new Response($oRequest), $aaChangesets);
+		return $oResponseHelper->setResponse(new Response($request), $aaChangesets);
 	}
 
 }

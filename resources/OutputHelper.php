@@ -9,4 +9,9 @@ class ResponseHelper {
 		return $oResponse;
 	}
 
+	public function setFailedResponse(Response $oResponse) {
+		$oResponse->code = Response::NOTFOUND;
+		return $oResponse;
+	}
+
 }

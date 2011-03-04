@@ -20,21 +20,21 @@ class ChangesetResource extends MergeHelper_Resource {
 			$aThisPathoperation = array();
 			$aThisPathoperation['sAction'] = $aPathoperation['sAction'];
 			$aThisPathoperation['sPath'] = $aPathoperation['oPath']->sGetAsString();
-			if (is_object($aPathoperation['oCopyfromPath'])) $aThisPathoperation['sCopyfromPath'] = $aPathoperation['oCopyfromPath']->sGetAsString();
-			if (is_object($aPathoperation['oCopyfromRev'])) $aThisPathoperation['sCopyfromRev'] = $aPathoperation['oCopyfromRev']->sGetAsString();
+			if (array_key_exists('oCopyfromPath', $aPathoperation) && is_object($aPathoperation['oCopyfromPath'])) $aThisPathoperation['sCopyfromPath'] = $aPathoperation['oCopyfromPath']->sGetAsString();
+			if (array_key_exists('oCopyfromRev', $aPathoperation) && is_object($aPathoperation['oCopyfromRev'])) $aThisPathoperation['sCopyfromRev'] = $aPathoperation['oCopyfromRev']->sGetAsString();
 			$aChangeset['aaPathoperations'][] = $aThisPathoperation;
 		}
 		return $aChangeset;
 	}
 
-	public function get($oRequest) {
+	public function get($request, $sRevisionNumber) {
 		$oCacheDb = new PDO($this->aConfig['sRepoCacheConnectionString'], NULL, NULL);
 		$oRepoCache = new MergeHelper_RepoCache($oCacheDb);
 
-		$oChangeset = $oRepoCache->oGetChangesetForRevision(new MergeHelper_Revision("$oRequest"));
+		$oChangeset = $oRepoCache->oGetChangesetForRevision(new MergeHelper_Revision($sRevisionNumber));
 
 		$oResponseHelper = new ResponseHelper();
-		return $oResponseHelper->setResponse(new Response($oRequest), self::aGetChangesetAsArray($oChangeset));
+		return $oResponseHelper->setResponse(new Response($request), self::aGetChangesetAsArray($oChangeset));
 	}
 
 }
