@@ -2,7 +2,11 @@
 <?php
 
 if (is_file($argv[1])) {
-	require_once($argv[1]);
+	require_once $argv[1];
+	$sRepoLocation = $aConfig['sRepoLocation'];
+	$sRepoUsername = $aConfig['sRepoUsername'];
+	$sRepoPassword = $aConfig['sRepoPassword'];
+	$sRepoCacheConnectionString = $aConfig['sRepoCacheConnectionString'];
 } else {
 	$sRepoLocation = $argv[1];
 	$sRepoUsername = $argv[2];

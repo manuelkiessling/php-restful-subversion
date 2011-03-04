@@ -1,15 +1,22 @@
 <?php
 
 if (!is_file('../etc/PHPMergeHelper.conf')) {
-	die('You need to define a configuration in ../etc/PHPMergeHelper.conf');
+	echo '<p>';
+	echo 'You need to define a configuration in <em>'.realpath('../etc').'/PHPMergeHelper.conf</em>';
+	echo '</p>';
+	echo '<p>';
+	echo 'See <em>'.realpath('../etc/PHPMergeHelper.sample.conf').'</em> for an example configuration.';
+	echo '</p>';
+	die();
 }
 
-require_once('../etc/PHPMergeHelper.conf');
-require_once('../lib/Tonic.php');
-require_once '../resources/Changeset.php';
+require_once '../resources/Bootstrap.php';
+require_once '../etc/PHPMergeHelper.conf';
 
-$request = new Request(array('baseUri' => '/PHPMergeHelper'));
-$resource = $request->loadResource();
+MergeHelper_Resource_Config::getInstance()->setConfig($aConfig);
 
-$response = $resource->exec($request);
-$response->output();
+$oRequest = new Request(array('baseUri' => '/PHPMergeHelper'));
+$oResource = $oRequest->loadResource();
+
+$oResponse = $oResource->exec($oRequest);
+$oResponse->output();
