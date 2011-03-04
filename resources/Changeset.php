@@ -6,7 +6,7 @@
  */
 class ChangesetResource extends MergeHelper_Resource {
 
-	protected function aGetChangesetAsArray(MergeHelper_Changeset $oChangeset) {
+	public static function aGetChangesetAsArray(MergeHelper_Changeset $oChangeset) {
 		$aChangeset = array();
 		$aChangeset['sRevisionNumber'] = $oChangeset->oGetRevision()->sGetAsString();
 		$aChangeset['sAuthor'] = $oChangeset->sGetAuthor();
@@ -34,7 +34,7 @@ class ChangesetResource extends MergeHelper_Resource {
 		$oChangeset = $oRepoCache->oGetChangesetForRevision(new MergeHelper_Revision("$oRequest"));
 
 		$oResponseHelper = new ResponseHelper();
-		return $oResponseHelper->setResponse(new Response($oRequest), $this->aGetChangesetAsArray($oChangeset));
+		return $oResponseHelper->setResponse(new Response($oRequest), self::aGetChangesetAsArray($oChangeset));
 	}
 
 }
