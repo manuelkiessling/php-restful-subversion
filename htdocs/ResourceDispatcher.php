@@ -10,12 +10,12 @@ if (!is_file('../etc/PHPMergeHelper.conf')) {
 	die();
 }
 
-require_once '../resources/Bootstrap.php';
+require_once '../resources/lib/Bootstrap.php';
 require_once '../etc/PHPMergeHelper.conf';
 
-MergeHelper_Resource_Config::getInstance()->setConfig($aConfig);
+MergeHelper_ResourceConfig::getInstance()->setConfig($aConfig);
 
-$oRequest = new Request(array('baseUri' => '/PHPMergeHelper'));
+$oRequest = new Request();
 $oResource = $oRequest->loadResource();
 
 $oResponse = $oResource->exec($oRequest);

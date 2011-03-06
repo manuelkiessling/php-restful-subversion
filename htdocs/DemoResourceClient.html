@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<script src="angular-0.9.12.min.js" ng:autobind></script>
+
+		<script>
+			ChangesetsController.$inject = ['$resource'];
+			function ChangesetsController($resource) {
+				this.Finder = $resource(
+					'/changesets',
+					{ alt: 'json', callback: 'JSON_CALLBACK' },
+					{ get: { method: 'JSON' } }
+				);
+			}
+
+			ChangesetsController.prototype = {
+				fetch: function() {
+					this.result = this.Finder.get({ with_message_containing:this.text });
+				}
+			};
+		</script>
+
+	</head>
+	
+	<body>
+
+		<div ng:controller="ChangesetsController">
+			<input name="text" value="ini"/>
+			<button ng:click="fetch()">find</button>
+			<hr/>
+			<div class="changeset" ng:repeat="changeset in result.changesets">
+				<div class="info">
+					Revision: {{changeset.sRevisionNumber}}
+					<br />
+					Author: {{changeset.sAuthor}}
+					<br />
+					Commit date and time: {{changeset.sDateTime}}
+					<br />
+					Message: {{changeset.sMessage}}
+				</div>
+				<div class="pathoperations">
+					<pre class="pathoperation" ng:repeat="aPathoperation in changeset.aaPathoperations">{{aPathoperation.sAction}} {{aPathoperation.sPath}}</pre>
+				</div>
+			</div>
+		</div>
+
+	</body>
+
+</html>

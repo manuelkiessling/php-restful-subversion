@@ -1,6 +1,6 @@
 <?php
 
-class MergeHelper_Resource_Config {
+class MergeHelper_ResourceConfig {
 
 	static private $oInstance = NULL;
 	static private $aConfig = array();

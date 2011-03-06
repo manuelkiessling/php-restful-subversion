@@ -2,7 +2,7 @@
 
 /**
  * Changeset resource
- * @uri /changeset/{sRevisionNumber}
+ * @uri /changeset/:sRevisionNumber
  */
 class ChangesetResource extends MergeHelper_Resource {
 
