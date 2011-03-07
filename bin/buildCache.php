@@ -1,6 +1,49 @@
 #!/usr/bin/php
 <?php
 
+function displayErrorWithUsageInformationAndExit($sError) {
+	echo "\n";
+	echo 'ERROR: '.$sError;
+
+	$sInfo = <<<EOT
+
+
+Usage information:
+
+There are two ways of using this script:
+
+1: You provide the path to a file containing the necessary SVN and
+   cache db information
+
+   or
+
+2: You provide the SVN repository location, a valid SVN username and
+   password, and a PDO compatible cache db connection string directly
+
+
+Example for variant 1:
+
+   buildCache.php /path/to/PHPMergeHelper.conf
+
+See file PHPMergeHelper.sample.conf as an example of how such a config
+file needs to be designed.
+
+
+Example for variant 2:
+
+   buildCache.php http://svn.example.com/ user pass sqlite:/var/tmp/svncache.db
+
+
+EOT;
+
+	echo $sInfo;
+	exit(1);
+}
+
+if (!array_key_exists(1, $argv)) {
+	displayErrorWithUsageInformationAndExit("You need to provide either the path to a valid PHPMergeHelper.conf file or the location of a SVN repository, a SVN username and password, and a PDO compatible connection string.");
+}
+
 if (is_file($argv[1])) {
 	require_once $argv[1];
 	$sRepoLocation = $aConfig['sRepoLocation'];
@@ -9,29 +52,37 @@ if (is_file($argv[1])) {
 	$sRepoCacheConnectionString = $aConfig['sRepoCacheConnectionString'];
 } else {
 	$sRepoLocation = $argv[1];
+
+	if (!array_key_exists(2, $argv)) {
+		displayErrorWithUsageInformationAndExit("You need to provide a SVN username.");
+	}
 	$sRepoUsername = $argv[2];
+
+	if (!array_key_exists(3, $argv)) {
+		displayErrorWithUsageInformationAndExit("You need to provide a SVN password.");
+	}
 	$sRepoPassword = $argv[3];
+
+	if (!array_key_exists(4, $argv)) {
+		displayErrorWithUsageInformationAndExit("You need to provide a PDO compatible connection string.");
+	}
 	$sRepoCacheConnectionString = $argv[4];
 }
 
 if (empty($sRepoLocation)) {
-	echo "No repository URI given.\n";
-	exit(1);
+	displayErrorWithUsageInformationAndExit("No repository URI given.");
 }
 
 if (empty($sRepoUsername)) {
-	echo "No repository username given.\n";
-	exit(1);
+	displayErrorWithUsageInformationAndExit("No repository username given.");
 }
 
 if (empty($sRepoPassword)) {
-	echo "No repository password given.\n";
-	exit(1);
+	displayErrorWithUsageInformationAndExit("No repository password given.");
 }
 
 if (empty($sRepoCacheConnectionString)) {
-	echo "No cache db connection string given.\n";
-	exit(1);
+	displayErrorWithUsageInformationAndExit("No cache db connection string given.");
 }
 
 require_once('../lib/MergeHelper.php');
