@@ -10,7 +10,7 @@ if (!is_file('../etc/PHPMergeHelper.conf')) {
 	die();
 }
 
-require_once '../resources/lib/Bootstrap.php';
+require_once '../lib/MergeHelper/Webservice/Bootstrap.php';
 require_once '../etc/PHPMergeHelper.conf';
 
 MergeHelper_Webservice_Helper_Config::getInstance()->setConfig($aConfig);
