@@ -1,6 +1,6 @@
 <?php
 
-class ResponseHelper {
+class MergeHelper_Webservice_Helper_Response {
 
 	public function setResponse(Response $oResponse, $mBody, $sCallback) {
 		$oResponse->code = Response::OK;

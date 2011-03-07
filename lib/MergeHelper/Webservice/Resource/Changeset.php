@@ -4,7 +4,7 @@
  * Changeset resource
  * @uri /changeset/:sRevisionNumber
  */
-class ChangesetResource extends MergeHelper_Resource {
+class MergeHelper_Webservice_Resource_Changeset extends MergeHelper_Webservice_Resource {
 
 	public static function aGetChangesetAsArray(MergeHelper_Changeset $oChangeset) {
 		$aChangeset = array();
@@ -33,7 +33,7 @@ class ChangesetResource extends MergeHelper_Resource {
 
 		$oChangeset = $oRepoCache->oGetChangesetForRevision(new MergeHelper_Revision($sRevisionNumber));
 
-		$oResponseHelper = new ResponseHelper();
+		$oResponseHelper = new MergeHelper_Webservice_Helper_Response();
 		return $oResponseHelper->setResponse(new Response($request), self::aGetChangesetAsArray($oChangeset));
 	}
 

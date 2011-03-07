@@ -13,7 +13,7 @@ if (!is_file('../etc/PHPMergeHelper.conf')) {
 require_once '../resources/lib/Bootstrap.php';
 require_once '../etc/PHPMergeHelper.conf';
 
-MergeHelper_ResourceConfig::getInstance()->setConfig($aConfig);
+MergeHelper_Webservice_Helper_Config::getInstance()->setConfig($aConfig);
 
 $oRequest = new Request();
 $oResource = $oRequest->loadResource();

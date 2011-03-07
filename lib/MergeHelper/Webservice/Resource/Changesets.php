@@ -4,10 +4,10 @@
  * Changesets resource
  * @uri /changesets
  */
-class ChangesetsResource extends MergeHelper_Resource {
+class MergeHelper_Webservice_Resource_Changesets extends MergeHelper_Webservice_Resource {
 
 	public function get($request) {
-		$oResponseHelper = new ResponseHelper();
+		$oResponseHelper = new MergeHelper_Webservice_Helper_Response();
 
 		if (isset($_GET['with_message_containing'])) {
 			$sSearchMode = 'with_message_containing';
@@ -34,7 +34,7 @@ class ChangesetsResource extends MergeHelper_Resource {
 		}
 
 		foreach ($aoChangesets as $oChangeset) {
-			$aaChangesets[] = ChangesetResource::aGetChangesetAsArray($oChangeset);
+			$aaChangesets[] = MergeHelper_Webservice_Resource_Changeset::aGetChangesetAsArray($oChangeset);
 		}
 
 		return $oResponseHelper->setResponse(new Response($request), array('changesets' => $aaChangesets), $sCallback);
