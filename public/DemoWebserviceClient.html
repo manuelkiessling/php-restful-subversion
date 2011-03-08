@@ -9,7 +9,7 @@
 			ChangesetsController.$inject = ['$resource'];
 			function ChangesetsController($resource) {
 				this.ChangesetsResource = $resource(
-					'/changesets',
+					'/changesets.json',
 					{ callback: 'JSON_CALLBACK' },
 					{ get: { method: 'JSON' } }
 				);
