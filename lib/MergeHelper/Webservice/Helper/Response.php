@@ -61,9 +61,13 @@ class MergeHelper_Webservice_Helper_Response {
 		return $oResponse;
 	}
 
-	public function setFailedResponse(Response $oResponse, $sErrorMessage = 'This request is not valid.') {
-		$oResponse->code = Response::NOTFOUND;
-		$oResponse->body = json_encode(array('error' => $sErrorMessage));
+	public function setFailedResponse(Response $oResponse, $sErrorMessage = 'This request is not valid.', $sCallback = NULL) {
+		$oResponse->code = Response::BADREQUEST;
+		if (is_string($sCallback)) {
+			$oResponse->body = $sCallback.'('.json_encode(array('error' => TRUE, 'errorMessage' => $sErrorMessage)).');';
+		} else {
+			$oResponse->body = json_encode(array('error' => TRUE, 'error' => $sErrorMessage));
+		}
 		return $oResponse;
 	}
 

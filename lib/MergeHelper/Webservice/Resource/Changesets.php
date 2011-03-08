@@ -55,6 +55,11 @@ class MergeHelper_Webservice_Resource_Changesets extends MergeHelper_Webservice_
 	public function get($request) {
 		$oResponseHelper = new MergeHelper_Webservice_Helper_Response();
 
+		$sCallback = NULL;
+		if (isset($_GET['callback'])) {
+			$sCallback = $_GET['callback'];
+		}
+
 		if (isset($_GET['with_message_containing'])) {
 			$sSearchMode = 'with_message_containing';
 			$sSearchTerm = $_GET['with_message_containing'];
@@ -62,12 +67,7 @@ class MergeHelper_Webservice_Resource_Changesets extends MergeHelper_Webservice_
 			$sSearchMode = 'with_path_ending_on';
 			$sSearchTerm = $_GET['with_path_ending_on'];
 		} else {
-			return $oResponseHelper->setFailedResponse(new Response($request), "You can't request an unfiltered list of all changesets. Use changesets?with_message_containing=<text> or changesets?with_path_ending_on=<text> instead.");
-		}
-
-		$sCallback = NULL;
-		if (isset($_GET['callback'])) {
-			$sCallback = $_GET['callback'];
+			return $oResponseHelper->setFailedResponse(new Response($request), "You can't request an unfiltered list of all changesets. Use changesets?with_message_containing=TEXT or changesets?with_path_ending_on=TEXT instead.", $sCallback);
 		}
 
 		$oCacheDb = new PDO($this->aConfig['sRepoCacheConnectionString'], NULL, NULL);
