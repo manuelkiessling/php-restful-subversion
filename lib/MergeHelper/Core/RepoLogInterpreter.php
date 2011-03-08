@@ -40,7 +40,7 @@
  */
 
 /**
- * Class that can interprete the XML output of svn log to create Changeset objects from it
+ * Class that can interprete the XML output of an executed svn log commandline to create Changeset objects from it
  *
  * @category   VersionControl
  * @package    MergeHelper

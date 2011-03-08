@@ -40,7 +40,7 @@
  */
 
 /**
- * Object representing a command line on a shell
+ * Class which allows construction of a command line
  *
  * @category   VersionControl
  * @package    MergeHelper

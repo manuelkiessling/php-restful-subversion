@@ -40,7 +40,7 @@
  */
 
 /**
- * Autoloader for the whole PHPMergeHelper Library
+ * Autoloader for the whole MergeHelper library
  *
  * @category   VersionControl
  * @package    MergeHelper

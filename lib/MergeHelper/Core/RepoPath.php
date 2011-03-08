@@ -40,7 +40,7 @@
  */
 
 /**
- * Class representing the path to an object in a SVN repository
+ * Class representing the path to a file or folder in a SVN repository
  *
  * @category   VersionControl
  * @package    MergeHelper

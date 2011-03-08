@@ -40,7 +40,7 @@
  */
 
 /**
- * Generic Exception thrown by some of the libaries methods
+ * Generic exception thrown by some of the core libary methods
  *
  * @category   VersionControl
  * @package    MergeHelper

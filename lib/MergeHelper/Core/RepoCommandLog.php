@@ -40,7 +40,7 @@
  */
 
 /**
- * Class representing the SVN log command
+ * Class which allows to build a svn log command line
  *
  * @category   VersionControl
  * @package    MergeHelper

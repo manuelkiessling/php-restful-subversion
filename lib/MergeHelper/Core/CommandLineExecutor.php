@@ -40,10 +40,7 @@
  */
 
 /**
- * Singleton which represents the means to execute a command on the shell
- *
- * The Executor takes care of checking the cache for already known command
- * output, and of caching the results of an executed command
+ * Singleton which represents the means to execute a command line on the shell
  *
  * @category   VersionControl
  * @package    MergeHelper
@@ -65,18 +62,12 @@ class MergeHelper_Core_CommandLineExecutor {
 	}
 	
 	public static function oGetInstance() {
-
 		if (is_null(self::$oInstance)) self::$oInstance = new self;
 		return self::$oInstance;
-
 	}
 	
 	public function sGetCommandResult($sCommand) {
-
-		if (isset(self::$asCache[$sCommand])) return self::$asCache[$sCommand];
-		self::$asCache[$sCommand] = shell_exec($sCommand);
-		return self::$asCache[$sCommand];
-
+		return shell_exec($sCommand);
 	}
 
 }

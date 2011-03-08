@@ -40,7 +40,7 @@
  */
 
 /**
- * Class representing the SVN merge command
+ * Class which allows to build a svn merge command line
  *
  * @category   VersionControl
  * @package    MergeHelper

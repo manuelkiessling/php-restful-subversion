@@ -40,7 +40,7 @@
  */
 
 /**
- * Class representing a revision or range of revisions
+ * Class representing a set of changes in the repository identified by a revision
  *
  * @category   VersionControl
  * @package    MergeHelper

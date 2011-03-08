@@ -40,7 +40,7 @@
  */
 
 /**
- * Class representing an existing SVN repository
+ * Class representing a SVN repository
  *
  * @category   VersionControl
  * @package    MergeHelper

@@ -40,7 +40,7 @@
    */
 
   /**
-   * Class representing an existing SVN repository
+   * Class representing the cache of a MergeHelper_Repo SVN repository
    *
    * @category   VersionControl
    * @package    MergeHelper
@@ -53,6 +53,13 @@
 class MergeHelper_Core_RepoCache {
 
 	protected $oDb = NULL;
+
+	protected function setupDatabaseIfNecessary() {
+		$oResult = $this->oDb->query('SELECT revision FROM revisions LIMIT 1');
+		if ($oResult === FALSE) { // Database is not yet created
+			$this->resetCache();
+		}
+	}
 
 	public function __construct($oDb) {
 		$this->oDb = $oDb;
@@ -171,16 +178,10 @@ class MergeHelper_Core_RepoCache {
 		return $asReturn;
 	}
 
-	protected function setupDatabaseIfNecessary() {
-		$oResult = $this->oDb->query('SELECT revision FROM revisions LIMIT 1');
-		if ($oResult === FALSE) { // Database is not yet created
-			$this->resetCache();
-		}
-	}
 }
 
 /**
- * Exception for errors in MergeHelper_Core_RepoPath
+ * Exception for errors in MergeHelper_Core_RepoCache
  *
  * @category   VersionControl
  * @package    MergeHelper

@@ -40,7 +40,7 @@
  */
 
 /**
- * Class representing a revision or range of revisions
+ * Class representing a revision number in a SVN repository
  *
  * @category   VersionControl
  * @package    MergeHelper
@@ -84,7 +84,7 @@ class MergeHelper_Core_Revision {
 }
 
 /**
- * Exception for errors in MergeHelper_Core_RepoPath
+ * Exception for errors in MergeHelper_Core_Revision
  *
  * @category   VersionControl
  * @package    MergeHelper
