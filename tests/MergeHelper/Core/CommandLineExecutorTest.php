@@ -2,6 +2,16 @@
 
 class MergeHelper_Core_RepoCommandExecutorTest extends PHPUnit_Framework_TestCase {
 
+	protected function _assertThrowsException($sExpectedExceptionClassName, $function) {
+		$bExceptionThrown = FALSE;
+		try {
+			$function();
+		} catch (Exception $e) {
+			if (is_a($e, $sExpectedExceptionClassName)) $bExceptionThrown = TRUE;
+		}
+		$this->assertTrue($bExceptionThrown);
+	}
+
 	public function setUp() {
 		`rm -rf /var/tmp/MergeHelperExecutorTest`;
 	}
@@ -29,16 +39,10 @@ class MergeHelper_Core_RepoCommandExecutorTest extends PHPUnit_Framework_TestCas
 	}
 
 	public function test_cloningImpossible() {
-		$bExceptionThrown = FALSE;
-		$o = MergeHelper_Core_CommandLineExecutor::oGetInstance();
-
-		try {
+		$this->_assertThrowsException('MergeHelper_Core_Exception', function() {
+			$o = MergeHelper_Core_CommandLineExecutor::oGetInstance();
 			clone($o);
-		} catch (MergeHelper_Core_Exception $e) {
-			$bExceptionThrown = TRUE;
-		}
-
-		$this->assertTrue($bExceptionThrown);
+		});
 	}
 
 }
