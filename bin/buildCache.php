@@ -87,15 +87,15 @@ if (empty($sRepoCacheConnectionString)) {
 
 require_once('../lib/MergeHelper.php');
 
-$oRepo = new MergeHelper_Repo();
+$oRepo = new MergeHelper_Core_Repo();
 $oRepo->setLocation($sRepoLocation);
 $oRepo->setAuthinfo($sRepoUsername, $sRepoPassword);
 
-$oCommandLineExecutor = MergeHelper_CommandLineExecutor::oGetInstance();
-$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
-$oLogInterpreter = new MergeHelper_RepoLogInterpreter();
+$oCommandLineExecutor = MergeHelper_Core_CommandLineExecutor::oGetInstance();
+$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
+$oLogInterpreter = new MergeHelper_Core_RepoLogInterpreter();
 
-$oRepoCache = new MergeHelper_RepoCache(new PDO($sRepoCacheConnectionString, NULL, NULL));
+$oRepoCache = new MergeHelper_Core_RepoCache(new PDO($sRepoCacheConnectionString, NULL, NULL));
 $oMergeHelper = new MergeHelper($oRepo, $oRepoCache);
 
 $iHighestRevisionInRepo = (int)$oMergeHelper->oGetHighestRevisionInRepo()->sGetAsString();
@@ -117,12 +117,12 @@ while ($iCurrentRevision <= $iHighestRevisionInRepo) {
 	echo "\n";
 	echo 'About to import revision '.$iCurrentRevision.":\n";
 
-	$oRevision = new MergeHelper_Revision((string)$iCurrentRevision);
+	$oRevision = new MergeHelper_Core_Revision((string)$iCurrentRevision);
 
-	$oCommandLog = new MergeHelper_RepoCommandLog($oRepo, $oCommandLineBuilder);
+	$oCommandLog = new MergeHelper_Core_RepoCommandLog($oRepo, $oCommandLineBuilder);
 	$oCommandLog->enableVerbose();
 	$oCommandLog->enableXml();
-	$oCommandLog->setRevision(new MergeHelper_Revision((string)$iCurrentRevision));
+	$oCommandLog->setRevision(new MergeHelper_Core_Revision((string)$iCurrentRevision));
 	$sCommandline = $oCommandLog->sGetCommandline();
 	$sLogOutput = $oCommandLineExecutor->sGetCommandResult($sCommandline);
 

@@ -31,8 +31,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Command
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,85 +40,62 @@
  */
 
 /**
- * Class representing the SVN merge command
+ * Class representing the SVN log command
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Command
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Repo
- * @uses       MergeHelper_Revision
- * @uses       MergeHelper_RepoPath
+ * @uses       MergeHelper_Core_Repo
+ * @uses       MergeHelper_Core_Revision
+ * @uses       MergeHelper_Core_CommandLineExecutor
+ * @uses       MergeHelper_Core_RepoPath
  */
-class MergeHelper_RepoCommandMerge {
-
-	const SVN_CMD_MERGE = 'svn merge';
+class MergeHelper_Core_RepoCommandLog {
 	
 	protected $oRepo = NULL;
 	protected $oRevision = NULL;
-	protected $oRepoPath = NULL;
-	protected $sWorkingCopyPath = NULL;
-	protected $bDryrun = FALSE;
-	protected $bRollback = FALSE;
-	protected $oCommandLineBuilderBuilder = NULL;
-
-	public function __construct(MergeHelper_Repo $oRepo, MergeHelper_CommandLineBuilderInterface $oCommandLineBuilderBuilder) {
+	protected $sRange = NULL;
+	protected $bVerbose = FALSE;
+	protected $bXml = FALSE;
+	protected $oCommandLineBuilder = NULL;
+	
+	public function __construct(MergeHelper_Core_Repo $oRepo, MergeHelper_Core_CommandLineBuilderInterface $oCommandLineBuilder) {
 		$this->oRepo = $oRepo;
-		$this->oCommandLineBuilder = $oCommandLineBuilderBuilder;
+		$this->oCommandLineBuilder = $oCommandLineBuilder;
 	}
 	
-	public function setRevision(MergeHelper_Revision $oRevision) {
+	public function setRevision(MergeHelper_Core_Revision $oRevision) {
 		$this->oRevision = $oRevision;
 	}
 
-	public function setRepoPath(MergeHelper_RepoPath $oRepoPath) {
-		$this->oRepoPath = $oRepoPath;
+	public function enableVerbose() {
+		$this->bVerbose = TRUE;
 	}
 
-	public function setWorkingCopyPath($sWorkingCopyPath) {
-		$this->sWorkingCopyPath = $sWorkingCopyPath;
+	public function enableXml() {
+		$this->bXml = TRUE;
 	}
-
-	public function enableDryrun() {
-		$this->bDryrun = TRUE;
-	}
-
-	public function enableRollback() {
-		$this->bRollback = TRUE;
-	}
-
-	/**
-	 * creates commandline for mergeprocess
-	 *
-	 * @param array $amMerge
-	 * @param string $sRevisions
-	 * @return varchar
-	 */
-	public function sGetCommandLine() {
-		if (is_null($this->oRevision)) return NULL;
-
+		
+	public function sGetCommandline() {
 		$this->oCommandLineBuilder->reset();
 		$this->oCommandLineBuilder->setCommand('svn');
-		$this->oCommandLineBuilder->addParameter('merge');
+		$this->oCommandLineBuilder->addParameter('log');
+		$this->oCommandLineBuilder->addLongSwitch('no-auth-cache');
+		$this->oCommandLineBuilder->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
+		$this->oCommandLineBuilder->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
 
-		if ($this->bDryrun) {
-			$this->oCommandLineBuilder->addLongSwitch('dry-run');
+		if (is_object($this->oRevision)) {
+			$this->oCommandLineBuilder->addShortSwitchWithValue('r', $this->oRevision->sGetAsString());
 		}
 
-		$this->oCommandLineBuilder->addShortSwitch('c');
+		if ($this->bVerbose) $this->oCommandLineBuilder->addShortSwitch('v');
+		if ($this->bXml) $this->oCommandLineBuilder->addLongSwitch('xml');
 
-		if ($this->bRollback) {
-			$sRevisionNumber = '-'.$this->oRevision->sGetAsString();
-		} else {
-			$sRevisionNumber = $this->oRevision->sGetAsString();
-		}
-
-		$this->oCommandLineBuilder->addParameter($sRevisionNumber);
-		$this->oCommandLineBuilder->addParameter($this->oRepo->sGetLocation() . $this->oRepoPath->sGetAsString());
-		$this->oCommandLineBuilder->addParameter($this->sWorkingCopyPath);
+		$this->oCommandLineBuilder->addParameter($this->oRepo->sGetLocation());
 
 		return $this->oCommandLineBuilder->sGetCommandLine();
 	}

@@ -31,8 +31,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Command
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,87 +40,87 @@
  */
 
 /**
- * Object representing a command line on a shell
+ * Class representing the SVN merge command
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Command
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @implements MergeHelper_CommandLineInterface
+ * @uses       MergeHelper_Core_Repo
+ * @uses       MergeHelper_Core_Revision
+ * @uses       MergeHelper_Core_RepoPath
  */
-class MergeHelper_CommandLineBuilder implements MergeHelper_CommandLineBuilderInterface {
+class MergeHelper_Core_RepoCommandMerge {
 
-	protected $iNumberOfArguments;
-	protected $sCommand;
-	protected $asParameters;
-	protected $aaShortSwitches;
-	protected $aaLongSwitches;
+	const SVN_CMD_MERGE = 'svn merge';
+	
+	protected $oRepo = NULL;
+	protected $oRevision = NULL;
+	protected $oRepoPath = NULL;
+	protected $sWorkingCopyPath = NULL;
+	protected $bDryrun = FALSE;
+	protected $bRollback = FALSE;
+	protected $oCommandLineBuilderBuilder = NULL;
 
-	public function __construct() {
-		$this->reset();
+	public function __construct(MergeHelper_Core_Repo $oRepo, MergeHelper_Core_CommandLineBuilderInterface $oCommandLineBuilderBuilder) {
+		$this->oRepo = $oRepo;
+		$this->oCommandLineBuilder = $oCommandLineBuilderBuilder;
+	}
+	
+	public function setRevision(MergeHelper_Core_Revision $oRevision) {
+		$this->oRevision = $oRevision;
 	}
 
-	public function reset() {
-		$this->iNumberOfArguments = 0;
-		$this->sCommand = '';
-		$this->asParameters = array();
-		$this->aaShortSwitches = array();
-		$this->aaLongSwitches = array();
+	public function setRepoPath(MergeHelper_Core_RepoPath $oRepoPath) {
+		$this->oRepoPath = $oRepoPath;
 	}
 
-	public function setCommand($sCommand) {
-		$this->sCommand = $sCommand;
+	public function setWorkingCopyPath($sWorkingCopyPath) {
+		$this->sWorkingCopyPath = $sWorkingCopyPath;
 	}
-	
-	public function addParameter($sParameterName) {
-		$this->asParameters[$this->iNumberOfArguments] = $sParameterName;
-		$this->iNumberOfArguments++;
+
+	public function enableDryrun() {
+		$this->bDryrun = TRUE;
 	}
-	
-	public function addShortSwitch($sSwitchName) {
-		$this->addShortSwitchWithValue($sSwitchName, '');
+
+	public function enableRollback() {
+		$this->bRollback = TRUE;
 	}
-	
-	public function addShortSwitchWithValue($sSwitchName, $sSwitchValue) {
-		$this->aaShortSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
-		$this->iNumberOfArguments++;
-	}
-	
-	public function addLongSwitch($sSwitchName) {
-		$this->addLongSwitchWithValue($sSwitchName, '');
-	}
-	
-	public function addLongSwitchWithValue($sSwitchName, $sSwitchValue) {
-		$this->aaLongSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
-		$this->iNumberOfArguments++;
-	}
-	
+
+	/**
+	 * creates commandline for mergeprocess
+	 *
+	 * @param array $amMerge
+	 * @param string $sRevisions
+	 * @return varchar
+	 */
 	public function sGetCommandLine() {
-		$return = $this->sCommand;
+		if (is_null($this->oRevision)) return NULL;
 
-		for ($i = 0; $i < $this->iNumberOfArguments; $i++) {
-			
-			if (isset($this->asParameters[$i])) $return .= ' '.$this->asParameters[$i];
-			
-			if (isset($this->aaShortSwitches[$i])) {
-				$return .= ' -'.$this->aaShortSwitches[$i]['sSwitchName'];
-				if ($this->aaShortSwitches[$i]['sSwitchValue'] !== '') {
-					$return .= ' '.$this->aaShortSwitches[$i]['sSwitchValue'];
-				}
-			}
-			
-			if (isset($this->aaLongSwitches[$i])) {
-				$return .= ' --'.$this->aaLongSwitches[$i]['sSwitchName'];
-				if ($this->aaLongSwitches[$i]['sSwitchValue'] !== '') {
-					$return .= '='.$this->aaLongSwitches[$i]['sSwitchValue'];
-				}
-			}
-			
+		$this->oCommandLineBuilder->reset();
+		$this->oCommandLineBuilder->setCommand('svn');
+		$this->oCommandLineBuilder->addParameter('merge');
+
+		if ($this->bDryrun) {
+			$this->oCommandLineBuilder->addLongSwitch('dry-run');
 		}
-		return $return;
+
+		$this->oCommandLineBuilder->addShortSwitch('c');
+
+		if ($this->bRollback) {
+			$sRevisionNumber = '-'.$this->oRevision->sGetAsString();
+		} else {
+			$sRevisionNumber = $this->oRevision->sGetAsString();
+		}
+
+		$this->oCommandLineBuilder->addParameter($sRevisionNumber);
+		$this->oCommandLineBuilder->addParameter($this->oRepo->sGetLocation() . $this->oRepoPath->sGetAsString());
+		$this->oCommandLineBuilder->addParameter($this->sWorkingCopyPath);
+
+		return $this->oCommandLineBuilder->sGetCommandLine();
 	}
 
 }

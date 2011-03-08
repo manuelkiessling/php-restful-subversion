@@ -1,22 +1,22 @@
 <?php
 
-class MergeHelper_CommandLineBuilderTest extends PHPUnit_Framework_TestCase {
+class MergeHelper_Core_CommandLineBuilderTest extends PHPUnit_Framework_TestCase {
 
 	public function test_CommandLineBuilderImplementsCommandLineBuilderInterface() {
-		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+		$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
 
-		$this->assertTrue(is_a($oCommandLineBuilder, 'MergeHelper_CommandLineBuilderInterface'));
+		$this->assertTrue(is_a($oCommandLineBuilder, 'MergeHelper_Core_CommandLineBuilderInterface'));
 	}
 	
 	public function test_setCommand() {
-		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+		$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
 		$oCommandLineBuilder->setCommand('ls');
 
 		$this->assertSame('ls', $oCommandLineBuilder->sGetCommandLine());
 	}
 	
 	public function test_addParameter() {
-		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+		$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
 		$oCommandLineBuilder->setCommand('svn');
 		$oCommandLineBuilder->addParameter('info');
 
@@ -24,7 +24,7 @@ class MergeHelper_CommandLineBuilderTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function test_addParameters() {
-		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+		$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
 		$oCommandLineBuilder->setCommand('svn');
 		$oCommandLineBuilder->addParameter('help');
 		$oCommandLineBuilder->addParameter('info');
@@ -33,7 +33,7 @@ class MergeHelper_CommandLineBuilderTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function test_addShortSwitch() {
-		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+		$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
 		$oCommandLineBuilder->setCommand('ls');
 		$oCommandLineBuilder->addShortSwitch('lah');
 
@@ -41,7 +41,7 @@ class MergeHelper_CommandLineBuilderTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_addShortSwitchWithValue() {
-		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+		$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
 		$oCommandLineBuilder->setCommand('svn');
 		$oCommandLineBuilder->addShortSwitchWithValue('r', '12345');
 
@@ -49,7 +49,7 @@ class MergeHelper_CommandLineBuilderTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function test_addLongSwitch() {
-		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+		$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
 		$oCommandLineBuilder->setCommand('svn');
 		$oCommandLineBuilder->addLongSwitch('xml');
 
@@ -57,7 +57,7 @@ class MergeHelper_CommandLineBuilderTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_addLongSwitchWithValue() {
-		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+		$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
 		$oCommandLineBuilder->setCommand('svn');
 		$oCommandLineBuilder->addLongSwitchWithValue('username', 'manuel');
 
@@ -65,7 +65,7 @@ class MergeHelper_CommandLineBuilderTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function test_reset() {
-		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
+		$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
 		$oCommandLineBuilder->setCommand('svn');
 		$oCommandLineBuilder->addLongSwitchWithValue('username', 'manuel');
 		$oCommandLineBuilder->reset();

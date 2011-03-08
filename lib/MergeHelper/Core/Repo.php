@@ -31,35 +31,87 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
+ * @package    MergeHelper
  * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
-
-require_once realpath(dirname(__FILE__)).'/Autoloader.php';
-
-spl_autoload_register('MergeHelper_Autoloader::load');
-date_default_timezone_set('Europe/Berlin');
 
 /**
- * Provides bootstrap helper functions
+ * Class representing an existing SVN repository
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
+ * @package    MergeHelper
  * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Autoloader::load
+ * @uses       MergeHelper_Core_RepoPath
  */
-class MergeHelper_Bootstrap {
+class MergeHelper_Core_Repo {
 
-	public static function sGetPackageRoot() {
-		return realpath(dirname(__FILE__));
+	protected $sLocation = NULL;
+	protected $sAuthinfoUsername = NULL;
+	protected $sAuthinfoPassword = NULL;
+	protected $aoSourcePaths = array();
+	protected $oTargetPath = NULL;
+
+	public function setLocation($sLocation) {
+		$this->sLocation = $sLocation;
+	}
+
+	public function sGetLocation() {
+		return $this->sLocation;
+	}
+
+	public function sGetLocationBranches() {
+		return $this->sGetLocation().'/branches';
+	}
+
+  	public function setAuthinfo($sUsername, $sPassword) {
+		$this->sAuthinfoUsername = $sUsername;
+		$this->sAuthinfoPassword = $sPassword;
+	}
+
+	public function sGetAuthinfoUsername() {
+		return $this->sAuthinfoUsername;
+	}
+
+	public function sGetAuthinfoPassword() {
+		return $this->sAuthinfoPassword;
+	}
+
+	public function addSourcePath(MergeHelper_Core_RepoPath $oPath) {
+		$this->aoSourcePaths[] = $oPath;
+	}
+
+	public function aoGetSourcePaths() {
+		return $this->aoSourcePaths;
+	}
+	
+	public function asGetSourceLocations() {
+		$asReturn = array();
+
+		foreach ($this->aoSourcePaths as $oSourcePath) {
+			$asReturn[] = $this->sGetLocation()."$oSourcePath";
+		}
+
+		return $asReturn;
+	}
+		
+	public function setTargetPath(MergeHelper_Core_RepoPath $oPath) {
+		$this->oTargetPath = $oPath;
+	}
+
+	public function oGetTargetPath() {
+		return $this->oTargetPath;
+	}
+	
+	public function sGetTargetLocation() {
+		return $this->sGetLocation()."$this->oTargetPath";
 	}
 
 }

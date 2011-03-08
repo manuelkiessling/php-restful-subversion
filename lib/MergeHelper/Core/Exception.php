@@ -31,8 +31,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Command
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,30 +40,21 @@
  */
 
 /**
- * Interface for MergeHelper_CommandLine classes
+ * Generic Exception thrown by some of the libaries methods
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Command
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
+ * @uses       Exception
  */
-interface MergeHelper_CommandLineBuilderInterface {	
+class MergeHelper_Core_Exception extends Exception {
 
-	public function setCommand($sCommand);
-	
-	public function addParameter($sParameterName);
-	
-	public function addShortSwitch($sSwitchName);
-	
-	public function addShortSwitchWithValue($sSwitchName, $sSwitchValue);
-	
-	public function addLongSwitch($sSwitchName);
-	
-	public function addLongSwitchWithValue($sSwitchName, $sSwitchValue);
-	
-	public function sGetCommandLine();
+	public function __construct($sMessage = NULL, $iCode = 0) {
+		parent::__construct($sMessage, $iCode);
+	}
 
 }

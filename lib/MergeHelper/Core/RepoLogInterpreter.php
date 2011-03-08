@@ -31,8 +31,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Revision
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,59 +40,43 @@
  */
 
 /**
- * Class representing a revision or range of revisions
+ * Class that can interprete the XML output of svn log to create Changeset objects from it
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Revision
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
-class MergeHelper_Revision {
+class MergeHelper_Core_RepoLogInterpreter {
 
-	protected $sRevisionNumber = NULL;
-	
-	public function __construct($sRevisionNumber) {
-		if ($sRevisionNumber == 'HEAD') {
-			$this->sRevisionNumber = $sRevisionNumber;
-			return;
+	public function aoCreateChangesetsFromVerboseXml($sXml) {
+		$aoChangesets = array();
+
+		$oXml = new SimpleXMLElement($sXml);
+		foreach ($oXml->logentry as $oLogentry) {
+			$oChangeset = new MergeHelper_Core_Changeset(new MergeHelper_Core_Revision((string)$oLogentry['revision']));
+			$oChangeset->setAuthor((string)$oLogentry->author);
+			$oChangeset->setDateTime(date('Y-m-d H:i:s', strtotime($oLogentry->date)));
+			$oChangeset->setMessage((string)$oLogentry->msg);
+
+			foreach ($oLogentry->paths[0] as $oPath) {
+				$oCopyfromPath = NULL;
+				$oCopyfromRev = NULL;
+				if ($oPath['copyfrom-path']) $oCopyfromPath = new MergeHelper_Core_RepoPath((string)$oPath['copyfrom-path']);
+				if ($oPath['copyfrom-rev']) $oCopyfromRev = new MergeHelper_Core_Revision((string)$oPath['copyfrom-rev']);
+				$oChangeset->addPathOperation((string)$oPath['action'],
+											  new MergeHelper_Core_RepoPath((string)$oPath),
+											  $oCopyfromPath,
+											  $oCopyfromRev);
+			}
+
+			$aoChangesets[] = $oChangeset;
 		}
 
-		if ((int)$sRevisionNumber < 0) {
-			throw new MergeHelper_RevisionInvalidRevisionNumberException('Revision number must be positive.');
-		}
-		if ((string)(int)$sRevisionNumber != $sRevisionNumber) {
-			throw new MergeHelper_RevisionInvalidRevisionNumberException('"'.$sRevisionNumber.'" is not a valid revision number.');
-		}
-		$this->sRevisionNumber = $sRevisionNumber;
+		return $aoChangesets;
 	}
-	
-	public function sGetAsString() {
-		return (string)($this->sRevisionNumber);
-	}
-	
-	public function sGetRevertedAsString() {
-		return '-'.$this->sGetAsString();
-	}
-	
-	public function __toString() {
-		return (string)$this->sGetAsString();
-	}
-	
+
 }
-
-/**
- * Exception for errors in MergeHelper_RepoPath
- *
- * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Exception
- * @author     Manuel Kiessling <manuel@kiessling.net>
- * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
- * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
- * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Exception
- */
-class MergeHelper_RevisionInvalidRevisionNumberException extends MergeHelper_Exception {};

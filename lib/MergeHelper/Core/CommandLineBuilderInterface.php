@@ -31,8 +31,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Revision
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,67 +40,30 @@
  */
 
 /**
- * Class representing a revision or range of revisions
+ * Interface for MergeHelper_Core_CommandLine classes
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Revision
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
-class MergeHelper_Changeset {
+interface MergeHelper_Core_CommandLineBuilderInterface {
 
-	protected $oRevision = NULL;
-	protected $sAuthor = NULL;
-	protected $sDateTime = NULL;
-	protected $sMessage = NULL;
-	protected $aaPathOperations = array();
+	public function setCommand($sCommand);
 	
-	public function __construct(MergeHelper_Revision $oRevision) {
-		$this->oRevision = $oRevision;
-	}
+	public function addParameter($sParameterName);
 	
-	public function setAuthor($sAuthor) {
-		$this->sAuthor = $sAuthor;
-	}
+	public function addShortSwitch($sSwitchName);
 	
-	public function setDateTime($sDateTime) {
-		$this->sDateTime = $sDateTime;
-	}
+	public function addShortSwitchWithValue($sSwitchName, $sSwitchValue);
 	
-	public function setMessage($sMessage) {
-		$this->sMessage = $sMessage;
-	}
+	public function addLongSwitch($sSwitchName);
 	
-	public function addPathOperation($sAction, MergeHelper_RepoPath $oPath, MergeHelper_RepoPath $oCopyfromPath = NULL, MergeHelper_Revision $oCopyfromRev = NULL) {
-		$aPathOperation = array('sAction' => $sAction,
-		                        'oPath' => $oPath
-		                       );
-		if ($oCopyfromPath) $aPathOperation['oCopyfromPath'] = $oCopyfromPath;
-		if ($oCopyfromRev) $aPathOperation['oCopyfromRev'] = $oCopyfromRev;
-		$this->aaPathOperations[] = $aPathOperation;
-	}
+	public function addLongSwitchWithValue($sSwitchName, $sSwitchValue);
+	
+	public function sGetCommandLine();
 
-	public function oGetRevision() {
-		return $this->oRevision;
-	}
-
-	public function sGetAuthor() {
-		return $this->sAuthor;
-	}
-
-	public function sGetDateTime() {
-		return $this->sDateTime;
-	}
-
-	public function sGetMessage() {
-		return $this->sMessage;
-	}
-
-	public function aaGetPathOperations() {
-		return $this->aaPathOperations;
-	}
-	
 }

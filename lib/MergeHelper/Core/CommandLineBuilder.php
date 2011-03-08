@@ -31,7 +31,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
+ * @package    MergeHelper
  * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
@@ -40,31 +40,87 @@
  */
 
 /**
- * Autoloader for the whole PHPMergeHelper Library
+ * Object representing a command line on a shell
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
+ * @package    MergeHelper
  * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Bootstrap::sGetPackageRoot()
+ * @implements MergeHelper_Core_CommandLineInterface
  */
-class MergeHelper_Autoloader {
+class MergeHelper_Core_CommandLineBuilder implements MergeHelper_Core_CommandLineBuilderInterface {
+
+	protected $iNumberOfArguments;
+	protected $sCommand;
+	protected $asParameters;
+	protected $aaShortSwitches;
+	protected $aaLongSwitches;
+
+	public function __construct() {
+		$this->reset();
+	}
+
+	public function reset() {
+		$this->iNumberOfArguments = 0;
+		$this->sCommand = '';
+		$this->asParameters = array();
+		$this->aaShortSwitches = array();
+		$this->aaLongSwitches = array();
+	}
+
+	public function setCommand($sCommand) {
+		$this->sCommand = $sCommand;
+	}
 	
-	public static function load($sClass) {
-		$sFilename = mb_substr($sClass, 12).'.php';
+	public function addParameter($sParameterName) {
+		$this->asParameters[$this->iNumberOfArguments] = $sParameterName;
+		$this->iNumberOfArguments++;
+	}
+	
+	public function addShortSwitch($sSwitchName) {
+		$this->addShortSwitchWithValue($sSwitchName, '');
+	}
+	
+	public function addShortSwitchWithValue($sSwitchName, $sSwitchValue) {
+		$this->aaShortSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
+		$this->iNumberOfArguments++;
+	}
+	
+	public function addLongSwitch($sSwitchName) {
+		$this->addLongSwitchWithValue($sSwitchName, '');
+	}
+	
+	public function addLongSwitchWithValue($sSwitchName, $sSwitchValue) {
+		$this->aaLongSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
+		$this->iNumberOfArguments++;
+	}
+	
+	public function sGetCommandLine() {
+		$return = $this->sCommand;
 
-		$asPaths = array(realpath(MergeHelper_Bootstrap::sGetPackageRoot()));
-		foreach ($asPaths as $sPath) {
-			if (file_exists(realpath($sPath.'/'.$sFilename))) {
-				require_once realpath($sPath.'/'.$sFilename);
-				return $sFilename;
+		for ($i = 0; $i < $this->iNumberOfArguments; $i++) {
+			
+			if (isset($this->asParameters[$i])) $return .= ' '.$this->asParameters[$i];
+			
+			if (isset($this->aaShortSwitches[$i])) {
+				$return .= ' -'.$this->aaShortSwitches[$i]['sSwitchName'];
+				if ($this->aaShortSwitches[$i]['sSwitchValue'] !== '') {
+					$return .= ' '.$this->aaShortSwitches[$i]['sSwitchValue'];
+				}
 			}
+			
+			if (isset($this->aaLongSwitches[$i])) {
+				$return .= ' --'.$this->aaLongSwitches[$i]['sSwitchName'];
+				if ($this->aaLongSwitches[$i]['sSwitchValue'] !== '') {
+					$return .= '='.$this->aaLongSwitches[$i]['sSwitchValue'];
+				}
+			}
+			
 		}
-
-		return FALSE;
+		return $return;
 	}
 
 }

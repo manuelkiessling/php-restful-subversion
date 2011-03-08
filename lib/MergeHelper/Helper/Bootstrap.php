@@ -31,73 +31,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Command
+ * @package    MergeHelper
+ * @subpackage Helper
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
+
+require_once realpath(dirname(__FILE__)) . '/Autoloader.php';
+
+spl_autoload_register('MergeHelper_Helper_Autoloader::load');
+date_default_timezone_set('Europe/Berlin');
 
 /**
- * Class representing the SVN log command
+ * Provides bootstrap helper functions
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Command
+ * @package    MergeHelper
+ * @subpackage Helper
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Repo
- * @uses       MergeHelper_Revision
- * @uses       MergeHelper_CommandLineExecutor
- * @uses       MergeHelper_RepoPath
+ * @uses       MergeHelper_Helper_Autoloader::load
  */
-class MergeHelper_RepoCommandLog {
-	
-	protected $oRepo = NULL;
-	protected $oRevision = NULL;
-	protected $sRange = NULL;
-	protected $bVerbose = FALSE;
-	protected $bXml = FALSE;
-	protected $oCommandLineBuilder = NULL;
-	
-	public function __construct(MergeHelper_Repo $oRepo, MergeHelper_CommandLineBuilderInterface $oCommandLineBuilder) {
-		$this->oRepo = $oRepo;
-		$this->oCommandLineBuilder = $oCommandLineBuilder;
-	}
-	
-	public function setRevision(MergeHelper_Revision $oRevision) {
-		$this->oRevision = $oRevision;
-	}
+class MergeHelper_Helper_Bootstrap {
 
-	public function enableVerbose() {
-		$this->bVerbose = TRUE;
-	}
-
-	public function enableXml() {
-		$this->bXml = TRUE;
-	}
-		
-	public function sGetCommandline() {
-		$this->oCommandLineBuilder->reset();
-		$this->oCommandLineBuilder->setCommand('svn');
-		$this->oCommandLineBuilder->addParameter('log');
-		$this->oCommandLineBuilder->addLongSwitch('no-auth-cache');
-		$this->oCommandLineBuilder->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
-		$this->oCommandLineBuilder->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
-
-		if (is_object($this->oRevision)) {
-			$this->oCommandLineBuilder->addShortSwitchWithValue('r', $this->oRevision->sGetAsString());
-		}
-
-		if ($this->bVerbose) $this->oCommandLineBuilder->addShortSwitch('v');
-		if ($this->bXml) $this->oCommandLineBuilder->addLongSwitch('xml');
-
-		$this->oCommandLineBuilder->addParameter($this->oRepo->sGetLocation());
-
-		return $this->oCommandLineBuilder->sGetCommandLine();
+	public static function sGetPackageRoot() {
+		return realpath(dirname(__FILE__).'/../');
 	}
 
 }

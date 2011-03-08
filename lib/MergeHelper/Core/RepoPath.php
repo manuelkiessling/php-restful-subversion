@@ -31,8 +31,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Revision
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -43,15 +43,15 @@
  * Class representing the path to an object in a SVN repository
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Revision
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_RepoPathInvalidPathException
+ * @uses       MergeHelper_Core_RepoPathInvalidPathCoreException
  */
-class MergeHelper_RepoPath {
+class MergeHelper_Core_RepoPath {
 
 	/**
 	 * Internal string representation of the path
@@ -63,14 +63,14 @@ class MergeHelper_RepoPath {
 	 *
 	 * @param string $sPath Path to create the object for
 	 * @return void
-	 * @throws MergeHelper_RepoPathInvalidPathException if the given string doesn't have the correct format
+	 * @throws MergeHelper_Core_RepoPathInvalidPathCoreException if the given string doesn't have the correct format
 	 */
 	public function __construct($sPath) {
-		if (mb_substr($sPath, -1) === '/') throw new MergeHelper_RepoPathInvalidPathException();
-		if ($sPath[0] !== '/') throw new MergeHelper_RepoPathInvalidPathException();
-		if (mb_substr($sPath, -1) === '.') throw new MergeHelper_RepoPathInvalidPathException();
-		if (mb_substr($sPath, -5) === '/.svn') throw new MergeHelper_RepoPathInvalidPathException();
-		if (mb_strstr($sPath, '..')) throw new MergeHelper_RepoPathInvalidPathException();
+		if (mb_substr($sPath, -1) === '/') throw new MergeHelper_Core_RepoPathInvalidPathCoreException();
+		if ($sPath[0] !== '/') throw new MergeHelper_Core_RepoPathInvalidPathCoreException();
+		if (mb_substr($sPath, -1) === '.') throw new MergeHelper_Core_RepoPathInvalidPathCoreException();
+		if (mb_substr($sPath, -5) === '/.svn') throw new MergeHelper_Core_RepoPathInvalidPathCoreException();
+		if (mb_strstr($sPath, '..')) throw new MergeHelper_Core_RepoPathInvalidPathCoreException();
 		$this->sPath = $sPath;
 	}
 
@@ -85,15 +85,15 @@ class MergeHelper_RepoPath {
 }
 
 /**
- * Exception for errors in MergeHelper_RepoPath
+ * Exception for errors in MergeHelper_Core_RepoPath
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
+ * @package    MergeHelper
  * @subpackage Exception
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Exception
+ * @uses       MergeHelper_Core_Exception
  */
-class MergeHelper_RepoPathInvalidPathException extends MergeHelper_Exception {};
+class MergeHelper_Core_RepoPathInvalidPathCoreException extends MergeHelper_Core_Exception {};

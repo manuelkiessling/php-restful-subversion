@@ -31,8 +31,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Exception
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,21 +40,67 @@
  */
 
 /**
- * Generic Exception thrown by some of the libaries methods
+ * Class representing a revision or range of revisions
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Exception
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       Exception
  */
-class MergeHelper_Exception extends Exception {
+class MergeHelper_Core_Changeset {
 
-	public function __construct($sMessage = NULL, $iCode = 0) {
-		parent::__construct($sMessage, $iCode);
+	protected $oRevision = NULL;
+	protected $sAuthor = NULL;
+	protected $sDateTime = NULL;
+	protected $sMessage = NULL;
+	protected $aaPathOperations = array();
+	
+	public function __construct(MergeHelper_Core_Revision $oRevision) {
+		$this->oRevision = $oRevision;
+	}
+	
+	public function setAuthor($sAuthor) {
+		$this->sAuthor = $sAuthor;
+	}
+	
+	public function setDateTime($sDateTime) {
+		$this->sDateTime = $sDateTime;
+	}
+	
+	public function setMessage($sMessage) {
+		$this->sMessage = $sMessage;
+	}
+	
+	public function addPathOperation($sAction, MergeHelper_Core_RepoPath $oPath, MergeHelper_Core_RepoPath $oCopyfromPath = NULL, MergeHelper_Core_Revision $oCopyfromRev = NULL) {
+		$aPathOperation = array('sAction' => $sAction,
+		                        'oPath' => $oPath
+		                       );
+		if ($oCopyfromPath) $aPathOperation['oCopyfromPath'] = $oCopyfromPath;
+		if ($oCopyfromRev) $aPathOperation['oCopyfromRev'] = $oCopyfromRev;
+		$this->aaPathOperations[] = $aPathOperation;
 	}
 
+	public function oGetRevision() {
+		return $this->oRevision;
+	}
+
+	public function sGetAuthor() {
+		return $this->sAuthor;
+	}
+
+	public function sGetDateTime() {
+		return $this->sDateTime;
+	}
+
+	public function sGetMessage() {
+		return $this->sMessage;
+	}
+
+	public function aaGetPathOperations() {
+		return $this->aaPathOperations;
+	}
+	
 }

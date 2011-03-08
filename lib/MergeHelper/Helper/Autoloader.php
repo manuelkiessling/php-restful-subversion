@@ -31,8 +31,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Repository
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,78 +40,33 @@
  */
 
 /**
- * Class representing an existing SVN repository
+ * Autoloader for the whole PHPMergeHelper Library
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Repository
+ * @package    MergeHelper
+ * @subpackage Helper
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_RepoPath
+ * @uses       MergeHelper_Helper_Bootstrap::sGetPackageRoot()
  */
-class MergeHelper_Repo {
-
-	protected $sLocation = NULL;
-	protected $sAuthinfoUsername = NULL;
-	protected $sAuthinfoPassword = NULL;
-	protected $aoSourcePaths = array();
-	protected $oTargetPath = NULL;
-
-	public function setLocation($sLocation) {
-		$this->sLocation = $sLocation;
-	}
-
-	public function sGetLocation() {
-		return $this->sLocation;
-	}
-
-	public function sGetLocationBranches() {
-		return $this->sGetLocation().'/branches';
-	}
-
-  	public function setAuthinfo($sUsername, $sPassword) {
-		$this->sAuthinfoUsername = $sUsername;
-		$this->sAuthinfoPassword = $sPassword;
-	}
-
-	public function sGetAuthinfoUsername() {
-		return $this->sAuthinfoUsername;
-	}
-
-	public function sGetAuthinfoPassword() {
-		return $this->sAuthinfoPassword;
-	}
-
-	public function addSourcePath(MergeHelper_RepoPath $oPath) {
-		$this->aoSourcePaths[] = $oPath;
-	}
-
-	public function aoGetSourcePaths() {
-		return $this->aoSourcePaths;
-	}
+class MergeHelper_Helper_Autoloader {
 	
-	public function asGetSourceLocations() {
-		$asReturn = array();
+	public static function load($sClassName) {
+		$aClassParts = explode('_', $sClassName);
+		unset($aClassParts[0]);
+		$sClassPath = implode('/', $aClassParts).'.php';
 
-		foreach ($this->aoSourcePaths as $oSourcePath) {
-			$asReturn[] = $this->sGetLocation()."$oSourcePath";
+		$asPaths = array(realpath(MergeHelper_Helper_Bootstrap::sGetPackageRoot()));
+		foreach ($asPaths as $sPath) {
+			if (file_exists(realpath($sPath.'/'.$sClassPath))) {
+				require_once realpath($sPath.'/'.$sClassPath);
+				return $sClassPath;
+			}
 		}
 
-		return $asReturn;
-	}
-		
-	public function setTargetPath(MergeHelper_RepoPath $oPath) {
-		$this->oTargetPath = $oPath;
-	}
-
-	public function oGetTargetPath() {
-		return $this->oTargetPath;
-	}
-	
-	public function sGetTargetLocation() {
-		return $this->sGetLocation()."$this->oTargetPath";
+		return FALSE;
 	}
 
 }

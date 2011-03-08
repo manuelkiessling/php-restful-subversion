@@ -31,8 +31,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Command
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,43 +40,59 @@
  */
 
 /**
- * Singleton which represents the means to execute a command on the shell
- *
- * The Executor takes care of checking the cache for already known command
- * output, and of caching the results of an executed command
+ * Class representing a revision or range of revisions
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Command
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
-class MergeHelper_CommandLineExecutor {
+class MergeHelper_Core_Revision {
+
+	protected $sRevisionNumber = NULL;
 	
-	protected static $oInstance = NULL;
-	protected static $asCache = array();
+	public function __construct($sRevisionNumber) {
+		if ($sRevisionNumber == 'HEAD') {
+			$this->sRevisionNumber = $sRevisionNumber;
+			return;
+		}
 
-	protected function __construct() {}
-
-	public function __clone() {
-		throw new MergeHelper_Exception('You cannot clone the singleton instance MergeHelper_CommandLineExecutor');
+		if ((int)$sRevisionNumber < 0) {
+			throw new MergeHelper_Core_RevisionInvalidRevisionNumberCoreException('Revision number must be positive.');
+		}
+		if ((string)(int)$sRevisionNumber != $sRevisionNumber) {
+			throw new MergeHelper_Core_RevisionInvalidRevisionNumberCoreException('"'.$sRevisionNumber.'" is not a valid revision number.');
+		}
+		$this->sRevisionNumber = $sRevisionNumber;
 	}
 	
-	public static function oGetInstance() {
-
-		if (is_null(self::$oInstance)) self::$oInstance = new self;
-		return self::$oInstance;
-
+	public function sGetAsString() {
+		return (string)($this->sRevisionNumber);
 	}
 	
-	public function sGetCommandResult($sCommand) {
-
-		if (isset(self::$asCache[$sCommand])) return self::$asCache[$sCommand];
-		self::$asCache[$sCommand] = shell_exec($sCommand);
-		return self::$asCache[$sCommand];
-
+	public function sGetRevertedAsString() {
+		return '-'.$this->sGetAsString();
 	}
-
+	
+	public function __toString() {
+		return (string)$this->sGetAsString();
+	}
+	
 }
+
+/**
+ * Exception for errors in MergeHelper_Core_RepoPath
+ *
+ * @category   VersionControl
+ * @package    MergeHelper
+ * @subpackage Exception
+ * @author     Manuel Kiessling <manuel@kiessling.net>
+ * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
+ * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @link       http://manuelkiessling.github.com/PHPMergeHelper
+ * @uses       MergeHelper_Core_Exception
+ */
+class MergeHelper_Core_RevisionInvalidRevisionNumberCoreException extends MergeHelper_Core_Exception {};

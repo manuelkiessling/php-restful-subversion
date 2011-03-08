@@ -31,51 +31,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Core
+ * @package    MergeHelper
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
 
-require_once realpath(dirname(__FILE__)).'/MergeHelper/Bootstrap.php';
+require_once realpath(dirname(__FILE__)) . '/MergeHelper/Helper/Bootstrap.php';
 
 /**
  * Class implementing a Mediator pattern to allow effective use of the library
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Repository
+ * @package    MergeHelper
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Repo
- * @uses       MergeHelper_Revision
- * @uses       MergeHelper_RepoPath
- * @uses       MergeHelper_RepoCommandLog
- * @uses       MergeHelper_RepoCommandMerge
+ * @uses       MergeHelper_Core_Repo
+ * @uses       MergeHelper_Core_Revision
+ * @uses       MergeHelper_Core_RepoPath
+ * @uses       MergeHelper_Core_RepoCommandLog
+ * @uses       MergeHelper_Core_RepoCommandMerge
  */
 class MergeHelper {
 
 	protected $oRepo = NULL;
 	protected $oRepoCache = NULL;
 
-	public function __construct(MergeHelper_Repo $oRepo, MergeHelper_RepoCache $oRepoCache) {
+	public function __construct(MergeHelper_Core_Repo $oRepo, MergeHelper_Core_RepoCache $oRepoCache) {
 		$this->oRepo = $oRepo;
 		$this->oRepoCache = $oRepoCache;
 	}
 
 	public function oGetHighestRevisionInRepo() {
-		$oCommandLineExecutor = MergeHelper_CommandLineExecutor::oGetInstance();
-		$oCommandLineBuilder = new MergeHelper_CommandLineBuilder();
-		$oLogInterpreter = new MergeHelper_RepoLogInterpreter();
+		$oCommandLineExecutor = MergeHelper_Core_CommandLineExecutor::oGetInstance();
+		$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
+		$oLogInterpreter = new MergeHelper_Core_RepoLogInterpreter();
 
-		$oCommandLog = new MergeHelper_RepoCommandLog($this->oRepo, $oCommandLineBuilder);
+		$oCommandLog = new MergeHelper_Core_RepoCommandLog($this->oRepo, $oCommandLineBuilder);
 		$oCommandLog->enableVerbose();
 		$oCommandLog->enableXml();
-		$oCommandLog->setRevision(new MergeHelper_Revision('HEAD'));
+		$oCommandLog->setRevision(new MergeHelper_Core_Revision('HEAD'));
 		$sCommandline = $oCommandLog->sGetCommandline();
 		$sLogOutput = $oCommandLineExecutor->sGetCommandResult($sCommandline);
 
@@ -94,11 +92,11 @@ class MergeHelper {
 		return ($this->oGetHighestRevisionInRepo() == $this->oGetHighestRevisionInRepoCache());
 	}
 
-	public function bPathIsOnAtLeastOneSourcePath(MergeHelper_RepoPath $oPath) {
+	public function bPathIsOnAtLeastOneSourcePath(MergeHelper_Core_RepoPath $oPath) {
 		return (!is_null($this->oGetCommonSourcePathForFullPath($oPath)));
 	}
 
-	public function oGetCommonSourcePathOfRevision(MergeHelper_Revision $oRevision) {
+	public function oGetCommonSourcePathOfRevision(MergeHelper_Core_Revision $oRevision) {
 		$aoPaths = $this->aoGetPathsForRevision($oRevision);
 		$oExpectedCommonSourcePath = $this->oGetCommonSourcePathForFullPath($aoPaths[0]);
 		if (is_null($oExpectedCommonSourcePath)) return NULL;
@@ -112,7 +110,7 @@ class MergeHelper {
 		return $oExpectedCommonSourcePath;
 	}
 
-	public function oGetCommonBasePathOfRevision(MergeHelper_Revision $oRevision) {
+	public function oGetCommonBasePathOfRevision(MergeHelper_Core_Revision $oRevision) {
 		$aoPaths = $this->aoGetPathsForRevision($oRevision);
 		$oExpectedCommonBasePath = $this->oGetCommonBasePathForFullPath($aoPaths[0]);
 		if (is_null($oExpectedCommonBasePath)) return NULL;
@@ -126,11 +124,6 @@ class MergeHelper {
 		return $oExpectedCommonBasePath;
 	}
 
-	/**
-	 * Check if all files of a list of revisions share the same Repo source path
-	 *
-	 * @return bool TRUE if all paths of all $aoRevisions are on the same Repo source path, FALSE if not
-	 */
 	public function bRevisionsAreOnSameSourcePath(Array $aoRevisions) {
 		if (sizeof($aoRevisions) === 0) return FALSE;
 
@@ -154,16 +147,16 @@ class MergeHelper {
 		return TRUE;
 	}
 
-	public function oGetChangesetForRevision(MergeHelper_Revision $oRevision) {
+	public function oGetChangesetForRevision(MergeHelper_Core_Revision $oRevision) {
 		return $this->oRepoCache->oGetChangesetForRevision($oRevision);
 	}
 
-	public function sGetMergeCommandlineForRevision(MergeHelper_Revision $oRevision, $bDryrun = FALSE) {
-		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo, new MergeHelper_CommandLineBuilder());
+	public function sGetMergeCommandlineForRevision(MergeHelper_Core_Revision $oRevision, $bDryrun = FALSE) {
+		$oMergeCommand = new MergeHelper_Core_RepoCommandMerge($this->oRepo, new MergeHelper_Core_CommandLineBuilder());
 
 		$oSourcePath = $this->oGetCommonBasePathOfRevision($oRevision);
 		if (is_null($oSourcePath)) {
-			throw new MergeHelper_CannotMergeRevisionWithMixedPathsException();
+			throw new MergeHelper_Core_Exception();
 		}
 		$oMergeCommand->setRevision($oRevision);
 		$oMergeCommand->setRepoPath($oSourcePath);
@@ -174,12 +167,12 @@ class MergeHelper {
 		return $oMergeCommand->sGetCommandline();
 	}
 
-	public function sGetRollbackMergeCommandlineForRevision(MergeHelper_Revision $oRevision, $bDryrun = FALSE) {
-		$oMergeCommand = new MergeHelper_RepoCommandMerge($this->oRepo, new MergeHelper_CommandLineBuilder());
+	public function sGetRollbackMergeCommandlineForRevision(MergeHelper_Core_Revision $oRevision, $bDryrun = FALSE) {
+		$oMergeCommand = new MergeHelper_Core_RepoCommandMerge($this->oRepo, new MergeHelper_Core_CommandLineBuilder());
 
 		$oSourcePath = $this->oGetCommonBasePathOfRevision($oRevision);
 		if (is_null($oSourcePath)) {
-			throw new MergeHelper_CannotMergeRevisionWithMixedPathsException();
+			throw new MergeHelper_Core_Exception();
 		}
 		$oMergeCommand->setRevision($oRevision);
 		$oMergeCommand->setRepoPath($oSourcePath);
@@ -209,12 +202,7 @@ class MergeHelper {
 		return $aoRevisions;
 	}
 
-	/**
-	 * Get all file and directory paths for a given revision
-	 *
-	 * @return array Array of MergeHelper_RepoPath objects representing the paths of all elements of the given revision
-	 */
-	protected function aoGetPathsForRevision(MergeHelper_Revision $oRevision) {
+	protected function aoGetPathsForRevision(MergeHelper_Core_Revision $oRevision) {
 		$aoPaths = array();
 		$oChangeset = $this->oRepoCache->oGetChangesetForRevision($oRevision);
 		foreach ($oChangeset->aaGetPathOperations() as $aPathOperation) {
@@ -223,16 +211,16 @@ class MergeHelper {
 		return $aoPaths;
 	}
 
-	protected function oGetCommonBasePathForFullPath(MergeHelper_RepoPath $oPath) {
+	protected function oGetCommonBasePathForFullPath(MergeHelper_Core_RepoPath $oPath) {
 		$aoSourcePaths = $this->oRepo->aoGetSourcePaths();
 		$aoSourcePaths[] = $this->oRepo->oGetTargetPath();
 
 		foreach ($aoSourcePaths as $oSourcePath) {
 			if (mb_substr("$oPath", 0, mb_strlen("$oSourcePath")) === "$oSourcePath") {
 				// find next directory level name and add it
-				$oPathWithoutSourcePath = new MergeHelper_RepoPath(mb_substr("$oPath", mb_strlen("$oSourcePath")));
+				$oPathWithoutSourcePath = new MergeHelper_Core_RepoPath(mb_substr("$oPath", mb_strlen("$oSourcePath")));
 				$asPathWithoutSourcePathElements = explode('/', "$oPathWithoutSourcePath");
-				$oReturn = new MergeHelper_RepoPath("$oSourcePath".'/'.$asPathWithoutSourcePathElements[1]);
+				$oReturn = new MergeHelper_Core_RepoPath("$oSourcePath".'/'.$asPathWithoutSourcePathElements[1]);
 				return $oReturn;
 			}
 		}
@@ -240,29 +228,14 @@ class MergeHelper {
 		return NULL;
 	}
 
-	/**
-	 * Returns the source path all files on the given path would share
-	 *
-	 * Example: If the full path is
-	 * <pre>/branches/_production/2010-04-15/cooperations/logo_acme_123x30.gif</pre>
-	 * and one of the source paths is
-	 * <pre>/branches/_production</pre>
-	 * then the common source path is
-	 * <pre>/branches/_production/2010-04-15</pre>
-	 *
-	 * @uses MergeHelper_Repo::aoGetSourcePaths()
-	 * @uses MergeHelper_RepoPath
-	 * @return MergeHelper_RepoPath|NULL MergeHelper_RepoPath if a common path could be found, NULL if none of the $oRepo source paths matched the given path
-	 * @todo Source paths should know themselves at which level the common path starts, we currently assume sourcepath + 1
-	 */
-	protected function oGetCommonSourcePathForFullPath(MergeHelper_RepoPath $oPath) {
+	protected function oGetCommonSourcePathForFullPath(MergeHelper_Core_RepoPath $oPath) {
 		$aoSourcePaths = $this->oRepo->aoGetSourcePaths();
 		foreach ($aoSourcePaths as $oSourcePath) {
 			if (mb_substr("$oPath", 0, mb_strlen("$oSourcePath")) === "$oSourcePath") {
 				// find next directory level name and add it
-				$oPathWithoutSourcePath = new MergeHelper_RepoPath(mb_substr("$oPath", mb_strlen("$oSourcePath")));
+				$oPathWithoutSourcePath = new MergeHelper_Core_RepoPath(mb_substr("$oPath", mb_strlen("$oSourcePath")));
 				$asPathWithoutSourcePathElements = explode('/', "$oPathWithoutSourcePath");
-				$oReturn = new MergeHelper_RepoPath("$oSourcePath".'/'.$asPathWithoutSourcePathElements[1]);
+				$oReturn = new MergeHelper_Core_RepoPath("$oSourcePath".'/'.$asPathWithoutSourcePathElements[1]);
 				return $oReturn;
 			}
 		}
@@ -275,12 +248,12 @@ class MergeHelper {
  * Exception for a merge tried on a revision that doesn't have all files on the same source path
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Exception
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Exception
+ * @uses       MergeHelper_Core_Exception
  */
-class MergeHelper_CannotMergeRevisionWithMixedPathsException extends MergeHelper_Exception {};
+class MergeHelper_Core_CannotMergeRevisionWithMixedPathsCoreException extends MergeHelper_Core_Exception {};

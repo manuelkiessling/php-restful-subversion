@@ -31,8 +31,8 @@
    * POSSIBILITY OF SUCH DAMAGE.
    *
    * @category   VersionControl
-   * @package    PHPMergeHelper
-   * @subpackage Cache
+   * @package    MergeHelper
+   * @subpackage Core
    * @author     Manuel Kiessling <manuel@kiessling.net>
    * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
    * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -43,14 +43,14 @@
    * Class representing an existing SVN repository
    *
    * @category   VersionControl
-   * @package    PHPMergeHelper
-   * @subpackage Cache
+   * @package    MergeHelper
+   * @subpackage Core
    * @author     Manuel Kiessling <manuel@kiessling.net>
    * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
    * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
    * @link       http://manuelkiessling.github.com/PHPMergeHelper
    */
-class MergeHelper_RepoCache {
+class MergeHelper_Core_RepoCache {
 
 	protected $oDb = NULL;
 
@@ -80,7 +80,7 @@ class MergeHelper_RepoCache {
 		}
 	}
 
-	public function addChangeset(MergeHelper_Changeset $oChangeset) {
+	public function addChangeset(MergeHelper_Core_Changeset $oChangeset) {
 		$oStatement = $this->oDb->prepare('INSERT INTO revisions (revision, author, datetime, message) VALUES (?, ?, ?, ?)');
 
 		$bSuccessful = $oStatement->execute(array($oChangeset->oGetRevision()->sGetAsString(),
@@ -88,7 +88,7 @@ class MergeHelper_RepoCache {
 		                                          $oChangeset->sGetDateTime(),
 		                                          $oChangeset->sGetMessage()));
 		if (!$bSuccessful) {
-			throw new MergeHelper_RepoCacheRevisionAlreadyInCacheException();
+			throw new MergeHelper_Core_RepoCacheRevisionAlreadyInCacheCoreException();
 		}
 
 		$aaPathOperations = $oChangeset->aaGetPathOperations();
@@ -109,13 +109,13 @@ class MergeHelper_RepoCache {
 		                            ORDER BY revision DESC
 		                            LIMIT 1')
 				 as $asRow) {
-			return new MergeHelper_Revision($asRow['revision']);
+			return new MergeHelper_Core_Revision($asRow['revision']);
 		}
 		return FALSE;
 	}
 
-	public function oGetChangesetForRevision(MergeHelper_Revision $oRevision) {
-		$oChangeset = new MergeHelper_Changeset($oRevision);
+	public function oGetChangesetForRevision(MergeHelper_Core_Revision $oRevision) {
+		$oChangeset = new MergeHelper_Core_Changeset($oRevision);
 
 		$oStatement = $this->oDb->prepare('SELECT author, datetime, message FROM revisions WHERE revision = ?');
 		$oStatement->execute(array($oRevision->sGetAsString()));
@@ -133,9 +133,9 @@ class MergeHelper_RepoCache {
 		$oRows = $oStatement->fetchAll();
 		foreach ($oRows as $asRow) {
 			$oChangeset->addPathOperation($asRow['action'],
-			                              new MergeHelper_RepoPath($asRow['path']),
-			                              ($asRow['copyfrompath'] != '') ? new MergeHelper_RepoPath($asRow['copyfrompath']) : NULL,
-			                              ($asRow['copyfromrev'] != 0) ? new MergeHelper_Revision($asRow['copyfromrev']) : NULL);
+			                              new MergeHelper_Core_RepoPath($asRow['path']),
+			                              ($asRow['copyfrompath'] != '') ? new MergeHelper_Core_RepoPath($asRow['copyfrompath']) : NULL,
+			                              ($asRow['copyfromrev'] != 0) ? new MergeHelper_Core_Revision($asRow['copyfromrev']) : NULL);
 		}
 
 		return $oChangeset;
@@ -150,7 +150,7 @@ class MergeHelper_RepoCache {
 		                                 ORDER BY revision ASC');
 		if ($oStatement->execute(array(strrev($sString).'%'))) {
 			while ($asRow = $oStatement->fetch()) {
-				$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Revision($asRow['revision']));
+				$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Core_Revision($asRow['revision']));
 			}
 		}
 		return $asReturn;
@@ -165,7 +165,7 @@ class MergeHelper_RepoCache {
 		                                 ORDER BY revision ASC');
 		if ($oStatement->execute(array('%'.$sText.'%'))) {
 			while ($asRow = $oStatement->fetch()) {
-				$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Revision($asRow['revision']));
+				$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Core_Revision($asRow['revision']));
 			}
 		}
 		return $asReturn;
@@ -180,15 +180,15 @@ class MergeHelper_RepoCache {
 }
 
 /**
- * Exception for errors in MergeHelper_RepoPath
+ * Exception for errors in MergeHelper_Core_RepoPath
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
+ * @package    MergeHelper
  * @subpackage Exception
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
- * @uses       MergeHelper_Exception
+ * @uses       MergeHelper_Core_Exception
  */
-class MergeHelper_RepoCacheRevisionAlreadyInCacheException extends MergeHelper_Exception {};
+class MergeHelper_Core_RepoCacheRevisionAlreadyInCacheCoreException extends MergeHelper_Core_Exception {};

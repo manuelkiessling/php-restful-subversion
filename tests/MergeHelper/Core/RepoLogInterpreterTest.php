@@ -1,6 +1,6 @@
 <?php
 
-class MergeHelper_RepoLogInterpreterTest extends PHPUnit_Framework_TestCase {
+class MergeHelper_Core_RepoLogInterpreterTest extends PHPUnit_Framework_TestCase {
 
 	public function test_createChangesetsFromXmlOneRevision() {
 		$sXml = <<<EOT
@@ -35,18 +35,18 @@ EOT;
 
 		$aoExpected = array();
 
-		$oExpected = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oExpected = new MergeHelper_Core_Changeset(new MergeHelper_Core_Revision('12345'));
 		$oExpected->setAuthor('Han Solo');
 		$oExpected->setDateTime('2011-02-17 10:58:40');
 		$oExpected->setMessage("DEV-5678: Hello World\n- This is foo bar\n");
-		$oExpected->addPathOperation('A', new MergeHelper_RepoPath('/foo/bar.php'));
-		$oExpected->addPathOperation('M', new MergeHelper_RepoPath('/foo/foo.php'));
-		$oExpected->addPathOperation('A', new MergeHelper_RepoPath('/foo/targetfile.php'), new MergeHelper_RepoPath('/foo/sourcefile.php'), new MergeHelper_Revision('12344'));
-		$oExpected->addPathOperation('D', new MergeHelper_RepoPath('/foo/other.php'));
+		$oExpected->addPathOperation('A', new MergeHelper_Core_RepoPath('/foo/bar.php'));
+		$oExpected->addPathOperation('M', new MergeHelper_Core_RepoPath('/foo/foo.php'));
+		$oExpected->addPathOperation('A', new MergeHelper_Core_RepoPath('/foo/targetfile.php'), new MergeHelper_Core_RepoPath('/foo/sourcefile.php'), new MergeHelper_Core_Revision('12344'));
+		$oExpected->addPathOperation('D', new MergeHelper_Core_RepoPath('/foo/other.php'));
 
 		$aoExpected[] = $oExpected;
 
-		$oInterpreter = new MergeHelper_RepoLogInterpreter();
+		$oInterpreter = new MergeHelper_Core_RepoLogInterpreter();
 		$aoActual = $oInterpreter->aoCreateChangesetsFromVerboseXml($sXml);
 
 		$this->assertEquals($aoExpected, $aoActual);
@@ -102,27 +102,27 @@ EOT;
 
 		$aoExpected = array();
 
-		$oExpected = new MergeHelper_Changeset(new MergeHelper_Revision('12345'));
+		$oExpected = new MergeHelper_Core_Changeset(new MergeHelper_Core_Revision('12345'));
 		$oExpected->setAuthor('Han Solo');
 		$oExpected->setDateTime('2011-02-17 10:58:40');
 		$oExpected->setMessage("DEV-5678: Hello World\n- This is foo bar\n");
-		$oExpected->addPathOperation('A', new MergeHelper_RepoPath('/foo/bar.php'));
-		$oExpected->addPathOperation('M', new MergeHelper_RepoPath('/foo/foo.php'));
-		$oExpected->addPathOperation('A', new MergeHelper_RepoPath('/foo/targetfile.php'), new MergeHelper_RepoPath('/foo/sourcefile.php'), new MergeHelper_Revision('12344'));
-		$oExpected->addPathOperation('D', new MergeHelper_RepoPath('/foo/other.php'));
+		$oExpected->addPathOperation('A', new MergeHelper_Core_RepoPath('/foo/bar.php'));
+		$oExpected->addPathOperation('M', new MergeHelper_Core_RepoPath('/foo/foo.php'));
+		$oExpected->addPathOperation('A', new MergeHelper_Core_RepoPath('/foo/targetfile.php'), new MergeHelper_Core_RepoPath('/foo/sourcefile.php'), new MergeHelper_Core_Revision('12344'));
+		$oExpected->addPathOperation('D', new MergeHelper_Core_RepoPath('/foo/other.php'));
 
 		$aoExpected[] = $oExpected;
 
-		$oExpected = new MergeHelper_Changeset(new MergeHelper_Revision('12346'));
+		$oExpected = new MergeHelper_Core_Changeset(new MergeHelper_Core_Revision('12346'));
 		$oExpected->setAuthor('Luke Skywalker');
 		$oExpected->setDateTime('2011-02-17 10:59:40');
 		$oExpected->setMessage("DEV-5679: Goodbye World");
-		$oExpected->addPathOperation('A', new MergeHelper_RepoPath('/foo/targetfile2.php'), new MergeHelper_RepoPath('/foo/sourcefile2.php'), new MergeHelper_Revision('999'));
-		$oExpected->addPathOperation('M', new MergeHelper_RepoPath('/foo/bar.php'));
+		$oExpected->addPathOperation('A', new MergeHelper_Core_RepoPath('/foo/targetfile2.php'), new MergeHelper_Core_RepoPath('/foo/sourcefile2.php'), new MergeHelper_Core_Revision('999'));
+		$oExpected->addPathOperation('M', new MergeHelper_Core_RepoPath('/foo/bar.php'));
 
 		$aoExpected[] = $oExpected;
 
-		$oInterpreter = new MergeHelper_RepoLogInterpreter();
+		$oInterpreter = new MergeHelper_Core_RepoLogInterpreter();
 		$aoActual = $oInterpreter->aoCreateChangesetsFromVerboseXml($sXml);
 
 		$this->assertEquals($aoExpected, $aoActual);

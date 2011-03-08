@@ -31,8 +31,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Command
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -40,43 +40,43 @@
  */
 
 /**
- * Class that can interprete the XML output of svn log to create Changeset objects from it
+ * Singleton which represents the means to execute a command on the shell
+ *
+ * The Executor takes care of checking the cache for already known command
+ * output, and of caching the results of an executed command
  *
  * @category   VersionControl
- * @package    PHPMergeHelper
- * @subpackage Utility
+ * @package    MergeHelper
+ * @subpackage Core
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
-class MergeHelper_RepoLogInterpreter {
+class MergeHelper_Core_CommandLineExecutor {
+	
+	protected static $oInstance = NULL;
+	protected static $asCache = array();
 
-	public function aoCreateChangesetsFromVerboseXml($sXml) {
-		$aoChangesets = array();
+	protected function __construct() {}
 
-		$oXml = new SimpleXMLElement($sXml);
-		foreach ($oXml->logentry as $oLogentry) {
-			$oChangeset = new MergeHelper_Changeset(new MergeHelper_Revision((string)$oLogentry['revision']));
-			$oChangeset->setAuthor((string)$oLogentry->author);
-			$oChangeset->setDateTime(date('Y-m-d H:i:s', strtotime($oLogentry->date)));
-			$oChangeset->setMessage((string)$oLogentry->msg);
+	public function __clone() {
+		throw new MergeHelper_Core_Exception('You cannot clone the singleton instance MergeHelper_Core_CommandLineExecutor');
+	}
+	
+	public static function oGetInstance() {
 
-			foreach ($oLogentry->paths[0] as $oPath) {
-				$oCopyfromPath = NULL;
-				$oCopyfromRev = NULL;
-				if ($oPath['copyfrom-path']) $oCopyfromPath = new MergeHelper_RepoPath((string)$oPath['copyfrom-path']);
-				if ($oPath['copyfrom-rev']) $oCopyfromRev = new MergeHelper_Revision((string)$oPath['copyfrom-rev']);
-				$oChangeset->addPathOperation((string)$oPath['action'],
-											  new MergeHelper_RepoPath((string)$oPath),
-											  $oCopyfromPath,
-											  $oCopyfromRev);
-			}
+		if (is_null(self::$oInstance)) self::$oInstance = new self;
+		return self::$oInstance;
 
-			$aoChangesets[] = $oChangeset;
-		}
+	}
+	
+	public function sGetCommandResult($sCommand) {
 
-		return $aoChangesets;
+		if (isset(self::$asCache[$sCommand])) return self::$asCache[$sCommand];
+		self::$asCache[$sCommand] = shell_exec($sCommand);
+		return self::$asCache[$sCommand];
+
 	}
 
 }
