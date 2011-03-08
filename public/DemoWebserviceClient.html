@@ -3,21 +3,25 @@
 
 	<head>
 
-		<script src="angular-0.9.12.min.js" ng:autobind></script>
+		<script src="js/angular-0.9.12.min.js" ng:autobind></script>
 
 		<script>
 			ChangesetsController.$inject = ['$resource'];
 			function ChangesetsController($resource) {
-				this.Finder = $resource(
+				this.ChangesetsResource = $resource(
 					'/changesets',
-					{ alt: 'json', callback: 'JSON_CALLBACK' },
+					{ callback: 'JSON_CALLBACK' },
 					{ get: { method: 'JSON' } }
 				);
 			}
 
 			ChangesetsController.prototype = {
-				fetch: function() {
-					this.result = this.Finder.get({ with_message_containing:this.text });
+				fetchWithMessageContaining: function() {
+					this.result = this.ChangesetsResource.get({ with_message_containing: this.messagePart });
+				},
+
+				fetchWithPathEndingOn: function() {
+					this.result = this.ChangesetsResource.get({ with_path_ending_on: this.pathEnd });
 				}
 			};
 		</script>
@@ -27,23 +31,46 @@
 	<body>
 
 		<div ng:controller="ChangesetsController">
-			<input name="text" value="ini"/>
-			<button ng:click="fetch()">find</button>
+			<div class="searchform">
+				<div class="message">
+					Show changesets with message containing:
+					<input name="messagePart" value="Hello World"/>
+					<button ng:click="fetchWithMessageContaining()">Find</button>
+				</div>
+				<div class="path">
+					Show changesets with at least one path ending on:
+					<input name="pathEnd" value="index.php"/>
+					<button ng:click="fetchWithPathEndingOn()">Find</button>
+				</div>
+			</div>
 			<hr/>
-			<div class="changeset" ng:repeat="changeset in result.changesets">
-				<div class="info">
-					Revision: {{changeset.sRevisionNumber}}
-					<br />
-					Author: {{changeset.sAuthor}}
-					<br />
-					Commit date and time: {{changeset.sDateTime}}
-					<br />
-					Message: {{changeset.sMessage}}
+			<div class="searchresults">
+				<div class="searchresult" ng:repeat="changeset in result.changesets">
+					<div class="changeset metadata">
+						<div class="revision">
+							<span class="label">Revision:</span>
+							<span class="value">{{changeset.sRevisionNumber}}</span>
+						</div>
+						<div class="author">
+							<span class="label">Author:</span>
+							<span class="value">{{changeset.sAuthor}}</span>
+						</div>
+						<div class="datetime">
+							<span class="label">Date and time of commit:</span>
+							<span class="value">{{changeset.sDateTime}}</span>
+						</div>
+						<div class="message">
+							<span class="label">Message:</span>
+							<div class="value">{{changeset.sMessage}}</div>
+						</div>
+					</div>
+					<div class="changeset pathoperations">
+						<div class="pathoperation" ng:repeat="aPathoperation in changeset.aaPathoperations">
+							<div class="action">{{aPathoperation.sAction}}</div>
+							<div class="path">{{aPathoperation.sPath}}</div>
+						</div>
+					</div>
 				</div>
-				<div class="pathoperations">
-					<code class="pathoperation" ng:repeat="aPathoperation in changeset.aaPathoperations">{{aPathoperation.sAction}} {{aPathoperation.sPath}}<br /></code>
-				</div>
-				<p />
 			</div>
 		</div>
 
