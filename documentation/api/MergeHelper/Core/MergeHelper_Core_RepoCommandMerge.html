@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class MergeHelper_Core_RepoCommandMerge</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class MergeHelper_Core_RepoCommandMerge</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+						
+			</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Class which allows to build a svn merge command line</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Manuel Kiessling &lt;<a href="mailto:manuel@kiessling.net">manuel@kiessling.net</a>&gt;</li>
+				<li><span class="field">copyright:</span> 2011 Manuel Kiessling &lt;manuel@kiessling.net&gt;</li>
+				<li><span class="field">link:</span> <a href="http://manuelkiessling.github.com/PHPMergeHelper">http://manuelkiessling.github.com/PHPMergeHelper</a></li>
+				<li><span class="field">uses:</span> <a href="../../MergeHelper/Core/MergeHelper_Core_Revision.html">MergeHelper_Core_Revision</a></li>
+				<li><span class="field">uses:</span> <a href="../../MergeHelper/Core/MergeHelper_Core_RepoPath.html">MergeHelper_Core_RepoPath</a></li>
+				<li><span class="field">uses:</span> <a href="../../MergeHelper/Core/MergeHelper_Core_Repo.html">MergeHelper_Core_Repo</a></li>
+				<li><span class="field">license:</span> <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_MergeHelper---Core---RepoCommandMerge.php.html">/MergeHelper/Core/RepoCommandMerge.php</a> (line <span class="field">56</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+	<a name="sec-const-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constant Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Constants</span> (<a href="#sec-consts">details</a>)
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<div class="const-summary">
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#SVN_CMD_MERGE" title="details" class="const-name">SVN_CMD_MERGE</a> = 					<span class="var-type"> 'svn merge'</span>
+
+				</div>
+							</div>
+		</div>
+	</div>
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																																								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$bDryrun" title="details" class="var-name">$bDryrun</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$bRollback" title="details" class="var-name">$bRollback</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$oCommandLineBuilderBuilder" title="details" class="var-name">$oCommandLineBuilderBuilder</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$oRepo" title="details" class="var-name">$oRepo</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$oRepoPath" title="details" class="var-name">$oRepoPath</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$oRevision" title="details" class="var-name">$oRevision</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$sWorkingCopyPath" title="details" class="var-name">$sWorkingCopyPath</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																						
+				<div class="method-definition">
+											<span class="method-result">MergeHelper_Core_RepoCommandMerge</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_Repo.html">MergeHelper_Core_Repo</a></span>&nbsp;<span class="var-name">$oRepo</span>, <span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_CommandLineBuilderInterface.html">MergeHelper_Core_CommandLineBuilderInterface</a></span>&nbsp;<span class="var-name">$oCommandLineBuilderBuilder</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#enableDryrun" title="details" class="method-name">enableDryrun</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#enableRollback" title="details" class="method-name">enableRollback</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setRepoPath" title="details" class="method-name">setRepoPath</a>
+											(<span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_RepoPath.html">MergeHelper_Core_RepoPath</a></span>&nbsp;<span class="var-name">$oRepoPath</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setRevision" title="details" class="method-name">setRevision</a>
+											(<span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_Revision.html">MergeHelper_Core_Revision</a></span>&nbsp;<span class="var-name">$oRevision</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setWorkingCopyPath" title="details" class="method-name">setWorkingCopyPath</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$sWorkingCopyPath</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">varchar</span>
+										<a href="#sGetCommandLine" title="details" class="method-name">sGetCommandLine</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$amMerge</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$sRevisions</span>)
+									</div>
+											</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			
+<a name="var$bDryrun" id="$bDryrun"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$bDryrun</span>
+			 = <span class="var-default"> FALSE</span>			(line <span class="line-number">64</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$bRollback" id="$bRollback"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$bRollback</span>
+			 = <span class="var-default"> FALSE</span>			(line <span class="line-number">65</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$oCommandLineBuilderBuilder" id="$oCommandLineBuilderBuilder"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$oCommandLineBuilderBuilder</span>
+			 = <span class="var-default"> NULL</span>			(line <span class="line-number">66</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$oRepo" id="$oRepo"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$oRepo</span>
+			 = <span class="var-default"> NULL</span>			(line <span class="line-number">60</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$oRepoPath" id="$oRepoPath"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$oRepoPath</span>
+			 = <span class="var-default"> NULL</span>			(line <span class="line-number">62</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$oRevision" id="$oRevision"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$oRevision</span>
+			 = <span class="var-default"> NULL</span>			(line <span class="line-number">61</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$sWorkingCopyPath" id="$sWorkingCopyPath"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$sWorkingCopyPath</span>
+			 = <span class="var-default"> NULL</span>			(line <span class="line-number">63</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																			<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">68</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">MergeHelper_Core_RepoCommandMerge</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_Repo.html">MergeHelper_Core_Repo</a></span>&nbsp;<span class="var-name">$oRepo</span>, <span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_CommandLineBuilderInterface.html">MergeHelper_Core_CommandLineBuilderInterface</a></span>&nbsp;<span class="var-name">$oCommandLineBuilderBuilder</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_Repo.html">MergeHelper_Core_Repo</a></span>
+				<span class="var-name">$oRepo</span>			</li>
+					<li>
+				<span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_CommandLineBuilderInterface.html">MergeHelper_Core_CommandLineBuilderInterface</a></span>
+				<span class="var-name">$oCommandLineBuilderBuilder</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodenableDryrun" id="enableDryrun"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">enableDryrun</span> (line <span class="line-number">85</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			enableDryrun
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodenableRollback" id="enableRollback"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">enableRollback</span> (line <span class="line-number">89</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			enableRollback
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetRepoPath" id="setRepoPath"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setRepoPath</span> (line <span class="line-number">77</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setRepoPath
+		</span>
+					(<span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_RepoPath.html">MergeHelper_Core_RepoPath</a></span>&nbsp;<span class="var-name">$oRepoPath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_RepoPath.html">MergeHelper_Core_RepoPath</a></span>
+				<span class="var-name">$oRepoPath</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetRevision" id="setRevision"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setRevision</span> (line <span class="line-number">73</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setRevision
+		</span>
+					(<span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_Revision.html">MergeHelper_Core_Revision</a></span>&nbsp;<span class="var-name">$oRevision</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../MergeHelper/Core/MergeHelper_Core_Revision.html">MergeHelper_Core_Revision</a></span>
+				<span class="var-name">$oRevision</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetWorkingCopyPath" id="setWorkingCopyPath"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setWorkingCopyPath</span> (line <span class="line-number">81</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setWorkingCopyPath
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sWorkingCopyPath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sWorkingCopyPath</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsGetCommandLine" id="sGetCommandLine"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">sGetCommandLine</span> (line <span class="line-number">100</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">creates commandline for mergeprocess</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">varchar</span>
+		<span class="method-name">
+			sGetCommandLine
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$amMerge</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$sRevisions</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$amMerge</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$sRevisions</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="constSVN_CMD_MERGE" id="SVN_CMD_MERGE"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">SVN_CMD_MERGE</span>
+			 = <span class="const-default"> 'svn merge'</span>
+			(line <span class="line-number">58</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+						
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Tue, 08 Mar 2011 15:01:08 +0100 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>
