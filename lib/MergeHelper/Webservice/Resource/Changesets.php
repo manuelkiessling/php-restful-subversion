@@ -65,6 +65,7 @@ class MergeHelper_Webservice_Resource_Changesets extends MergeHelper_Webservice_
 			return $oResponseHelper->setFailedResponse(new Response($request), "You can't request an unfiltered list of all changesets. Use changesets?with_message_containing=<text> or changesets?with_path_ending_on=<text> instead.");
 		}
 
+		$sCallback = NULL;
 		if (isset($_GET['callback'])) {
 			$sCallback = $_GET['callback'];
 		}
