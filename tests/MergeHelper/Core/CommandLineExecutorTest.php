@@ -13,19 +13,6 @@ class MergeHelper_Core_RepoCommandExecutorTest extends PHPUnit_Framework_TestCas
 		                  MergeHelper_Core_CommandLineExecutor::oGetInstance()->sGetCommandResult($sCommand));
 	}
 
-	public function test_cachingWorks() {
-
-		`mkdir /var/tmp/MergeHelperExecutorTest`;
-		`touch /var/tmp/MergeHelperExecutorTest/test1.txt`;
-		MergeHelper_Core_CommandLineExecutor::oGetInstance()->sGetCommandResult('ls /var/tmp/MergeHelperExecutorTest');
-		`touch /var/tmp/MergeHelperExecutorTest/test2.txt`;
-
-		// We assert the same result, because an identical command returns a previously cached result
-		$this->assertSame('test1.txt'."\n",
-		                  MergeHelper_Core_CommandLineExecutor::oGetInstance()->sGetCommandResult('ls /var/tmp/MergeHelperExecutorTest'));
-
-	}
-
 	public function test_singletonReturnsSameInstance() {
 		$this->assertTrue(MergeHelper_Core_CommandLineExecutor::oGetInstance() === MergeHelper_Core_CommandLineExecutor::oGetInstance(),
                          'Singleton is not working!'
