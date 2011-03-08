@@ -41,8 +41,9 @@
 					Message: {{changeset.sMessage}}
 				</div>
 				<div class="pathoperations">
-					<pre class="pathoperation" ng:repeat="aPathoperation in changeset.aaPathoperations">{{aPathoperation.sAction}} {{aPathoperation.sPath}}</pre>
+					<code class="pathoperation" ng:repeat="aPathoperation in changeset.aaPathoperations">{{aPathoperation.sAction}} {{aPathoperation.sPath}}<br /></code>
 				</div>
+				<p />
 			</div>
 		</div>
 
