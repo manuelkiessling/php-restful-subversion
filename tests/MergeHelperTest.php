@@ -27,7 +27,7 @@ class MergeHelperTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function test_getHighestRevisionInRepo() {
-		$this->assertSame('7', $this->oMergeHelper->oGetHighestRevisionInRepo()->sGetAsString());
+		$this->assertSame('9', $this->oMergeHelper->oGetHighestRevisionInRepo()->sGetAsString());
 	}
 
 	public function test_getHighestRevisionInRepoCache() {
