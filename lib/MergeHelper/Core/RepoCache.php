@@ -150,13 +150,22 @@ class MergeHelper_Core_RepoCache {
 		return $oChangeset;
 	}
 
-	public function aoGetChangesetsWithPathEndingOn($sString) {
+	public function aoGetChangesetsWithPathEndingOn($sString, $sOrder = 'ascending', $iLimit = NULL) {
+		if ($sOrder === 'descending') {
+			$sOrder = 'DESC';
+		} else {
+			$sOrder = 'ASC';
+		}
+		$sLimitClause = '';
+		if (!is_null($iLimit)) {
+			$sLimitClause = ' LIMIT '.$this->oDb->quote((int)$iLimit);
+		}
 		$asReturn = array();
 		$oStatement = $this->oDb->prepare('SELECT revision
 		                                     FROM pathoperations
 		                                    WHERE revertedpath LIKE ?
 		                                 GROUP BY revision
-		                                 ORDER BY revision ASC');
+		                                 ORDER BY revision '.$sOrder.$sLimitClause);
 		if ($oStatement->execute(array(strrev($sString).'%'))) {
 			while ($asRow = $oStatement->fetch()) {
 				$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Core_Revision($asRow['revision']));
