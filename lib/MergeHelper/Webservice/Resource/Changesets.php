@@ -70,19 +70,38 @@ class MergeHelper_Webservice_Resource_Changesets extends MergeHelper_Webservice_
 			return $oResponseHelper->setFailedResponse(new Response($request), "You can't request an unfiltered list of all changesets. Use changesets?with_message_containing=TEXT or changesets?with_path_ending_on=TEXT instead.", $sCallback);
 		}
 
+
+		$sSortOrder = 'descending';
+		if (isset($_GET['sort_order'])) {
+			$sSortOrder = $_GET['sort_order'];
+		}
+		if (!($sSortOrder === 'ascending' || $sSortOrder === 'descending')) {
+			return $oResponseHelper->setFailedResponse(new Response($request), "Sort order must be 'ascending' or 'descending'.", $sCallback);
+		}
+
+		$iLimit = NULL;
+		if (isset($_GET['limit'])) {
+			if (!is_numeric($_GET['limit']) || (string)(int)$_GET['limit'] !== $_GET['limit']) {
+				return $oResponseHelper->setFailedResponse(new Response($request), "Limit must be an integer value.", $sCallback);
+			}
+			$iLimit = (int)$_GET['limit'];
+		}
+		if ($iLimit === 0) $iLimit = NULL;
+
 		$oCacheDb = new PDO($this->aConfig['sRepoCacheConnectionString'], NULL, NULL);
 		$oRepoCache = new MergeHelper_Core_RepoCache($oCacheDb);
 		$aaChangesets = array();
 
 		if ($sSearchMode == 'with_message_containing') {
-			$aoChangesets = $oRepoCache->aoGetChangesetsWithMessageContainingText($sSearchTerm);
+			$aoChangesets = $oRepoCache->aoGetChangesetsWithMessageContainingText($sSearchTerm, $sSortOrder, $iLimit);
 		} elseif ($sSearchMode == 'with_path_ending_on') {
-			$aoChangesets = $oRepoCache->aoGetChangesetsWithPathEndingOn($sSearchTerm);
+			$aoChangesets = $oRepoCache->aoGetChangesetsWithPathEndingOn($sSearchTerm, $sSortOrder, $iLimit);
 		}
 
 		foreach ($aoChangesets as $oChangeset) {
 			$aaChangesets[] = MergeHelper_Webservice_Resource_Changeset::aGetChangesetAsArray($oChangeset);
 		}
+		ksort($aaChangesets);
 
 		return $oResponseHelper->setResponse(new Response($request), array('changesets' => $aaChangesets), $sCallback);
 	}
