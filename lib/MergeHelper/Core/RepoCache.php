@@ -165,18 +165,22 @@ class MergeHelper_Core_RepoCache {
 		return $asReturn;
 	}
 
-	public function aoGetChangesetsWithMessageContainingText($sText, $sOrder = 'ascending') {
+	public function aoGetChangesetsWithMessageContainingText($sText, $sOrder = 'ascending', $iLimit = NULL) {
 		if ((string)$sText === '') return array();
 		if ($sOrder === 'descending') {
 			$sOrder = 'DESC';
 		} else {
 			$sOrder = 'ASC';
 		}
+		$sLimitClause = '';
+		if (!is_null($iLimit)) {
+			$sLimitClause = ' LIMIT '.$this->oDb->quote((int)$iLimit);
+		}
 		$asReturn = array();
 		$oStatement = $this->oDb->prepare('SELECT revision
 		                                     FROM revisions
 		                                    WHERE message LIKE ?
-		                                 ORDER BY revision '.$sOrder);
+		                                 ORDER BY revision '.$sOrder.$sLimitClause);
 		if ($oStatement->execute(array('%'.$sText.'%'))) {
 			while ($asRow = $oStatement->fetch()) {
 				$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Core_Revision($asRow['revision']));

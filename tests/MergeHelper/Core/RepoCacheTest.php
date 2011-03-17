@@ -156,6 +156,38 @@ class MergeHelper_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithMessageContainingText('world', 'descending'));
 	}
 
+	public function test_getChangesetsWithMessageContainingTextOrderDescendingLimited() {
+		$aoExpected = array();
+
+		$oChangeset = new MergeHelper_Core_Changeset(new MergeHelper_Core_Revision('1234'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_Core_RepoPath('/foo/a.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		$oChangeset = new MergeHelper_Core_Changeset(new MergeHelper_Core_Revision('1235'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-19 22:56:00');
+		$oChangeset->setMessage('Helloworlds');
+		$oChangeset->addPathOperation('M', new MergeHelper_Core_RepoPath('/foo/ar.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+		$aoExpected[] = $oChangeset;
+
+		$oChangeset = new MergeHelper_Core_Changeset(new MergeHelper_Core_Revision('1236'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-20 22:56:00');
+		$oChangeset->setMessage('Hello W orld');
+		$oChangeset->addPathOperation('M', new MergeHelper_Core_RepoPath('/foo/bar/bla.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+
+		reset($aoExpected);
+		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithMessageContainingText('world', 'descending', 1));
+	}
+
 	public function test_getChangesetsWithMessageContainingTextNoTextGiven() {
 		$oChangeset = new MergeHelper_Core_Changeset(new MergeHelper_Core_Revision('1234'));
 		$oChangeset->setAuthor('Han Solo');
