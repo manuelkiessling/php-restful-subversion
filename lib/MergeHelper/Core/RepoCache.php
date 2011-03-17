@@ -72,15 +72,17 @@ class MergeHelper_Core_RepoCache {
 		$asSql[] = 'DROP TABLE IF EXISTS revisions;';
 		$asSql[] = 'CREATE TABLE revisions(revision INTEGER PRIMARY KEY NOT NULL, author TEXT(64), datetime DATETIME, message TEXT(2048));';
 
-		$asSql[] = 'CREATE INDEX author ON revisions(author);';
-		$asSql[] = 'CREATE INDEX message ON revisions(message);';
-		$asSql[] = 'CREATE INDEX datetime ON revisions(date, time);';
+		$asSql[] = 'CREATE INDEX r_revision ON revisions(revision);';
+		$asSql[] = 'CREATE INDEX r_author ON revisions(author);';
+		$asSql[] = 'CREATE INDEX r_message ON revisions(message);';
+		$asSql[] = 'CREATE INDEX r_datetime ON revisions(date, time);';
 
 		$asSql[] = 'DROP TABLE IF EXISTS pathoperations;';
 		$asSql[] = 'CREATE TABLE pathoperations (id INTEGER PRIMARY KEY, revision INTEGER NOT NULL, action TEXT(1), path TEXT(512), revertedpath TEXT(512), copyfrompath TEXT(512), copyfromrev INTEGER, FOREIGN KEY(revision) REFERENCES revisions(revision));';
 
-		$asSql[] = 'CREATE INDEX path ON pathoperations(path);';
-		$asSql[] = 'CREATE INDEX revertedpath ON pathoperations(revertedpath);';
+		$asSql[] = 'CREATE INDEX p_revision ON pathoperations(revision);';
+		$asSql[] = 'CREATE INDEX p_path ON pathoperations(path);';
+		$asSql[] = 'CREATE INDEX p_revertedpath ON pathoperations(revertedpath);';
 
 		foreach ($asSql as $sSql) {
 			$this->oDb->exec($sSql);
