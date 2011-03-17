@@ -198,9 +198,6 @@ and fill in real values according to our environment.
 (You can use of course any text editor you like for editing this file).
 
 The first value, _sRepoCacheConnectionString_, is probably fine for you as it
-is and you're not going to change it. If you would like to locate the 
+is and you're not going to change it.
 
-
-But wait, if you are planning to write your own PHP application by using
-PHPMergeHelper, and you don't need the RESTful webservice PHPMergeHelper
-provides,
+_to be continued..._
