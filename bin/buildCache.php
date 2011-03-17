@@ -31,8 +31,13 @@ file needs to be designed.
 
 Example for variant 2:
 
-   buildCache.php http://svn.example.com/ user pass sqlite:/var/tmp/svncache.db
+   buildCache.php http://svn.example.com/ user pass sqlite:/var/tmp/svncache.db 100
 
+This last parameter is optional and defines how many revisions should be
+imported to the cache during the run of this script. After reaching this
+amount of imports, the script will exit. If no value is provided, an unlimited
+number of revisions will be imported (of course limited by the maximum number
+of revisions that are in your repository).
 
 EOT;
 
@@ -50,6 +55,10 @@ if (is_file($argv[1])) {
 	$sRepoUsername = $aConfig['sRepoUsername'];
 	$sRepoPassword = $aConfig['sRepoPassword'];
 	$sRepoCacheConnectionString = $aConfig['sRepoCacheConnectionString'];
+	$iMaxImportsPerRun = 0;
+	if (array_key_exists('iMaxImportsPerRun', $aConfig)) {
+		$iMaxImportsPerRun = $aConfig['iMaxImportsPerRun'];
+	}
 } else {
 	$sRepoLocation = $argv[1];
 
@@ -67,6 +76,11 @@ if (is_file($argv[1])) {
 		displayErrorWithUsageInformationAndExit("You need to provide a PDO compatible connection string.");
 	}
 	$sRepoCacheConnectionString = $argv[4];
+
+	$iMaxImportsPerRun = 0;
+	if (array_key_exists(5, $argv)) {
+		$iMaxImportsPerRun = (int)$argv[5];
+	}
 }
 
 if (empty($sRepoLocation)) {
@@ -113,7 +127,13 @@ if ($iHighestRevisionInRepoCache == 0) {
 	$iCurrentRevision = $iHighestRevisionInRepoCache + 1;
 }
 
+$i = 0;
 while ($iCurrentRevision <= $iHighestRevisionInRepo) {
+	if ($iMaxImportsPerRun != 0 && $i == $iMaxImportsPerRun) {
+		echo "Imported the maximum number of $i revisions for this run, exiting.\n";
+		exit(0);
+	}
+
 	echo "\n";
 	echo 'About to import revision '.$iCurrentRevision.":\n";
 
@@ -132,6 +152,7 @@ while ($iCurrentRevision <= $iHighestRevisionInRepo) {
 		$oRepoCache->addChangeset($oChangeset);
 		$iCurrentRevision++;
 	}
+	$i++;
 }
 
 echo "All revisions imported to cache.\n";
