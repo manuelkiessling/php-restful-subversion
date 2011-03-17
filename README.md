@@ -1,5 +1,8 @@
 # PHPMergeHelper
 
+_Scroll down for detailed installation instructions._
+
+
 ## About
 
 PHPMergeHelper...
@@ -12,7 +15,7 @@ PHPMergeHelper...
 3. ...provides tools to cache your Subversion repository in order to make
    it searchable through the library in a fast and simple manner
 
-## Project Parts
+### Project Parts
 
 Maybe this stuff makes more sense when being visualized:
 
@@ -59,7 +62,7 @@ whose name ends on includes a certain string ("show me all changesets which
 include the file main/default.txt").
 
 
-## How PHPMergeHelper may help you with your approval and release process
+### How PHPMergeHelper may help you with your approval and release process
 
 As said PHPMergeHelper is a collection of PHP classes which allow developers to
 easily create tailor-made tools for merge- and releasemanagement within SVN
@@ -104,3 +107,100 @@ relating issue numbers into the commit messages), whereupon the tool shows him
 a chronologically ordered list of all commits for these issues, the command
 lines neccessary to merge these issues to the release branch, and warn him if
 there have already been release-commits for these issues.
+
+
+## Installation on Linux systems
+
+Getting PHPMergeHelper up and running usually takes around ten minutes and
+is a process which can roughly be split into four parts:
+
+1. Preparing your system
+2. Deploy and configure PHPMergeHelper
+3. Build the Subversion cache
+4. Configure Apache to serve the RESTful JSON webservice
+
+The following process describes the detailed steps necessary for every part
+of the process. The description of this process is targeted at an installation
+on a Debian GNU/Linux 6.0 ("Squeeze") system with at least the "Standard system
+utilities" collection installed.
+
+In order to keep things a bit simpler, I assume you do everything as root.
+
+
+### 1. Preparing your system
+
+Besides the packages already available on your system and PHPMergeHelper
+itself, you'll will need the following packages:
+
+* Git
+* Subversion
+* SQLite 3
+* PHP 5.3
+* PHPUnit 3
+* Apache 2
+
+In order to achieve this, you just need to run these commands:
+
+    apt-get update
+    apt-get install git
+    apt-get install subversion
+    apt-get install sqlite3
+    apt-get install php5-sqlite
+    apt-get install libapache2-mod-php5
+    apt-get install phpunit
+
+
+### 2. Deploy and configure PHPMergeHelper
+
+Now we are going to download PHPMergeHelper and see if it can work at all:
+
+    cd /opt
+    git clone git://github.com/ManuelKiessling/PHPMergeHelper.git
+    cd PHPMergeHelper/tests
+    bash ./runall.sh
+
+This should produce an output similar to
+
+    PHPUnit 3.4.14 by Sebastian Bergmann.
+
+    ............................................................ 60 / 91
+    ...............................
+
+    Time: 1 second, Memory: 9.25Mb
+
+    OK (91 tests, 92 assertions)
+
+The important thing is that there haven't been any failures, like this:
+
+    FAILURES!
+    Tests: 91, Assertions: 92, Failures: 1.
+
+If everything went fine, we can go on to configure our PHPMergeHelper
+configuration.
+
+Basically, this means to tell PHPMergeHelper where your Subversion repository
+is and where your Subversion cache is going to be.
+
+Have a look at _/opt/PHPMergeHelper/etc/PHPMergeHelper.sample.conf_ - it looks
+like this:
+
+    $aConfig['sRepoCacheConnectionString'] = 'sqlite:/var/tmp/PHPMergeHelper.RepoCache.sqlite';
+    $aConfig['sRepoLocation'] = 'http://svn.example.com/';
+    $aConfig['sRepoUsername'] = 'user';
+    $aConfig['sRepoPassword'] = 'password';
+
+We are going to copy this example file to _/opt/PHPMergeHelper/etc/PHPMergeHelper.conf_
+and fill in real values according to our environment.
+
+    cp /opt/PHPMergeHelper/etc/PHPMergeHelper.sample.conf /opt/PHPMergeHelper/etc/PHPMergeHelper.conf
+    vim /opt/PHPMergeHelper/etc/PHPMergeHelper.conf
+
+(You can use of course any text editor you like for editing this file).
+
+The first value, _sRepoCacheConnectionString_, is probably fine for you as it
+is and you're not going to change it. If you would like to locate the 
+
+
+But wait, if you are planning to write your own PHP application by using
+PHPMergeHelper, and you don't need the RESTful webservice PHPMergeHelper
+provides,

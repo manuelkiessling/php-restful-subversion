@@ -27,12 +27,27 @@ class MergeHelper_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($this->oRepoCache->oGetHighestRevision());
 	}
 
-	public function test_getChangesetForRevision() {
+	public function test_getChangesetForRevisionSimple() {
 		$oChangeset = new MergeHelper_Core_Changeset(new MergeHelper_Core_Revision('12345'));
 		$oChangeset->setAuthor('Han Solo');
 		$oChangeset->setDateTime('2011-02-18 22:56:00');
 		$oChangeset->setMessage('Hello World');
 		$oChangeset->addPathOperation('M', new MergeHelper_Core_RepoPath('/foo/bar.php'));
+
+		$this->oRepoCache->addChangeset($oChangeset);
+		unset($this->oRepoCache);
+		$this->setUp();
+
+		$this->assertEquals($oChangeset, $this->oRepoCache->oGetChangesetForRevision(new MergeHelper_Core_Revision('12345')));
+	}
+
+	public function test_getChangesetForRevisionComplex() {
+		$oChangeset = new MergeHelper_Core_Changeset(new MergeHelper_Core_Revision('12345'));
+		$oChangeset->setAuthor('Han Solo');
+		$oChangeset->setDateTime('2011-02-18 22:56:00');
+		$oChangeset->setMessage('Hello World');
+		$oChangeset->addPathOperation('M', new MergeHelper_Core_RepoPath('/foo/bar.php'));
+		$oChangeset->addPathOperation('M', new MergeHelper_Core_RepoPath('/foo/bar/bar.php'), new MergeHelper_Core_RepoPath('/foo/bar/old.php'), new MergeHelper_Core_Revision('12344'));
 
 		$this->oRepoCache->addChangeset($oChangeset);
 		unset($this->oRepoCache);

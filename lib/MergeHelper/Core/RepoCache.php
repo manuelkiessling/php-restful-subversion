@@ -106,7 +106,7 @@ class MergeHelper_Core_RepoCache {
 			                           $aPathOperation['oPath']->sGetAsString(),
 			                           strrev($aPathOperation['oPath']->sGetAsString()),
 			                           (array_key_exists('oCopyfromPath', $aPathOperation)) ? $aPathOperation['oCopyfromPath']->sGetAsString() : '',
-			                           (array_key_exists('oCopyfromRev', $aPathOperation)) ? $aPathOperation['oCopyfromRev']->sGetNumber() : 0));
+			                           (array_key_exists('oCopyfromRev', $aPathOperation)) ? $aPathOperation['oCopyfromRev']->sGetAsString() : 0));
 		}
 	}
 
