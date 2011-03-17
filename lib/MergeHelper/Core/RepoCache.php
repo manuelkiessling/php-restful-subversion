@@ -165,13 +165,18 @@ class MergeHelper_Core_RepoCache {
 		return $asReturn;
 	}
 
-	public function aoGetChangesetsWithMessageContainingText($sText) {
+	public function aoGetChangesetsWithMessageContainingText($sText, $sOrder = 'ascending') {
 		if ((string)$sText === '') return array();
+		if ($sOrder === 'descending') {
+			$sOrder = 'DESC';
+		} else {
+			$sOrder = 'ASC';
+		}
 		$asReturn = array();
 		$oStatement = $this->oDb->prepare('SELECT revision
 		                                     FROM revisions
 		                                    WHERE message LIKE ?
-		                                 ORDER BY revision ASC');
+		                                 ORDER BY revision '.$sOrder);
 		if ($oStatement->execute(array('%'.$sText.'%'))) {
 			while ($asRow = $oStatement->fetch()) {
 				$asReturn[] = $this->oGetChangesetForRevision(new MergeHelper_Core_Revision($asRow['revision']));
