@@ -130,7 +130,7 @@ In order to keep things a bit simpler, I assume you do everything as root.
 ### 1. Preparing your system
 
 Besides the packages already available on your system and PHPMergeHelper
-itself, you'll will need the following packages:
+itself, you will need the following packages:
 
 * Git
 * Subversion
