@@ -19,6 +19,47 @@ class MergeHelper_Core_RepoPathTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertSame($oRepoPath->sGetAsString(), "$oRepoPath");
 	}
+
+	public function test_filenameWithTwoDotsWorks() {
+		new MergeHelper_Core_RepoPath('/trunk/Monitoring/con/etc/ssl/certs/StartCom_Ltd..pem');
+	}
+
+	public function test_endsWithDotWorks() {
+		new MergeHelper_Core_RepoPath('/branches/test.');
+	}
+
+	public function test_endsWithTwoDotsWorks() {
+		new MergeHelper_Core_RepoPath('/branches/test..');
+	}
+
+	public function test_endsWithThreeDotsWorks() {
+		new MergeHelper_Core_RepoPath('/branches/test...');
+	}
+
+	public function test_endsWithSlashAndThreeDotsWorks() {
+		new MergeHelper_Core_RepoPath('/branches/test/...');
+	}
+
+	/**
+	 * @expectedException MergeHelper_Core_RepoPathInvalidPathCoreException
+	 */
+	public function test_exceptionsIfContainsRelativePath() {
+		new MergeHelper_Core_RepoPath('/branches/../test/');
+	}
+
+	/**
+	 * @expectedException MergeHelper_Core_RepoPathInvalidPathCoreException
+	 */
+	public function test_exceptionsIfBeginsWithRelativePath() {
+		new MergeHelper_Core_RepoPath('../branches/test');
+	}
+
+	/**
+	 * @expectedException MergeHelper_Core_RepoPathInvalidPathCoreException
+	 */
+	public function test_exceptionsIfEndsWithRelativePath() {
+		new MergeHelper_Core_RepoPath('/branches/test/..');
+	}
 	
 	/**
 	 * @expectedException MergeHelper_Core_RepoPathInvalidPathCoreException
@@ -32,13 +73,6 @@ class MergeHelper_Core_RepoPathTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_exceptionsIfNotStartsWithSlash() {
 		new MergeHelper_Core_RepoPath('branches/test');
-	}
-
-	/**
-	 * @expectedException MergeHelper_Core_RepoPathInvalidPathCoreException
-	 */
-	public function test_exceptionsIfEndsWithDot() {
-		new MergeHelper_Core_RepoPath('/branches/test.');
 	}
 
 	/**

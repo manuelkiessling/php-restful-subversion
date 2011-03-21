@@ -66,11 +66,13 @@ class MergeHelper_Core_RepoPath {
 	 * @throws MergeHelper_Core_RepoPathInvalidPathCoreException if the given string doesn't have the correct format
 	 */
 	public function __construct($sPath) {
-		if (mb_substr($sPath, -1) === '/') throw new MergeHelper_Core_RepoPathInvalidPathCoreException();
-		if ($sPath[0] !== '/') throw new MergeHelper_Core_RepoPathInvalidPathCoreException();
-		if (mb_substr($sPath, -1) === '.') throw new MergeHelper_Core_RepoPathInvalidPathCoreException();
-		if (mb_substr($sPath, -5) === '/.svn') throw new MergeHelper_Core_RepoPathInvalidPathCoreException();
-		if (mb_strstr($sPath, '..')) throw new MergeHelper_Core_RepoPathInvalidPathCoreException();
+		if (mb_substr($sPath, -1) === '/') throw new MergeHelper_Core_RepoPathInvalidPathCoreException($sPath);
+		if ($sPath[0] !== '/') throw new MergeHelper_Core_RepoPathInvalidPathCoreException($sPath);
+		if (mb_substr($sPath, -2) === '/.') throw new MergeHelper_Core_RepoPathInvalidPathCoreException($sPath);
+		if (mb_substr($sPath, -3) === '/..') throw new MergeHelper_Core_RepoPathInvalidPathCoreException($sPath);
+		if (mb_substr($sPath, -5) === '/.svn') throw new MergeHelper_Core_RepoPathInvalidPathCoreException($sPath);
+		if (mb_strstr($sPath, '/../')) throw new MergeHelper_Core_RepoPathInvalidPathCoreException($sPath);
+		if (mb_strstr($sPath, '/./')) throw new MergeHelper_Core_RepoPathInvalidPathCoreException($sPath);
 		$this->sPath = $sPath;
 	}
 
