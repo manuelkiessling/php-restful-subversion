@@ -282,6 +282,10 @@ class MergeHelper_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithMessageContainingText(''));
 	}
 
+	public function test_getNonExistantChangeset() {
+		$this->assertNull($this->oRepoCache->oGetChangesetForRevision(new MergeHelper_Core_Revision('98765')));
+	}
+
 	/**
 	 * @expectedException MergeHelper_Core_RepoCacheRevisionAlreadyInCacheCoreException
 	 */

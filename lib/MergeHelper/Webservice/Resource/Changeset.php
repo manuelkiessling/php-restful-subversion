@@ -56,9 +56,14 @@ class MergeHelper_Webservice_Resource_Changeset extends MergeHelper_Webservice_R
 		$oRepoCache = new MergeHelper_Core_RepoCache($oCacheDb);
 
 		$oChangeset = $oRepoCache->oGetChangesetForRevision(new MergeHelper_Core_Revision($sRevisionNumber));
+		if (!is_null($oChangeset)) {
+			$aResult = MergeHelper_Webservice_Helper_Result::aGetChangesetAsArray($oChangeset);
+		} else {
+			$aResult = NULL;
+		}
 
 		$oResponseHelper = new MergeHelper_Webservice_Helper_Response();
-		return $oResponseHelper->setResponse(new Response($request), MergeHelper_Webservice_Helper_Result::aGetChangesetAsArray($oChangeset));
+		return $oResponseHelper->setResponse(new Response($request), $aResult);
 	}
 
 }

@@ -129,8 +129,9 @@ class MergeHelper_Core_RepoCache {
 		$oStatement = $this->oDb->prepare('SELECT author, datetime, message FROM revisions WHERE revision = ?');
 		$oStatement->execute(array($oRevision->sGetAsString()));
 
-		$oRows = $oStatement->fetchAll();
-		foreach ($oRows as $asRow) {
+		$aaRows = $oStatement->fetchAll();
+		if (sizeof($aaRows) == 0) return NULL;
+		foreach ($aaRows as $asRow) {
 			$oChangeset->setAuthor($asRow['author']);
 			$oChangeset->setDateTime($asRow['datetime']);
 			$oChangeset->setMessage($asRow['message']);
@@ -139,8 +140,8 @@ class MergeHelper_Core_RepoCache {
 		$oStatement = $this->oDb->prepare('SELECT action, path, copyfrompath, copyfromrev FROM pathoperations WHERE revision = ?');
 		$oStatement->execute(array($oRevision->sGetAsString()));
 
-		$oRows = $oStatement->fetchAll();
-		foreach ($oRows as $asRow) {
+		$aaRows = $oStatement->fetchAll();
+		foreach ($aaRows as $asRow) {
 			$oChangeset->addPathOperation($asRow['action'],
 			                              new MergeHelper_Core_RepoPath($asRow['path']),
 			                              ($asRow['copyfrompath'] != '') ? new MergeHelper_Core_RepoPath($asRow['copyfrompath']) : NULL,
