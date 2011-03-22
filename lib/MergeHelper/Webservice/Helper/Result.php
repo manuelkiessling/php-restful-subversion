@@ -40,7 +40,6 @@
  */
 
 /**
- * @uri /changeset/:sRevisionNumber
  * @category   VersionControl
  * @package    MergeHelper
  * @subpackage Webservice
@@ -49,16 +48,27 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
-class MergeHelper_Webservice_Resource_Changeset extends MergeHelper_Webservice_Resource {
+class MergeHelper_Webservice_Helper_Result {
 
-	public function get($request, $sRevisionNumber) {
-		$oCacheDb = new PDO($this->aConfig['sRepoCacheConnectionString'], NULL, NULL);
-		$oRepoCache = new MergeHelper_Core_RepoCache($oCacheDb);
+	public static function aGetChangesetAsArray(MergeHelper_Core_Changeset $oChangeset) {
+		$aChangeset = array();
+		$aChangeset['revision'] = $oChangeset->oGetRevision()->sGetAsString();
+		$aChangeset['author'] = $oChangeset->sGetAuthor();
+		$aChangeset['datetime'] = $oChangeset->sGetDateTime();
+		$aChangeset['message'] = $oChangeset->sGetMessage();
 
-		$oChangeset = $oRepoCache->oGetChangesetForRevision(new MergeHelper_Core_Revision($sRevisionNumber));
+		$aChangeset['pathoperations'] = array();
 
-		$oResponseHelper = new MergeHelper_Webservice_Helper_Response();
-		return $oResponseHelper->setResponse(new Response($request), MergeHelper_Webservice_Helper_Result::aGetChangesetAsArray($oChangeset));
+		$aaPathoperations = $oChangeset->aaGetPathOperations();
+		foreach ($aaPathoperations as $aPathoperation) {
+			$aThisPathoperation = array();
+			$aThisPathoperation['action'] = $aPathoperation['sAction'];
+			$aThisPathoperation['path'] = $aPathoperation['oPath']->sGetAsString();
+			if (array_key_exists('copyfrompath', $aPathoperation) && is_object($aPathoperation['oCopyfromPath'])) $aThisPathoperation['sCopyfromPath'] = $aPathoperation['oCopyfromPath']->sGetAsString();
+			if (array_key_exists('copyfromrev', $aPathoperation) && is_object($aPathoperation['oCopyfromRev'])) $aThisPathoperation['sCopyfromRev'] = $aPathoperation['oCopyfromRev']->sGetAsString();
+			$aChangeset['pathoperations'][] = $aThisPathoperation;
+		}
+		return $aChangeset;
 	}
 
 }

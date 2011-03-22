@@ -99,7 +99,7 @@ class MergeHelper_Webservice_Resource_Changesets extends MergeHelper_Webservice_
 		}
 
 		foreach ($aoChangesets as $oChangeset) {
-			$aaChangesets[] = MergeHelper_Webservice_Resource_Changeset::aGetChangesetAsArray($oChangeset);
+			$aaChangesets[] = MergeHelper_Webservice_Helper_Result::aGetChangesetAsArray($oChangeset);
 		}
 		ksort($aaChangesets);
 
