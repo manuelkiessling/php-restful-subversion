@@ -251,7 +251,7 @@ which you can use by pointing your browser at
 
 ## Using the PHP library
 
-If you want to use the PHP library that works under the hood of,
+If you want to use the PHP library that works under the hood of
 PHPRestfulSubversion, here is how to integrate it into your code:
 
     <?php
