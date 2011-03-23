@@ -11,7 +11,7 @@ PHPRestfulSubversion...
       Subversion repository
 
 2. ...provides tools to cache your Subversion repository in order to make
-      it searchable through the library in a fast and simple manner
+      it searchable through the webservice in a fast and simple manner
 
 3. ...is a library of PHP classes which you can use to implement more complex
       use cases
