@@ -39,7 +39,7 @@
  * @link       http://manuelkiessling.github.com/PHPMergeHelper
  */
 
-require_once realpath(dirname(__FILE__).'/../../MergeHelper.php');
+require_once realpath(dirname(__FILE__).'/../../MergeHelper/Helper/Bootstrap.php');
 require_once realpath(dirname(__FILE__).'/../../../vendor/Tonic.php');
 require_once realpath(dirname(__FILE__)).'/Helper/Config.php';
 require_once realpath(dirname(__FILE__)).'/Helper/Response.php';
