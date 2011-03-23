@@ -39,10 +39,14 @@ div .searchresults .searchresult {
 }
 
 div .searchresults .searchresult .changeset .metadata {
-	padding: 4px;
-	background-color: #F9F9FF;
+	padding: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	background-color: #ffffaa;
+	width: 75%;
 	border-bottom: 1px dotted lightgray;
 	font-family: "Courier New", monotype;
+	color: #990000;
 }
 
 div.revision,div.author,div.datetime {
@@ -62,13 +66,12 @@ div.datetime .value {
 }
 
 div.message .value {
-	margin-left: 16px;
 	padding: 10px;
-	font-family: "Times New Roman";
-	font-size: 14pt;
-	font-style: italic;
-	color: #558;
-	background-color: #f9f9ff
+	font-family: "Courier New", monotype;
+	font-size: 10pt;
+	color: #333333;
+	background-color: #eee;
+	width: 75%;
 }
 
 div.pathoperations {
