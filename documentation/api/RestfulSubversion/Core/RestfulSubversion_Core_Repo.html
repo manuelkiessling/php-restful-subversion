@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class RestfulSubversion_Core_Repo</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class RestfulSubversion_Core_Repo</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Class representing a SVN repository</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Manuel Kiessling &lt;<a href="mailto:manuel@kiessling.net">manuel@kiessling.net</a>&gt;</li>
+				<li><span class="field">copyright:</span> 2011 Manuel Kiessling &lt;manuel@kiessling.net&gt;</li>
+				<li><span class="field">link:</span> <a href="http://manuelkiessling.github.com/PHPRestfulSubversion">http://manuelkiessling.github.com/PHPRestfulSubversion</a></li>
+				<li><span class="field">usedby:</span> <a href="../../RestfulSubversion/Core/RestfulSubversion_Core_RepoCommandLog.html">RestfulSubversion_Core_RepoCommandLog</a></li>
+				<li><span class="field">license:</span> <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a></li>
+				<li><span class="field">uses:</span> <a href="../../RestfulSubversion/Core/RestfulSubversion_Core_RepoPath.html">RestfulSubversion_Core_RepoPath</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_RestfulSubversion---Core---Repo.php.html">/RestfulSubversion/Core/Repo.php</a> (line <span class="field">54</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$aoSourcePaths" title="details" class="var-name">$aoSourcePaths</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$oTargetPath" title="details" class="var-name">$oTargetPath</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$sAuthinfoPassword" title="details" class="var-name">$sAuthinfoPassword</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$sAuthinfoUsername" title="details" class="var-name">$sAuthinfoUsername</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$sLocation" title="details" class="var-name">$sLocation</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#addSourcePath" title="details" class="method-name">addSourcePath</a>
+											(<span class="var-type"><a href="../../RestfulSubversion/Core/RestfulSubversion_Core_RepoPath.html">RestfulSubversion_Core_RepoPath</a></span>&nbsp;<span class="var-name">$oPath</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#aoGetSourcePaths" title="details" class="method-name">aoGetSourcePaths</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#asGetSourceLocations" title="details" class="method-name">asGetSourceLocations</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#oGetTargetPath" title="details" class="method-name">oGetTargetPath</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setAuthinfo" title="details" class="method-name">setAuthinfo</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$sUsername</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$sPassword</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setLocation" title="details" class="method-name">setLocation</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$sLocation</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setTargetPath" title="details" class="method-name">setTargetPath</a>
+											(<span class="var-type"><a href="../../RestfulSubversion/Core/RestfulSubversion_Core_RepoPath.html">RestfulSubversion_Core_RepoPath</a></span>&nbsp;<span class="var-name">$oPath</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#sGetAuthinfoPassword" title="details" class="method-name">sGetAuthinfoPassword</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#sGetAuthinfoUsername" title="details" class="method-name">sGetAuthinfoUsername</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#sGetLocation" title="details" class="method-name">sGetLocation</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#sGetLocationBranches" title="details" class="method-name">sGetLocationBranches</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#sGetTargetLocation" title="details" class="method-name">sGetTargetLocation</a>
+										()
+									</div>
+											</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			
+<a name="var$aoSourcePaths" id="$aoSourcePaths"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$aoSourcePaths</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">59</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$oTargetPath" id="$oTargetPath"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$oTargetPath</span>
+			 = <span class="var-default"> NULL</span>			(line <span class="line-number">60</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$sAuthinfoPassword" id="$sAuthinfoPassword"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$sAuthinfoPassword</span>
+			 = <span class="var-default"> NULL</span>			(line <span class="line-number">58</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$sAuthinfoUsername" id="$sAuthinfoUsername"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$sAuthinfoUsername</span>
+			 = <span class="var-default"> NULL</span>			(line <span class="line-number">57</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$sLocation" id="$sLocation"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$sLocation</span>
+			 = <span class="var-default"> NULL</span>			(line <span class="line-number">56</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodaddSourcePath" id="addSourcePath"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">addSourcePath</span> (line <span class="line-number">87</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addSourcePath
+		</span>
+					(<span class="var-type"><a href="../../RestfulSubversion/Core/RestfulSubversion_Core_RepoPath.html">RestfulSubversion_Core_RepoPath</a></span>&nbsp;<span class="var-name">$oPath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../RestfulSubversion/Core/RestfulSubversion_Core_RepoPath.html">RestfulSubversion_Core_RepoPath</a></span>
+				<span class="var-name">$oPath</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodaoGetSourcePaths" id="aoGetSourcePaths"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">aoGetSourcePaths</span> (line <span class="line-number">91</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			aoGetSourcePaths
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodasGetSourceLocations" id="asGetSourceLocations"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">asGetSourceLocations</span> (line <span class="line-number">95</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			asGetSourceLocations
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodoGetTargetPath" id="oGetTargetPath"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">oGetTargetPath</span> (line <span class="line-number">109</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			oGetTargetPath
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetAuthinfo" id="setAuthinfo"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setAuthinfo</span> (line <span class="line-number">74</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setAuthinfo
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sUsername</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$sPassword</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sUsername</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sPassword</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetLocation" id="setLocation"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setLocation</span> (line <span class="line-number">62</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setLocation
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$sLocation</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$sLocation</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetTargetPath" id="setTargetPath"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setTargetPath</span> (line <span class="line-number">105</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setTargetPath
+		</span>
+					(<span class="var-type"><a href="../../RestfulSubversion/Core/RestfulSubversion_Core_RepoPath.html">RestfulSubversion_Core_RepoPath</a></span>&nbsp;<span class="var-name">$oPath</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../../RestfulSubversion/Core/RestfulSubversion_Core_RepoPath.html">RestfulSubversion_Core_RepoPath</a></span>
+				<span class="var-name">$oPath</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsGetAuthinfoPassword" id="sGetAuthinfoPassword"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">sGetAuthinfoPassword</span> (line <span class="line-number">83</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			sGetAuthinfoPassword
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsGetAuthinfoUsername" id="sGetAuthinfoUsername"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">sGetAuthinfoUsername</span> (line <span class="line-number">79</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			sGetAuthinfoUsername
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsGetLocation" id="sGetLocation"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">sGetLocation</span> (line <span class="line-number">66</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			sGetLocation
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsGetLocationBranches" id="sGetLocationBranches"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">sGetLocationBranches</span> (line <span class="line-number">70</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			sGetLocationBranches
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsGetTargetLocation" id="sGetTargetLocation"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">sGetTargetLocation</span> (line <span class="line-number">113</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			sGetTargetLocation
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Wed, 23 Mar 2011 16:12:17 +0100 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>
