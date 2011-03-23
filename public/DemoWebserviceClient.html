@@ -55,24 +55,24 @@
 						<div class="metadata">
 							<div class="revision">
 								Changeset
-								<span class="value">[{{changeset.sRevisionNumber}}]</span>
+								<span class="value">[{{changeset.revision}}]</span>
 							</div>
 							<div class="datetime">
 								added on
-								<span class="value">{{changeset.sDateTime}}</span>
+								<span class="value">{{changeset.datetime}}</span>
 							</div>
 							<div class="author">
 								by
-								<span class="value">{{changeset.sAuthor}}</span>
+								<span class="value">{{changeset.author}}</span>
 							</div>
 						</div>
 						<div class="message">
-							<div class="value">{{changeset.sMessage}}</div>
+							<div class="value">{{changeset.message}}</div>
 						</div>
 						<div class="pathoperations">
-							<div class="pathoperation" ng:repeat="aPathoperation in changeset.aaPathoperations">
-								<div class="action">{{aPathoperation.sAction}}</div>
-								<div class="path">{{aPathoperation.sPath}}</div>
+							<div class="pathoperation" ng:repeat="pathoperation in changeset.pathoperations">
+								<div class="action">{{pathoperation.action}}</div>
+								<div class="path">{{pathoperation.path}}</div>
 							</div>
 						</div>
 					</div>
