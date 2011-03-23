@@ -7,13 +7,15 @@ _Scroll down for detailed installation instructions._
 
 PHPRestfulSubversion...
 
-1. ...is a library of PHP classes which enable you to write tools that
-   will support you with your specific Subversion workflow in your
-   release management process
-2. ...provides a RESTful JSON webservice API to access the resources of
-   this library
-3. ...provides tools to cache your Subversion repository in order to make
-   it searchable through the library in a fast and simple manner
+1. ...provides a RESTful JSON webservice API to access information in your
+      Subversion repository
+
+2. ...provides tools to cache your Subversion repository in order to make
+      it searchable through the library in a fast and simple manner
+
+3. ...is a library of PHP classes which you can use to implement more complex
+      use cases
+
 
 ### Project Parts
 
@@ -48,70 +50,19 @@ Maybe this stuff makes more sense when being visualized:
     ------------  ------------
 
 
-As you can see, PHPRestfulSubversion never writes to the Subversion repository, and
-the REST webservices are read-only as of now.
+As you can see, PHPRestfulSubversion never writes to the Subversion repository,
+and the REST webservices are read-only as of now.
 
-Well, PHPRestfulSubversion ships with only little direct functionality - it's a
-library in the first place. The idea is to enable you to write your own tools
-on top of it to actually provide functionality and value.
-
-However, there is a working JavaScript/HTML REST client included which allows
-you to search the Subversion cache for all changesets whose commit message
-contains a certain string, and for all changesets that include a changed path
-whose name ends on includes a certain string ("show me all changesets which
-include the file main/default.txt").
-
-
-### How PHPRestfulSubversion may help you with your approval and release process
-
-As said PHPRestfulSubversion is a collection of PHP classes which allow developers to
-easily create tailor-made tools for merge- and releasemanagement within SVN
-repositories.
-
-In my opinion, these tailor-made tools are necessary for two reasons:
-
-1. The available Subversion client tools do a great job in assisting us at
-merging whole branches or single commits, but they don't provide any support
-for the high-level tasks of release management, e.g. when we need to find all
-commits which belong to a certain project or when we need to sort out which
-commits of a certain project are already merged and released and which aren't.
-
-2. Every team of software developers does release management different.
-Therefore, it's difficult (if not impossible) to create a one-size-fits-all
-solution, which means that it should be easy for every team to build its own
-tool.
-
-Because it's only a collection of classes, PHPRestfulSubversion doesn't provide an
-instant solution.
-
-But it allows you to easily build your own tool which allows your release
-manager to shortcut and even automate many tedious and time-consuming SVN
-tasks.
-
-PHPRestfulSubversion implements these use cases:
-
-- "Give me a list of all revisions whose commit message contains a given string"
-
-- "For a given full path, give me the root path of the branch the full path belongs to"
-
-- "For a given revision, give me the root path of the branch this revision was applied to"
-
-- "Tell me if a given list of commits all apply to the same branch"
-
-- "Give me a list of all file and folder paths that were changed by a given commit"
-
-By combining these use cases, you could, for example, create a tool which
-allows your release manager to enter a list of issue numbers (from the
-bugtracker your team uses, provided that all your developers always put the
-relating issue numbers into the commit messages), whereupon the tool shows him
-a chronologically ordered list of all commits for these issues, the command
-lines neccessary to merge these issues to the release branch, and warn him if
-there have already been release-commits for these issues.
+There is a working JavaScript/HTML REST client included which allows you to
+search the Subversion cache for all changesets whose commit message contains
+a certain string, and for all changesets that include a path whose name ends
+on a certain string ("show me all changesets which include the file
+main/default.txt").
 
 
 ## Installation on Linux systems
 
-Getting PHPRestfulSubversion up and running usually takes around ten minutes and
+Getting PHPRestfulSubversion up and running usually takes around 10 minutes and
 is a process which can roughly be split into four parts:
 
 1. Preparing your system
@@ -152,28 +103,31 @@ In order to achieve this, you just need to run these commands:
 
 ### 2. Deploy and configure PHPRestfulSubversion
 
-Now we are going to download PHPRestfulSubversion and see if it can work at all:
+Now we are going to download PHPRestfulSubversion and check if it works:
 
     cd /opt
     git clone git://github.com/ManuelKiessling/PHPRestfulSubversion.git
     cd PHPRestfulSubversion/tests
     bash ./runall.sh
 
+
 This should produce an output similar to
 
-    PHPUnit 3.4.14 by Sebastian Bergmann.
+    PHPUnit 3.5.0 by Sebastian Bergmann.
 
-    ............................................................ 60 / 91
-    ...............................
+    ............................................................ 60 / 74
+    ..............
 
-    Time: 1 second, Memory: 9.25Mb
+    Time: 0 seconds, Memory: 6.25Mb
 
-    OK (91 tests, 92 assertions)
+    OK (74 tests, 70 assertions)
+
 
 The important thing is that there haven't been any failures, like this:
 
     FAILURES!
     Tests: 91, Assertions: 92, Failures: 1.
+
 
 If everything went fine, we can go on to configure our PHPRestfulSubversion
 configuration.
@@ -188,6 +142,8 @@ like this:
     $aConfig['sRepoLocation'] = 'http://svn.example.com/';
     $aConfig['sRepoUsername'] = 'user';
     $aConfig['sRepoPassword'] = 'password';
+    $aConfig['iMaxImportsPerRun'] = 100;
+
 
 We are going to copy this example file to _/opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.conf_
 and fill in real values according to our environment.
@@ -195,9 +151,120 @@ and fill in real values according to our environment.
     cp /opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.sample.conf /opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.conf
     vim /opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.conf
 
-(You can use of course any text editor you like for editing this file).
+
+(You can of course use any text editor you like for editing this file).
 
 The first value, _sRepoCacheConnectionString_, is probably fine for you as it
-is and you're not going to change it.
+is and you don't have to change it.
 
-_to be continued..._
+_sRepoLocation_ is the full URI to your Subversion repository, and
+_sRepoUsername_ and _sRepoPassword_ are the credentials needed to access this
+repository. PHPRestfulSubversion only needs read access.
+
+The buildCache script will stop after importing _iMaxImportsPerRun_ revisions.
+If started again, it will continue with the next batch of revisions. It's
+designed that way because some Subversion repositories might be really big,
+and it makes sense to not import the whole repository at once.
+
+
+### 3. Build the Subversion cache
+
+Once you've set up this configuration file with real-life values, you can start
+the command line script which reads from your Subversion repository and inserts
+the changesets into the cache database:
+
+    cd /opt/PHPRestfulSubversion/bin
+    ./buildCache.php /opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.conf
+
+
+In order to ensure that your repository cache is always in sync with your
+repository cache, create a cronjob which will insert new revisions into the
+cache regularly, like this:
+
+    * * * * *	root	/opt/PHPRestfulSubversion/bin/buildCache.php /opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.conf
+
+
+### 4. Configure Apache to serve the RESTful JSON webservice
+
+PHPRestfulSubversion allows you to query information about your Subversion
+repository using a RESTful JSON webservice API. In order to serve this API,
+you will need to set up a webserver which will provide access to this API via
+HTTP.
+
+Here's how to configure your Apache webserver to make it serve
+PHPRestfulSubversion:
+
+I assume you want to make the webservice available at
+
+    http://localhost:10000/
+
+
+which means you would be able to request information about revision 12345 by
+calling
+
+    http://localhost:10000/changeset/12345
+
+
+via GET.
+
+To achieve this, you need to enable the mod_rewrite Apache module:
+
+    a2enmod rewrite
+
+
+Then add the following at the end of _/etc/apache2/sites-available/default_:
+
+    # PHPRestfulSubversion REST API
+    NameVirtualHost 0.0.0.0:10000
+    Listen 0.0.0.0:10000
+    <VirtualHost 0.0.0.0:10000>
+      DocumentRoot "/opt/PHPRestfulSubversion/public"
+      DirectoryIndex index.html
+      <Directory "/opt/PHPRestfulSubversion//public">
+        AllowOverride All
+        Allow from All
+        RewriteEngine On
+        RewriteRule !\.(js|ico|gif|jpg|png|css|html)$ ResourceDispatcher.php
+      </Directory>
+    </VirtualHost>
+
+
+Afterwards, you need to restart your webserver:
+
+    /etc/init.d/apache2 force-reload
+
+
+Then you can open the following URL in your browser:
+
+    http://localhost:10000/changeset/1
+
+
+This should return a JSON result set with information about the first revision
+in your repository.
+
+
+PHPRestfulSubversion ships with a demo HTML client for the REST webservice,
+which you can use by pointing your browser at
+
+    http://localhost:10000/DemoWebserviceClient.html
+
+
+## Using the PHP library
+
+If you want to use the PHP library that works under the hood of,
+PHPRestfulSubversion, here is how to integrate it into your code:
+
+    <?php
+
+    require_once '/opt/PHPRestfulSubversion/lib/RestfulSubversion/Helper/Bootstrap.php';
+
+    $oRepoCache = new RestfulSubversion_Core_RepoCache(new PDO($sRepoCacheConnectionString, NULL, NULL));
+    $oChangeset = $oRepoCache->oGetChangesetForRevision('12345');
+
+    echo $oChangeset->sGetAuthor();
+
+
+## Feedback
+
+Any feedback is highly appreciated. You can reach me at <manuel@kiessling.net>,
+or open a new issue at https://github.com/ManuelKiessling/PHPRestfulSubversion/issues
