@@ -146,12 +146,12 @@ if ($iHighestRevisionInRepoCache == 0) {
 $i = 0;
 while ($iCurrentRevision <= $iHighestRevisionInRepo) {
 	if ($iMaxImportsPerRun != 0 && $i == $iMaxImportsPerRun) {
-		echo "Imported the maximum number of $i revisions for this run, exiting.\n";
+		echo "\nImported the maximum number of $i revisions for this run, exiting.\n";
 		exit(0);
 	}
 
 	echo "\n";
-	echo 'About to import revision '.$iCurrentRevision.":\n";
+	echo 'About to import revision '.$iCurrentRevision.": ";
 
 	$oRevision = new RestfulSubversion_Core_Revision((string)$iCurrentRevision);
 
@@ -169,6 +169,8 @@ while ($iCurrentRevision <= $iHighestRevisionInRepo) {
 		$iCurrentRevision++;
 	}
 	$i++;
+
+	echo "done";
 }
 
 echo "All revisions imported to cache.\n";
