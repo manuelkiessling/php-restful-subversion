@@ -3,6 +3,11 @@
 
 	<head>
 
+		<link href="css/default.css"
+			  rel="stylesheet"
+			  type="text/css"
+			  media="screen, projection" />
+
 		<script src="js/angular-0.9.12.min.js" ng:autobind></script>
 
 		<script>
@@ -10,64 +15,65 @@
 			function ChangesetsController($resource) {
 				this.ChangesetsResource = $resource(
 					'/changesets.json',
-					{ callback: 'JSON_CALLBACK' },
+					{ callback: 'JSON_CALLBACK', limit: '25', order: 'descending' },
 					{ get: { method: 'JSON' } }
 				);
 			}
 
 			ChangesetsController.prototype = {
 				fetchWithMessageContaining: function() {
-					this.result = this.ChangesetsResource.get({ with_message_containing: this.messagePart });
+					var self = this;
+					this.loading = true;
+					this.result = this.ChangesetsResource.get({ with_message_containing: this.q },
+					                                          function() { self.loading = false; });
 				},
 
 				fetchWithPathEndingOn: function() {
-					this.result = this.ChangesetsResource.get({ with_path_ending_on: this.pathEnd });
+					var self = this;
+					this.loading = true;
+					this.result = this.ChangesetsResource.get({ with_path_ending_on: this.q },
+					                                          function() { self.loading = false; });
 				}
 			};
 		</script>
 
 	</head>
-	
+
 	<body>
 
-		<div ng:controller="ChangesetsController">
-			<div class="searchform">
-				<div class="message">
-					Show changesets with message containing:
-					<input name="messagePart" value="Hello World"/>
-					<button ng:click="fetchWithMessageContaining()">Find</button>
-				</div>
-				<div class="path">
-					Show changesets with at least one path ending on:
-					<input name="pathEnd" value="index.php"/>
-					<button ng:click="fetchWithPathEndingOn()">Find</button>
-				</div>
+		<div id="content" ng:controller="ChangesetsController">
+			<div id="searchform">
+				<input name="q" value="" size="60" />
+				<button ng:click="fetchWithMessageContaining()">Search in messages</button>
+				<button ng:click="fetchWithPathEndingOn()">Search at path ends</button>
+				<img ng:show="loading" id="progressbar" src="images/progressbar.gif" width="190" height="14" />
 			</div>
-			<hr/>
+
 			<div class="searchresults">
 				<div class="searchresult" ng:repeat="changeset in result.changesets">
-					<div class="changeset metadata">
-						<div class="revision">
-							<span class="label">Revision:</span>
-							<span class="value">{{changeset.sRevisionNumber}}</span>
-						</div>
-						<div class="author">
-							<span class="label">Author:</span>
-							<span class="value">{{changeset.sAuthor}}</span>
-						</div>
-						<div class="datetime">
-							<span class="label">Date and time of commit:</span>
-							<span class="value">{{changeset.sDateTime}}</span>
+					<div class="changeset">
+						<div class="metadata">
+							<div class="revision">
+								Changeset
+								<span class="value">[{{changeset.sRevisionNumber}}]</span>
+							</div>
+							<div class="datetime">
+								added on
+								<span class="value">{{changeset.sDateTime}}</span>
+							</div>
+							<div class="author">
+								by
+								<span class="value">{{changeset.sAuthor}}</span>
+							</div>
 						</div>
 						<div class="message">
-							<span class="label">Message:</span>
 							<div class="value">{{changeset.sMessage}}</div>
 						</div>
-					</div>
-					<div class="changeset pathoperations">
-						<div class="pathoperation" ng:repeat="aPathoperation in changeset.aaPathoperations">
-							<div class="action">{{aPathoperation.sAction}}</div>
-							<div class="path">{{aPathoperation.sPath}}</div>
+						<div class="pathoperations">
+							<div class="pathoperation" ng:repeat="aPathoperation in changeset.aaPathoperations">
+								<div class="action">{{aPathoperation.sAction}}</div>
+								<div class="path">{{aPathoperation.sPath}}</div>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -1,0 +1,99 @@
+body {
+	font-family: Tahoma, sans-serif;
+	font-size: 10pt;
+	padding: 0;
+	margin: 0;
+}
+
+a,a:active,a:hover,a:visited {
+	text-decoration: none;
+	color: #990000;
+}
+
+a:visited {
+	color: #660066;
+}
+
+#content {
+	padding: 0;
+	margin: 0;
+}
+
+#searchform {
+	padding: 16px;
+	margin: 0;
+	background-color: #eee;
+}
+
+img#progressbar {
+	margin-bottom: -2px;
+}
+
+div.searchresults {
+	margin-top: 10px;
+	margin-left: 8px;
+}
+
+div .searchresults .searchresult {
+		margin-top: 64px;
+}
+
+div .searchresults .searchresult .changeset .metadata {
+	padding: 4px;
+	background-color: #F9F9FF;
+	border-bottom: 1px dotted lightgray;
+	font-family: "Courier New", monotype;
+}
+
+div.revision,div.author,div.datetime {
+	display: inline-block;
+}
+
+div.revision {
+	font-weight: bolder;
+}
+
+div.author .value {
+	font-weight: bolder;
+}
+
+div.datetime .value {
+	font-weight: bolder;
+}
+
+div.message .value {
+	margin-left: 16px;
+	padding: 10px;
+	font-family: "Times New Roman";
+	font-size: 14pt;
+	font-style: italic;
+	color: #558;
+	background-color: #f9f9ff
+}
+
+div.pathoperations {
+	margin-top: 0;
+	margin-left: 16px;
+	padding: 10px;
+	font-family: "Courier New", monotype;
+	border-style: dotted;
+	border-color: #eee;
+	border-width: 1px;
+	border-top: none;
+}
+
+div.pathoperations .pathoperation .action, div.pathoperations .pathoperation .path, div.pathoperations .pathoperation .showChange {
+	display: inline-block;
+}
+
+div.pathoperations .pathoperation .path {
+	font-weight: bold;
+}
+
+a.pathlink,a.pathlink:active,a.pathlink:hover {
+	color: #660000;
+}
+
+a.pathlink:visited {
+	color: #660066;
+}
