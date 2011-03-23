@@ -23,9 +23,9 @@ There are two ways of using this script:
 
 Example for variant 1:
 
-   buildCache.php /path/to/PHPMergeHelper.conf
+   buildCache.php /path/to/PHPRestfulSubversion.conf
 
-See file PHPMergeHelper.sample.conf as an example of how such a config
+See file PHPRestfulSubversion.sample.conf as an example of how such a config
 file needs to be designed.
 
 
@@ -45,8 +45,27 @@ EOT;
 	exit(1);
 }
 
+function iGetHighestRevisionInRepo(RestfulSubversion_Core_Repo $oRepo) {
+	$oCommandLineExecutor = RestfulSubversion_Core_CommandLineExecutor::oGetInstance();
+	$oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+	$oLogInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
+
+	$oCommandLog = new RestfulSubversion_Core_RepoCommandLog($oRepo, $oCommandLineBuilder);
+	$oCommandLog->enableVerbose();
+	$oCommandLog->enableXml();
+	$oCommandLog->setRevision(new RestfulSubversion_Core_Revision('HEAD'));
+	$sCommandline = $oCommandLog->sGetCommandline();
+	$sLogOutput = $oCommandLineExecutor->sGetCommandResult($sCommandline);
+
+	$aoChangesets = $oLogInterpreter->aoCreateChangesetsFromVerboseXml($sLogOutput);
+
+	foreach ($aoChangesets as $oChangeset) {
+		return (int)$oChangeset->oGetRevision()->sGetAsString();
+	}
+}
+
 if (!array_key_exists(1, $argv)) {
-	displayErrorWithUsageInformationAndExit("You need to provide either the path to a valid PHPMergeHelper.conf file or the location of a SVN repository, a SVN username and password, and a PDO compatible connection string.");
+	displayErrorWithUsageInformationAndExit("You need to provide either the path to a valid PHPRestfulSubversion.conf file or the location of a SVN repository, a SVN username and password, and a PDO compatible connection string.");
 }
 
 if (is_file($argv[1])) {
@@ -99,23 +118,20 @@ if (empty($sRepoCacheConnectionString)) {
 	displayErrorWithUsageInformationAndExit("No cache db connection string given.");
 }
 
-require_once('../lib/MergeHelper.php');
+require_once('../lib/RestfulSubversion/Helper/Bootstrap.php');
 
-$oRepo = new MergeHelper_Core_Repo();
+$oRepo = new RestfulSubversion_Core_Repo();
 $oRepo->setLocation($sRepoLocation);
 $oRepo->setAuthinfo($sRepoUsername, $sRepoPassword);
 
-$oCommandLineExecutor = MergeHelper_Core_CommandLineExecutor::oGetInstance();
-$oCommandLineBuilder = new MergeHelper_Core_CommandLineBuilder();
-$oLogInterpreter = new MergeHelper_Core_RepoLogInterpreter();
+$oCommandLineExecutor = RestfulSubversion_Core_CommandLineExecutor::oGetInstance();
+$oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+$oLogInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
+$oRepoCache = new RestfulSubversion_Core_RepoCache(new PDO($sRepoCacheConnectionString, NULL, NULL));
 
-$oRepoCache = new MergeHelper_Core_RepoCache(new PDO($sRepoCacheConnectionString, NULL, NULL));
-$oMergeHelper = new MergeHelper($oRepo, $oRepoCache);
-
-$iHighestRevisionInRepo = (int)$oMergeHelper->oGetHighestRevisionInRepo()->sGetAsString();
-
+$iHighestRevisionInRepo = iGetHighestRevisionInRepo($oRepo);
 $iHighestRevisionInRepoCache = 0;
-$oRevision = $oMergeHelper->oGetHighestRevisionInRepoCache();
+$oRevision = $oRepoCache->oGetHighestRevision();
 if (is_object($oRevision)) $iHighestRevisionInRepoCache = (int)$oRevision->sGetAsString();
 
 echo 'Highest revision found in repository: '.$iHighestRevisionInRepo."\n";
@@ -137,12 +153,12 @@ while ($iCurrentRevision <= $iHighestRevisionInRepo) {
 	echo "\n";
 	echo 'About to import revision '.$iCurrentRevision.":\n";
 
-	$oRevision = new MergeHelper_Core_Revision((string)$iCurrentRevision);
+	$oRevision = new RestfulSubversion_Core_Revision((string)$iCurrentRevision);
 
-	$oCommandLog = new MergeHelper_Core_RepoCommandLog($oRepo, $oCommandLineBuilder);
+	$oCommandLog = new RestfulSubversion_Core_RepoCommandLog($oRepo, $oCommandLineBuilder);
 	$oCommandLog->enableVerbose();
 	$oCommandLog->enableXml();
-	$oCommandLog->setRevision(new MergeHelper_Core_Revision((string)$iCurrentRevision));
+	$oCommandLog->setRevision(new RestfulSubversion_Core_Revision((string)$iCurrentRevision));
 	$sCommandline = $oCommandLog->sGetCommandline();
 	$sLogOutput = $oCommandLineExecutor->sGetCommandResult($sCommandline);
 

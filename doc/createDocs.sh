@@ -1,4 +1,4 @@
 #!/bin/bash
 
-phpdoc -dn PHPMergeHelper -po MergeHelper -d ../lib/MergeHelper,./tutorials -t ./html -o HTML:frames:phphtmllib "PHPMergeHelper Documentation"
+phpdoc -dn PHPRestfulSubversion -po RestfulSubversion -d ../lib/RestfulSubversion,./tutorials -t ./html -o HTML:frames:phphtmllib "PHPRestfulSubversion Documentation"
 

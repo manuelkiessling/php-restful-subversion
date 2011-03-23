@@ -1,0 +1,21 @@
+<refentry id="{@id}">
+        <refnamediv>
+                <refname>Documentation Home</refname>
+                <refpurpose></refpurpose>
+        </refnamediv>
+        <refsynopsisdiv>
+                <author>
+                        Manuel Kiessling
+                        <authorblurb>
+                                {@link mailto:manuel@kiessling.net}
+                        </authorblurb>
+                </author>
+        </refsynopsisdiv>
+        <refsect1 id="{@id intro}">
+                <title>Welcome to the PHPRestfulSubversion Documentation</title>
+                <para>
+			PHPRestfulSubversion is a collection of PHP classes which make SVN merge management simple.
+                </para>
+        </refsect1>
+</refentry>
+

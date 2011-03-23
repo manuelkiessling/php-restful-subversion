@@ -1,10 +1,10 @@
-# PHPMergeHelper
+# PHPRestfulSubversion
 
 ** Eine Sammlung von PHP Klassen die das Management von SVN Merges vereinfachen. **
 
-## Wozu sind die PHPMergeHelper gut?
+## Wozu sind die PHPRestfulSubversion gut?
 
-Die PHPMergeHelper sind eine Sammlung von PHP Klassen die es erleichtern, maßgeschneiderte Werkzeuge
+Die PHPRestfulSubversion sind eine Sammlung von PHP Klassen die es erleichtern, maßgeschneiderte Werkzeuge
 zum Merge- und Releasemanagement innerhalb eines SVN Repositories zu bauen.
 
 Diese maßgeschneiderten Werkzeuge wiederum sind meiner Meinung nach notwendig, aus zwei Gründen:
@@ -19,13 +19,13 @@ Zweitens: Jedes Team von Entwicklern betreibt Releasemanagement anders. Daher wi
 sein, eine one-size-fits-all Lösung zu bauen, was bedeutet dass jedes Team sein eigenes
 maßgeschneidertes Tool bauen können sollte.
 
-Da es sich lediglich um eine Klassensammlung handelt, bieten die PHPMergeHelper keine Sofortlösung!
+Da es sich lediglich um eine Klassensammlung handelt, bieten die PHPRestfulSubversion keine Sofortlösung!
 
 Sie ermöglichen aber mit vergleichsweise geringem Aufwand, ein eigenes Tool zu bauen, mit dessen
 Hilfe der Releasemanager eines Softwareentwicklerteams viele aufwendige und manuelle SVN Handgriffe
 stark vereinfachen und ggf. automatisieren kann.
 
-Die PHPMergeHelper implementieren unter anderen folgende Use Cases:
+Die PHPRestfulSubversion implementieren unter anderen folgende Use Cases:
 
 - "Liefere mir alle Revisionsnummern, deren Commit Message eine bestimmte Zeichenkette enthält"
 
