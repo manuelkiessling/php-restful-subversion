@@ -209,4 +209,16 @@ class MergeHelper_Manager {
 
 		return $oMergeCommand->asGetCommandlines();
 	}
+
+	public static function aoGetRevisionsWithPathEndingOn(MergeHelper_RepoCache $oRepoCache, $sString) {
+		$aoRevisions = array();
+		$aiRevisions = $oRepoCache->aiGetRevisionsWithPathEndingOn($sString);
+
+		foreach ($aiRevisions as $iRevision) {
+			$aoRevisions[] = new MergeHelper_Revision((string)$iRevision);
+		}
+
+		return $aoRevisions;
+	}
+
 }

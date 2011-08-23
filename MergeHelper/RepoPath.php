@@ -66,11 +66,12 @@ class MergeHelper_RepoPath {
 	 * @throws MergeHelper_RepoPathInvalidPathException if the given string doesn't have the correct format
 	 */
 	public function __construct($sPath) {
-		if (mb_substr($sPath, -1) === '/') throw new MergeHelper_RepoPathInvalidPathException();
-		if ($sPath[0] !== '/') throw new MergeHelper_RepoPathInvalidPathException();
-		if (mb_substr($sPath, -1) === '.') throw new MergeHelper_RepoPathInvalidPathException();
-		if (mb_substr($sPath, -5) === '/.svn') throw new MergeHelper_RepoPathInvalidPathException();
-		if (mb_strstr($sPath, '..')) throw new MergeHelper_RepoPathInvalidPathException();
+		if (mb_substr($sPath, -1) === '/') throw new MergeHelper_RepoPathInvalidPathException(1);
+		if ($sPath[0] !== '/') throw new MergeHelper_RepoPathInvalidPathException(2);
+		if (mb_substr($sPath, -1) === '.') throw new MergeHelper_RepoPathInvalidPathException(3);
+		if (mb_substr($sPath, -5) === '/.svn') throw new MergeHelper_RepoPathInvalidPathException(4);
+        if (mb_strstr($sPath, '..')) throw new MergeHelper_RepoPathInvalidPathException(5);
+		if (mb_substr($sPath, -2) === '..') throw new MergeHelper_RepoPathInvalidPathException(6);
 		$this->sPath = $sPath;
 	}
 
