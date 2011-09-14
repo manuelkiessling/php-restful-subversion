@@ -58,8 +58,8 @@ date_default_timezone_set('Europe/Berlin');
  */
 class RestfulSubversion_Helper_Bootstrap {
 
-	public static function sGetPackageRoot() {
-		return realpath(dirname(__FILE__).'/../');
-	}
+    public static function sGetPackageRoot() {
+        return realpath(dirname(__FILE__).'/../');
+    }
 
 }

@@ -24,7 +24,7 @@ Maybe this stuff makes more sense when being visualized:
 
        --------------------
        | Your REST client |
-	   --------------------
+       --------------------
                 .
                / \
                 |
@@ -181,7 +181,7 @@ In order to ensure that your repository cache is always in sync with your
 repository cache, create a cronjob which will insert new revisions into the
 cache regularly, like this:
 
-    * * * * *	root	/opt/PHPRestfulSubversion/bin/buildCache.php /opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.conf
+    * * * * *    root    /opt/PHPRestfulSubversion/bin/buildCache.php /opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.conf
 
 
 ### 4. Configure Apache to serve the RESTful JSON webservice

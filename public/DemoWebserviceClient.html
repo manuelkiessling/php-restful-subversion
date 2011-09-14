@@ -1,85 +1,85 @@
 <!DOCTYPE html>
 <html>
 
-	<head>
+    <head>
 
-		<link href="css/default.css"
-			  rel="stylesheet"
-			  type="text/css"
-			  media="screen, projection" />
+        <link href="css/default.css"
+              rel="stylesheet"
+              type="text/css"
+              media="screen, projection" />
 
-		<script src="js/angular-0.9.12.min.js" ng:autobind></script>
+        <script src="js/angular-0.9.12.min.js" ng:autobind></script>
 
-		<script>
-			ChangesetsController.$inject = ['$resource'];
-			function ChangesetsController($resource) {
-				this.ChangesetsResource = $resource(
-					'/changesets.json',
-					{ callback: 'JSON_CALLBACK', limit: '25', order: 'descending' },
-					{ get: { method: 'JSON' } }
-				);
-			}
+        <script>
+            ChangesetsController.$inject = ['$resource'];
+            function ChangesetsController($resource) {
+                this.ChangesetsResource = $resource(
+                    '/changesets.json',
+                    { callback: 'JSON_CALLBACK', limit: '25', order: 'descending' },
+                    { get: { method: 'JSON' } }
+                );
+            }
 
-			ChangesetsController.prototype = {
-				fetchWithMessageContaining: function() {
-					var self = this;
-					this.loading = true;
-					this.result = this.ChangesetsResource.get({ with_message_containing: this.q },
-					                                          function() { self.loading = false; });
-				},
+            ChangesetsController.prototype = {
+                fetchWithMessageContaining: function() {
+                    var self = this;
+                    this.loading = true;
+                    this.result = this.ChangesetsResource.get({ with_message_containing: this.q },
+                                                              function() { self.loading = false; });
+                },
 
-				fetchWithPathEndingOn: function() {
-					var self = this;
-					this.loading = true;
-					this.result = this.ChangesetsResource.get({ with_path_ending_on: this.q },
-					                                          function() { self.loading = false; });
-				}
-			};
-		</script>
+                fetchWithPathEndingOn: function() {
+                    var self = this;
+                    this.loading = true;
+                    this.result = this.ChangesetsResource.get({ with_path_ending_on: this.q },
+                                                              function() { self.loading = false; });
+                }
+            };
+        </script>
 
-	</head>
+    </head>
 
-	<body>
+    <body>
 
-		<div id="content" ng:controller="ChangesetsController">
-			<div id="searchform">
-				<input name="q" value="" size="60" />
-				<button ng:click="fetchWithMessageContaining()">Search in messages</button>
-				<button ng:click="fetchWithPathEndingOn()">Search at path ends</button>
-				<img ng:show="loading" id="progressbar" src="images/progressbar.gif" width="190" height="14" />
-			</div>
+        <div id="content" ng:controller="ChangesetsController">
+            <div id="searchform">
+                <input name="q" value="" size="60" />
+                <button ng:click="fetchWithMessageContaining()">Search in messages</button>
+                <button ng:click="fetchWithPathEndingOn()">Search at path ends</button>
+                <img ng:show="loading" id="progressbar" src="images/progressbar.gif" width="190" height="14" />
+            </div>
 
-			<div class="searchresults">
-				<div class="searchresult" ng:repeat="changeset in result.changesets">
-					<div class="changeset">
-						<div class="metadata">
-							<div class="revision">
-								Changeset
-								<span class="value">[{{changeset.revision}}]</span>
-							</div>
-							<div class="datetime">
-								added on
-								<span class="value">{{changeset.datetime}}</span>
-							</div>
-							<div class="author">
-								by
-								<span class="value">{{changeset.author}}</span>
-							</div>
-						</div>
-						<div class="message">
-							<div class="value">{{changeset.message}}</div>
-						</div>
-						<div class="pathoperations">
-							<div class="pathoperation" ng:repeat="pathoperation in changeset.pathoperations">
-								<div class="action">{{pathoperation.action}}</div>
-								<div class="path">{{pathoperation.path}}</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+            <div class="searchresults">
+                <div class="searchresult" ng:repeat="changeset in result.changesets">
+                    <div class="changeset">
+                        <div class="metadata">
+                            <div class="revision">
+                                Changeset
+                                <span class="value">[{{changeset.revision}}]</span>
+                            </div>
+                            <div class="datetime">
+                                added on
+                                <span class="value">{{changeset.datetime}}</span>
+                            </div>
+                            <div class="author">
+                                by
+                                <span class="value">{{changeset.author}}</span>
+                            </div>
+                        </div>
+                        <div class="message">
+                            <div class="value">{{changeset.message}}</div>
+                        </div>
+                        <div class="pathoperations">
+                            <div class="pathoperation" ng:repeat="pathoperation in changeset.pathoperations">
+                                <div class="action">{{pathoperation.action}}</div>
+                                <div class="path">{{pathoperation.path}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-	</body>
+    </body>
 
 </html>

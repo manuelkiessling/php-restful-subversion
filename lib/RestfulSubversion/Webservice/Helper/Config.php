@@ -50,25 +50,25 @@
  */
 class RestfulSubversion_Webservice_Helper_Config {
 
-	static private $oInstance = NULL;
-	static private $aConfig = array();
+    static private $oInstance = NULL;
+    static private $aConfig = array();
 
-	static public function getInstance() {
-		if (NULL === self::$oInstance) {
-			self::$oInstance = new self;
-		}
-		return self::$oInstance;
-	}
+    static public function getInstance() {
+        if (NULL === self::$oInstance) {
+            self::$oInstance = new self;
+        }
+        return self::$oInstance;
+    }
 
-	private function __construct() {}
-	private function __clone() {}
+    private function __construct() {}
+    private function __clone() {}
 
-	public function setConfig($aConfig) {
-		$this->aConfig = $aConfig;
-	}
+    public function setConfig($aConfig) {
+        $this->aConfig = $aConfig;
+    }
 
-	public function aGetConfig() {
-		return $this->aConfig;
-	}
+    public function aGetConfig() {
+        return $this->aConfig;
+    }
 
 }

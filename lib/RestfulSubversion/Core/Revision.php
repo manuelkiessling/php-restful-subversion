@@ -52,35 +52,35 @@
  */
 class RestfulSubversion_Core_Revision {
 
-	protected $sRevisionNumber = NULL;
-	
-	public function __construct($sRevisionNumber) {
-		if ($sRevisionNumber == 'HEAD') {
-			$this->sRevisionNumber = $sRevisionNumber;
-			return;
-		}
+    protected $sRevisionNumber = NULL;
+    
+    public function __construct($sRevisionNumber) {
+        if ($sRevisionNumber == 'HEAD') {
+            $this->sRevisionNumber = $sRevisionNumber;
+            return;
+        }
 
-		if ((int)$sRevisionNumber < 0) {
-			throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('Revision number must be positive.');
-		}
-		if ((string)(int)$sRevisionNumber != $sRevisionNumber) {
-			throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('"'.$sRevisionNumber.'" is not a valid revision number.');
-		}
-		$this->sRevisionNumber = $sRevisionNumber;
-	}
-	
-	public function sGetAsString() {
-		return (string)($this->sRevisionNumber);
-	}
-	
-	public function sGetRevertedAsString() {
-		return '-'.$this->sGetAsString();
-	}
-	
-	public function __toString() {
-		return (string)$this->sGetAsString();
-	}
-	
+        if ((int)$sRevisionNumber < 0) {
+            throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('Revision number must be positive.');
+        }
+        if ((string)(int)$sRevisionNumber != $sRevisionNumber) {
+            throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('"'.$sRevisionNumber.'" is not a valid revision number.');
+        }
+        $this->sRevisionNumber = $sRevisionNumber;
+    }
+    
+    public function sGetAsString() {
+        return (string)($this->sRevisionNumber);
+    }
+    
+    public function sGetRevertedAsString() {
+        return '-'.$this->sGetAsString();
+    }
+    
+    public function __toString() {
+        return (string)$this->sGetAsString();
+    }
+    
 }
 
 /**

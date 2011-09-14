@@ -53,74 +53,74 @@
  */
 class RestfulSubversion_Core_CommandLineBuilder implements RestfulSubversion_Core_CommandLineBuilderInterface {
 
-	protected $iNumberOfArguments;
-	protected $sCommand;
-	protected $asParameters;
-	protected $aaShortSwitches;
-	protected $aaLongSwitches;
+    protected $iNumberOfArguments;
+    protected $sCommand;
+    protected $asParameters;
+    protected $aaShortSwitches;
+    protected $aaLongSwitches;
 
-	public function __construct() {
-		$this->reset();
-	}
+    public function __construct() {
+        $this->reset();
+    }
 
-	public function reset() {
-		$this->iNumberOfArguments = 0;
-		$this->sCommand = '';
-		$this->asParameters = array();
-		$this->aaShortSwitches = array();
-		$this->aaLongSwitches = array();
-	}
+    public function reset() {
+        $this->iNumberOfArguments = 0;
+        $this->sCommand = '';
+        $this->asParameters = array();
+        $this->aaShortSwitches = array();
+        $this->aaLongSwitches = array();
+    }
 
-	public function setCommand($sCommand) {
-		$this->sCommand = $sCommand;
-	}
-	
-	public function addParameter($sParameterName) {
-		$this->asParameters[$this->iNumberOfArguments] = $sParameterName;
-		$this->iNumberOfArguments++;
-	}
-	
-	public function addShortSwitch($sSwitchName) {
-		$this->addShortSwitchWithValue($sSwitchName, '');
-	}
-	
-	public function addShortSwitchWithValue($sSwitchName, $sSwitchValue) {
-		$this->aaShortSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
-		$this->iNumberOfArguments++;
-	}
-	
-	public function addLongSwitch($sSwitchName) {
-		$this->addLongSwitchWithValue($sSwitchName, '');
-	}
-	
-	public function addLongSwitchWithValue($sSwitchName, $sSwitchValue) {
-		$this->aaLongSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
-		$this->iNumberOfArguments++;
-	}
-	
-	public function sGetCommandLine() {
-		$return = $this->sCommand;
+    public function setCommand($sCommand) {
+        $this->sCommand = $sCommand;
+    }
+    
+    public function addParameter($sParameterName) {
+        $this->asParameters[$this->iNumberOfArguments] = $sParameterName;
+        $this->iNumberOfArguments++;
+    }
+    
+    public function addShortSwitch($sSwitchName) {
+        $this->addShortSwitchWithValue($sSwitchName, '');
+    }
+    
+    public function addShortSwitchWithValue($sSwitchName, $sSwitchValue) {
+        $this->aaShortSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
+        $this->iNumberOfArguments++;
+    }
+    
+    public function addLongSwitch($sSwitchName) {
+        $this->addLongSwitchWithValue($sSwitchName, '');
+    }
+    
+    public function addLongSwitchWithValue($sSwitchName, $sSwitchValue) {
+        $this->aaLongSwitches[$this->iNumberOfArguments] = array('sSwitchName' => $sSwitchName, 'sSwitchValue' => $sSwitchValue);
+        $this->iNumberOfArguments++;
+    }
+    
+    public function sGetCommandLine() {
+        $return = $this->sCommand;
 
-		for ($i = 0; $i < $this->iNumberOfArguments; $i++) {
-			
-			if (isset($this->asParameters[$i])) $return .= ' '.$this->asParameters[$i];
-			
-			if (isset($this->aaShortSwitches[$i])) {
-				$return .= ' -'.$this->aaShortSwitches[$i]['sSwitchName'];
-				if ($this->aaShortSwitches[$i]['sSwitchValue'] !== '') {
-					$return .= ' '.$this->aaShortSwitches[$i]['sSwitchValue'];
-				}
-			}
-			
-			if (isset($this->aaLongSwitches[$i])) {
-				$return .= ' --'.$this->aaLongSwitches[$i]['sSwitchName'];
-				if ($this->aaLongSwitches[$i]['sSwitchValue'] !== '') {
-					$return .= '='.$this->aaLongSwitches[$i]['sSwitchValue'];
-				}
-			}
-			
-		}
-		return $return;
-	}
+        for ($i = 0; $i < $this->iNumberOfArguments; $i++) {
+            
+            if (isset($this->asParameters[$i])) $return .= ' '.$this->asParameters[$i];
+            
+            if (isset($this->aaShortSwitches[$i])) {
+                $return .= ' -'.$this->aaShortSwitches[$i]['sSwitchName'];
+                if ($this->aaShortSwitches[$i]['sSwitchValue'] !== '') {
+                    $return .= ' '.$this->aaShortSwitches[$i]['sSwitchValue'];
+                }
+            }
+            
+            if (isset($this->aaLongSwitches[$i])) {
+                $return .= ' --'.$this->aaLongSwitches[$i]['sSwitchName'];
+                if ($this->aaLongSwitches[$i]['sSwitchValue'] !== '') {
+                    $return .= '='.$this->aaLongSwitches[$i]['sSwitchValue'];
+                }
+            }
+            
+        }
+        return $return;
+    }
 
 }

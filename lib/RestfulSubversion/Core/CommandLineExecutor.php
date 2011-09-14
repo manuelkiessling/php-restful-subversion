@@ -51,23 +51,23 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 class RestfulSubversion_Core_CommandLineExecutor {
-	
-	protected static $oInstance = NULL;
-	protected static $asCache = array();
+    
+    protected static $oInstance = NULL;
+    protected static $asCache = array();
 
-	protected function __construct() {}
+    protected function __construct() {}
 
-	public function __clone() {
-		throw new RestfulSubversion_Core_Exception('You cannot clone the singleton instance RestfulSubversion_Core_CommandLineExecutor');
-	}
-	
-	public static function oGetInstance() {
-		if (is_null(self::$oInstance)) self::$oInstance = new self;
-		return self::$oInstance;
-	}
-	
-	public function sGetCommandResult($sCommand) {
-		return shell_exec($sCommand);
-	}
+    public function __clone() {
+        throw new RestfulSubversion_Core_Exception('You cannot clone the singleton instance RestfulSubversion_Core_CommandLineExecutor');
+    }
+    
+    public static function oGetInstance() {
+        if (is_null(self::$oInstance)) self::$oInstance = new self;
+        return self::$oInstance;
+    }
+    
+    public function sGetCommandResult($sCommand) {
+        return shell_exec($sCommand);
+    }
 
 }

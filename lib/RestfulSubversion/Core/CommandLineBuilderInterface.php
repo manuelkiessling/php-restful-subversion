@@ -52,18 +52,18 @@
  */
 interface RestfulSubversion_Core_CommandLineBuilderInterface {
 
-	public function setCommand($sCommand);
-	
-	public function addParameter($sParameterName);
-	
-	public function addShortSwitch($sSwitchName);
-	
-	public function addShortSwitchWithValue($sSwitchName, $sSwitchValue);
-	
-	public function addLongSwitch($sSwitchName);
-	
-	public function addLongSwitchWithValue($sSwitchName, $sSwitchValue);
-	
-	public function sGetCommandLine();
+    public function setCommand($sCommand);
+    
+    public function addParameter($sParameterName);
+    
+    public function addShortSwitch($sSwitchName);
+    
+    public function addShortSwitchWithValue($sSwitchName, $sSwitchValue);
+    
+    public function addLongSwitch($sSwitchName);
+    
+    public function addLongSwitchWithValue($sSwitchName, $sSwitchValue);
+    
+    public function sGetCommandLine();
 
 }

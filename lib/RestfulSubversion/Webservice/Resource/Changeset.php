@@ -51,19 +51,19 @@
  */
 class RestfulSubversion_Webservice_Resource_Changeset extends RestfulSubversion_Webservice_Resource {
 
-	public function get($request, $sRevisionNumber) {
-		$oCacheDb = new PDO($this->aConfig['sRepoCacheConnectionString'], NULL, NULL);
-		$oRepoCache = new RestfulSubversion_Core_RepoCache($oCacheDb);
+    public function get($request, $sRevisionNumber) {
+        $oCacheDb = new PDO($this->aConfig['sRepoCacheConnectionString'], NULL, NULL);
+        $oRepoCache = new RestfulSubversion_Core_RepoCache($oCacheDb);
 
-		$oChangeset = $oRepoCache->oGetChangesetForRevision(new RestfulSubversion_Core_Revision($sRevisionNumber));
-		if (!is_null($oChangeset)) {
-			$aResult = RestfulSubversion_Webservice_Helper_Result::aGetChangesetAsArray($oChangeset);
-		} else {
-			$aResult = NULL;
-		}
+        $oChangeset = $oRepoCache->oGetChangesetForRevision(new RestfulSubversion_Core_Revision($sRevisionNumber));
+        if (!is_null($oChangeset)) {
+            $aResult = RestfulSubversion_Webservice_Helper_Result::aGetChangesetAsArray($oChangeset);
+        } else {
+            $aResult = NULL;
+        }
 
-		$oResponseHelper = new RestfulSubversion_Webservice_Helper_Response();
-		return $oResponseHelper->setResponse(new Response($request), $aResult);
-	}
+        $oResponseHelper = new RestfulSubversion_Webservice_Helper_Response();
+        return $oResponseHelper->setResponse(new Response($request), $aResult);
+    }
 
 }

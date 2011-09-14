@@ -52,21 +52,21 @@
  * @uses       RestfulSubversion_Helper_Bootstrap::sGetPackageRoot()
  */
 class RestfulSubversion_Helper_Autoloader {
-	
-	public static function load($sClassName) {
-		$aClassParts = explode('_', $sClassName);
-		unset($aClassParts[0]);
-		$sClassPath = implode('/', $aClassParts).'.php';
+    
+    public static function load($sClassName) {
+        $aClassParts = explode('_', $sClassName);
+        unset($aClassParts[0]);
+        $sClassPath = implode('/', $aClassParts).'.php';
 
-		$asPaths = array(realpath(RestfulSubversion_Helper_Bootstrap::sGetPackageRoot()));
-		foreach ($asPaths as $sPath) {
-			if (file_exists(realpath($sPath.'/'.$sClassPath))) {
-				require_once realpath($sPath.'/'.$sClassPath);
-				return $sClassPath;
-			}
-		}
+        $asPaths = array(realpath(RestfulSubversion_Helper_Bootstrap::sGetPackageRoot()));
+        foreach ($asPaths as $sPath) {
+            if (file_exists(realpath($sPath.'/'.$sClassPath))) {
+                require_once realpath($sPath.'/'.$sClassPath);
+                return $sClassPath;
+            }
+        }
 
-		return FALSE;
-	}
+        return FALSE;
+    }
 
 }

@@ -52,55 +52,55 @@
  */
 class RestfulSubversion_Core_Changeset {
 
-	protected $oRevision = NULL;
-	protected $sAuthor = NULL;
-	protected $sDateTime = NULL;
-	protected $sMessage = NULL;
-	protected $aaPathOperations = array();
-	
-	public function __construct(RestfulSubversion_Core_Revision $oRevision) {
-		$this->oRevision = $oRevision;
-	}
-	
-	public function setAuthor($sAuthor) {
-		$this->sAuthor = $sAuthor;
-	}
-	
-	public function setDateTime($sDateTime) {
-		$this->sDateTime = $sDateTime;
-	}
-	
-	public function setMessage($sMessage) {
-		$this->sMessage = $sMessage;
-	}
-	
-	public function addPathOperation($sAction, RestfulSubversion_Core_RepoPath $oPath, RestfulSubversion_Core_RepoPath $oCopyfromPath = NULL, RestfulSubversion_Core_Revision $oCopyfromRev = NULL) {
-		$aPathOperation = array('sAction' => $sAction,
-		                        'oPath' => $oPath
-		                       );
-		if ($oCopyfromPath) $aPathOperation['oCopyfromPath'] = $oCopyfromPath;
-		if ($oCopyfromRev) $aPathOperation['oCopyfromRev'] = $oCopyfromRev;
-		$this->aaPathOperations[] = $aPathOperation;
-	}
+    protected $oRevision = NULL;
+    protected $sAuthor = NULL;
+    protected $sDateTime = NULL;
+    protected $sMessage = NULL;
+    protected $aaPathOperations = array();
+    
+    public function __construct(RestfulSubversion_Core_Revision $oRevision) {
+        $this->oRevision = $oRevision;
+    }
+    
+    public function setAuthor($sAuthor) {
+        $this->sAuthor = $sAuthor;
+    }
+    
+    public function setDateTime($sDateTime) {
+        $this->sDateTime = $sDateTime;
+    }
+    
+    public function setMessage($sMessage) {
+        $this->sMessage = $sMessage;
+    }
+    
+    public function addPathOperation($sAction, RestfulSubversion_Core_RepoPath $oPath, RestfulSubversion_Core_RepoPath $oCopyfromPath = NULL, RestfulSubversion_Core_Revision $oCopyfromRev = NULL) {
+        $aPathOperation = array('sAction' => $sAction,
+                                'oPath' => $oPath
+                               );
+        if ($oCopyfromPath) $aPathOperation['oCopyfromPath'] = $oCopyfromPath;
+        if ($oCopyfromRev) $aPathOperation['oCopyfromRev'] = $oCopyfromRev;
+        $this->aaPathOperations[] = $aPathOperation;
+    }
 
-	public function oGetRevision() {
-		return $this->oRevision;
-	}
+    public function oGetRevision() {
+        return $this->oRevision;
+    }
 
-	public function sGetAuthor() {
-		return $this->sAuthor;
-	}
+    public function sGetAuthor() {
+        return $this->sAuthor;
+    }
 
-	public function sGetDateTime() {
-		return $this->sDateTime;
-	}
+    public function sGetDateTime() {
+        return $this->sDateTime;
+    }
 
-	public function sGetMessage() {
-		return $this->sMessage;
-	}
+    public function sGetMessage() {
+        return $this->sMessage;
+    }
 
-	public function aaGetPathOperations() {
-		return $this->aaPathOperations;
-	}
-	
+    public function aaGetPathOperations() {
+        return $this->aaPathOperations;
+    }
+    
 }

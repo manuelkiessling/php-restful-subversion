@@ -52,31 +52,31 @@
  */
 class RestfulSubversion_Core_RepoLogInterpreter {
 
-	public function aoCreateChangesetsFromVerboseXml($sXml) {
-		$aoChangesets = array();
+    public function aoCreateChangesetsFromVerboseXml($sXml) {
+        $aoChangesets = array();
 
-		$oXml = new SimpleXMLElement($sXml);
-		foreach ($oXml->logentry as $oLogentry) {
-			$oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision((string)$oLogentry['revision']));
-			$oChangeset->setAuthor((string)$oLogentry->author);
-			$oChangeset->setDateTime(date('Y-m-d H:i:s', strtotime($oLogentry->date)));
-			$oChangeset->setMessage((string)$oLogentry->msg);
+        $oXml = new SimpleXMLElement($sXml);
+        foreach ($oXml->logentry as $oLogentry) {
+            $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision((string)$oLogentry['revision']));
+            $oChangeset->setAuthor((string)$oLogentry->author);
+            $oChangeset->setDateTime(date('Y-m-d H:i:s', strtotime($oLogentry->date)));
+            $oChangeset->setMessage((string)$oLogentry->msg);
 
-			foreach ($oLogentry->paths[0] as $oPath) {
-				$oCopyfromPath = NULL;
-				$oCopyfromRev = NULL;
-				if ($oPath['copyfrom-path']) $oCopyfromPath = new RestfulSubversion_Core_RepoPath((string)$oPath['copyfrom-path']);
-				if ($oPath['copyfrom-rev']) $oCopyfromRev = new RestfulSubversion_Core_Revision((string)$oPath['copyfrom-rev']);
-				$oChangeset->addPathOperation((string)$oPath['action'],
-											  new RestfulSubversion_Core_RepoPath((string)$oPath),
-											  $oCopyfromPath,
-											  $oCopyfromRev);
-			}
+            foreach ($oLogentry->paths[0] as $oPath) {
+                $oCopyfromPath = NULL;
+                $oCopyfromRev = NULL;
+                if ($oPath['copyfrom-path']) $oCopyfromPath = new RestfulSubversion_Core_RepoPath((string)$oPath['copyfrom-path']);
+                if ($oPath['copyfrom-rev']) $oCopyfromRev = new RestfulSubversion_Core_Revision((string)$oPath['copyfrom-rev']);
+                $oChangeset->addPathOperation((string)$oPath['action'],
+                                              new RestfulSubversion_Core_RepoPath((string)$oPath),
+                                              $oCopyfromPath,
+                                              $oCopyfromRev);
+            }
 
-			$aoChangesets[] = $oChangeset;
-		}
+            $aoChangesets[] = $oChangeset;
+        }
 
-		return $aoChangesets;
-	}
+        return $aoChangesets;
+    }
 
 }

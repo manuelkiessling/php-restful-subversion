@@ -50,11 +50,11 @@
  */
 class RestfulSubversion_Webservice_Resource extends Resource {
 
-	protected $aConfig = array();
+    protected $aConfig = array();
 
-	function  __construct($aParameters = array()) {
-		$this->aConfig = RestfulSubversion_Webservice_Helper_Config::getInstance()->aGetConfig();
-		parent::__construct($aParameters);
-	}
+    function  __construct($aParameters = array()) {
+        $this->aConfig = RestfulSubversion_Webservice_Helper_Config::getInstance()->aGetConfig();
+        parent::__construct($aParameters);
+    }
 
 }

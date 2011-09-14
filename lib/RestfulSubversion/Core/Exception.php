@@ -53,8 +53,8 @@
  */
 class RestfulSubversion_Core_Exception extends Exception {
 
-	public function __construct($sMessage = NULL, $iCode = 0) {
-		parent::__construct($sMessage, $iCode);
-	}
+    public function __construct($sMessage = NULL, $iCode = 0) {
+        parent::__construct($sMessage, $iCode);
+    }
 
 }
