@@ -50,9 +50,10 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Webservice_Resource_Changesets extends RestfulSubversion_Webservice_Resource {
-
-    public function get($request) {
+class RestfulSubversion_Webservice_Resource_Changesets extends RestfulSubversion_Webservice_Resource
+{
+    public function get($request)
+    {
         $responseHelper = new RestfulSubversion_Webservice_Helper_Response();
 
         $callback = NULL;
@@ -105,5 +106,4 @@ class RestfulSubversion_Webservice_Resource_Changesets extends RestfulSubversion
 
         return $responseHelper->setResponse(new Response($request), array('changesets' => $changesets), $callback);
     }
-
 }

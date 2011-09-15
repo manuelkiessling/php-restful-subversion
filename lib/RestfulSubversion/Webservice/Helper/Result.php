@@ -48,9 +48,10 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Webservice_Helper_Result {
-
-    public static function getChangesetAsArray(RestfulSubversion_Core_Changeset $changeset) {
+class RestfulSubversion_Webservice_Helper_Result
+{
+    public static function getChangesetAsArray(RestfulSubversion_Core_Changeset $changeset)
+    {
         $changesetArray = array();
         $changesetArray['revision'] = $changeset->getRevision()->getAsString();
         $changesetArray['author'] = $changeset->getAuthor();
@@ -70,5 +71,4 @@ class RestfulSubversion_Webservice_Helper_Result {
         }
         return $changesetArray;
     }
-
 }

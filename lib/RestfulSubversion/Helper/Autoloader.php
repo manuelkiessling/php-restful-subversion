@@ -51,22 +51,22 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  * @uses       RestfulSubversion_Helper_Bootstrap::getLibraryRoot()
  */
-class RestfulSubversion_Helper_Autoloader {
-    
-    public static function load($className) {
+class RestfulSubversion_Helper_Autoloader
+{
+    public static function load($className)
+    {
         $classParts = explode('_', $className);
         unset($classParts[0]);
-        $classPath = implode('/', $classParts).'.php';
+        $classPath = implode('/', $classParts) . '.php';
 
         $paths = array(realpath(RestfulSubversion_Helper_Bootstrap::getLibraryRoot()));
         foreach ($paths as $path) {
-            if (file_exists(realpath($path.'/'.$classPath))) {
-                require_once realpath($path.'/'.$classPath);
+            if (file_exists(realpath($path . '/' . $classPath))) {
+                require_once realpath($path . '/' . $classPath);
                 return $classPath;
             }
         }
 
         return FALSE;
     }
-
 }

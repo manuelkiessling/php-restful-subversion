@@ -48,12 +48,13 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Webservice_Helper_Config {
-
+class RestfulSubversion_Webservice_Helper_Config
+{
     static private $instance = NULL;
     static private $configValues = array();
 
-    static public function getInstance() {
+    static public function getInstance()
+    {
         if (NULL === self::$instance) {
             self::$instance = new self;
         }
@@ -61,14 +62,16 @@ class RestfulSubversion_Webservice_Helper_Config {
     }
 
     private function __construct() {}
+
     private function __clone() {}
 
-    public function setConfig($configValues) {
+    public function setConfig($configValues)
+    {
         $this->configValues = $configValues;
     }
 
-    public function aGetConfig() {
+    public function aGetConfig()
+    {
         return $this->configValues;
     }
-
 }

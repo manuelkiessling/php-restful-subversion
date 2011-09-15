@@ -50,24 +50,26 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Core_CommandLineExecutor {
-    
+class RestfulSubversion_Core_CommandLineExecutor
+{
     protected static $instance = NULL;
     protected static $cache = array();
 
     protected function __construct() {}
 
-    public function __clone() {
+    public function __clone()
+    {
         throw new RestfulSubversion_Core_Exception('You cannot clone the singleton instance RestfulSubversion_Core_CommandLineExecutor');
     }
-    
-    public static function getInstance() {
+
+    public static function getInstance()
+    {
         if (is_null(self::$instance)) self::$instance = new self;
         return self::$instance;
     }
-    
-    public function getCommandResult($command) {
+
+    public function getCommandResult($command)
+    {
         return shell_exec($command);
     }
-
 }

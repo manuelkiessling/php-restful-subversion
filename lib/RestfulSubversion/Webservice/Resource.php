@@ -48,13 +48,13 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Webservice_Resource extends Resource {
-
+class RestfulSubversion_Webservice_Resource extends Resource
+{
     protected $configValues = array();
 
-    function  __construct($parameters = array()) {
+    function  __construct($parameters = array())
+    {
         $this->configValues = RestfulSubversion_Webservice_Helper_Config::getInstance()->aGetConfig();
         parent::__construct($parameters);
     }
-
 }

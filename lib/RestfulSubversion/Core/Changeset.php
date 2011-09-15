@@ -50,57 +50,65 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Core_Changeset {
-
+class RestfulSubversion_Core_Changeset
+{
     protected $revision = NULL;
     protected $author = NULL;
     protected $dateTime = NULL;
     protected $message = NULL;
     protected $pathOperations = array();
-    
-    public function __construct(RestfulSubversion_Core_Revision $revision) {
+
+    public function __construct(RestfulSubversion_Core_Revision $revision)
+    {
         $this->revision = $revision;
     }
-    
-    public function setAuthor($author) {
+
+    public function setAuthor($author)
+    {
         $this->author = $author;
     }
-    
-    public function setDateTime($dateTime) {
+
+    public function setDateTime($dateTime)
+    {
         $this->dateTime = $dateTime;
     }
-    
-    public function setMessage($message) {
+
+    public function setMessage($message)
+    {
         $this->message = $message;
     }
-    
-    public function addPathOperation($action, RestfulSubversion_Core_RepoPath $path, RestfulSubversion_Core_RepoPath $copyfromPath = NULL, RestfulSubversion_Core_Revision $copyfromRev = NULL) {
+
+    public function addPathOperation($action, RestfulSubversion_Core_RepoPath $path, RestfulSubversion_Core_RepoPath $copyfromPath = NULL, RestfulSubversion_Core_Revision $copyfromRev = NULL)
+    {
         $pathOperation = array('action' => $action,
-                               'path' => $path
-                               );
+                               'path' => $path);
         if ($copyfromPath) $pathOperation['copyfromPath'] = $copyfromPath;
         if ($copyfromRev) $pathOperation['copyfromRev'] = $copyfromRev;
         $this->pathOperations[] = $pathOperation;
     }
 
-    public function getRevision() {
+    public function getRevision()
+    {
         return $this->revision;
     }
 
-    public function getAuthor() {
+    public function getAuthor()
+    {
         return $this->author;
     }
 
-    public function getDateTime() {
+    public function getDateTime()
+    {
         return $this->dateTime;
     }
 
-    public function getMessage() {
+    public function getMessage()
+    {
         return $this->message;
     }
 
-    public function getPathOperations() {
+    public function getPathOperations()
+    {
         return $this->pathOperations;
     }
-    
 }

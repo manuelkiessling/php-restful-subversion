@@ -50,20 +50,19 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-interface RestfulSubversion_Core_CommandLineBuilderInterface {
-
+interface RestfulSubversion_Core_CommandLineBuilderInterface
+{
     public function setCommand($command);
-    
-    public function addParameter($sParameterName);
-    
-    public function addShortSwitch($sSwitchName);
-    
-    public function addShortSwitchWithValue($sSwitchName, $sSwitchValue);
-    
-    public function addLongSwitch($sSwitchName);
-    
-    public function addLongSwitchWithValue($sSwitchName, $sSwitchValue);
-    
-    public function getCommandLine();
 
+    public function addParameter($parameterName);
+
+    public function addShortSwitch($switchName);
+
+    public function addShortSwitchWithValue($switchName, $switchValue);
+
+    public function addLongSwitch($switchName);
+
+    public function addLongSwitchWithValue($switchName, $switchValue);
+
+    public function getCommandLine();
 }

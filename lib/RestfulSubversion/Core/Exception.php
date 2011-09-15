@@ -51,10 +51,10 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  * @uses       Exception
  */
-class RestfulSubversion_Core_Exception extends Exception {
-
-    public function __construct($message = NULL, $code = 0) {
+class RestfulSubversion_Core_Exception extends Exception
+{
+    public function __construct($message = NULL, $code = 0)
+    {
         parent::__construct($message, $code);
     }
-
 }

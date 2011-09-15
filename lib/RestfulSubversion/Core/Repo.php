@@ -51,31 +51,36 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  * @uses       RestfulSubversion_Core_RepoPath
  */
-class RestfulSubversion_Core_Repo {
-
+class RestfulSubversion_Core_Repo
+{
     protected $uri = NULL;
     protected $username = NULL;
     protected $password = NULL;
     protected $oTargetPath = NULL;
 
-    public function setUri($uri) {
+    public function setUri($uri)
+    {
         $this->uri = $uri;
     }
 
-    public function getUri() {
+    public function getUri()
+    {
         return $this->uri;
     }
 
-    public function setAuthinfo($username, $password) {
+    public function setAuthinfo($username, $password)
+    {
         $this->username = $username;
         $this->password = $password;
     }
 
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->username;
     }
 
-    public function getPassword() {
+    public function getPassword()
+    {
         return $this->password;
     }
 }

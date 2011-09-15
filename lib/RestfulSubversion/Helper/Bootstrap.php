@@ -56,10 +56,10 @@ date_default_timezone_set('Europe/Berlin');
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  * @uses       RestfulSubversion_Helper_Autoloader::load
  */
-class RestfulSubversion_Helper_Bootstrap {
-
-    public static function getLibraryRoot() {
-        return realpath(dirname(__FILE__).'/../');
+class RestfulSubversion_Helper_Bootstrap
+{
+    public static function getLibraryRoot()
+    {
+        return realpath(dirname(__FILE__) . '/../');
     }
-
 }

@@ -49,9 +49,10 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Webservice_Resource_Changeset extends RestfulSubversion_Webservice_Resource {
-
-    public function get($request, $revisionNumber) {
+class RestfulSubversion_Webservice_Resource_Changeset extends RestfulSubversion_Webservice_Resource
+{
+    public function get($request, $revisionNumber)
+    {
         $cacheDbHandler = new PDO($this->configValues['repoCacheConnectionString'], NULL, NULL);
         $repoCache = new RestfulSubversion_Core_RepoCache($cacheDbHandler);
 
@@ -65,5 +66,4 @@ class RestfulSubversion_Webservice_Resource_Changeset extends RestfulSubversion_
         $responseHelper = new RestfulSubversion_Webservice_Helper_Response();
         return $responseHelper->setResponse(new Response($request), $result);
     }
-
 }

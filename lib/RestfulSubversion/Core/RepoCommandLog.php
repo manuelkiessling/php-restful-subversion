@@ -54,33 +54,38 @@
  * @uses       RestfulSubversion_Core_CommandLineExecutor
  * @uses       RestfulSubversion_Core_RepoPath
  */
-class RestfulSubversion_Core_RepoCommandLog {
-    
+class RestfulSubversion_Core_RepoCommandLog
+{
     protected $repo = NULL;
     protected $revision = NULL;
     protected $range = NULL;
     protected $verbose = FALSE;
     protected $xml = FALSE;
     protected $commandLineBuilder = NULL;
-    
-    public function __construct(RestfulSubversion_Core_Repo $repo, RestfulSubversion_Core_CommandLineBuilderInterface $commandLineBuilder) {
+
+    public function __construct(RestfulSubversion_Core_Repo $repo, RestfulSubversion_Core_CommandLineBuilderInterface $commandLineBuilder)
+    {
         $this->repo = $repo;
         $this->commandLineBuilder = $commandLineBuilder;
     }
-    
-    public function setRevision(RestfulSubversion_Core_Revision $revision) {
+
+    public function setRevision(RestfulSubversion_Core_Revision $revision)
+    {
         $this->revision = $revision;
     }
 
-    public function enableVerbose() {
+    public function enableVerbose()
+    {
         $this->verbose = TRUE;
     }
 
-    public function enableXml() {
+    public function enableXml()
+    {
         $this->xml = TRUE;
     }
-        
-    public function getCommandline() {
+
+    public function getCommandline()
+    {
         $this->commandLineBuilder->reset();
         $this->commandLineBuilder->setCommand('svn');
         $this->commandLineBuilder->addParameter('log');
@@ -99,5 +104,4 @@ class RestfulSubversion_Core_RepoCommandLog {
 
         return $this->commandLineBuilder->getCommandLine();
     }
-
 }

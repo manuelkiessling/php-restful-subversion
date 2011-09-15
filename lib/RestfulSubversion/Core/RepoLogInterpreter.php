@@ -50,9 +50,10 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Core_RepoLogInterpreter {
-
-    public function createChangesetsFromVerboseXml($xml) {
+class RestfulSubversion_Core_RepoLogInterpreter
+{
+    public function createChangesetsFromVerboseXml($xml)
+    {
         $changesets = array();
 
         $xmlObject = new SimpleXMLElement($xml);
@@ -68,9 +69,9 @@ class RestfulSubversion_Core_RepoLogInterpreter {
                 if ($path['copyfrom-path']) $copyfromPath = new RestfulSubversion_Core_RepoPath((string)$path['copyfrom-path']);
                 if ($path['copyfrom-rev']) $copyfromRev = new RestfulSubversion_Core_Revision((string)$path['copyfrom-rev']);
                 $changeset->addPathOperation((string)$path['action'],
-                                              new RestfulSubversion_Core_RepoPath((string)$path),
-                                              $copyfromPath,
-                                              $copyfromRev);
+                                             new RestfulSubversion_Core_RepoPath((string)$path),
+                                             $copyfromPath,
+                                             $copyfromRev);
             }
 
             $changesets[] = $changeset;
@@ -78,5 +79,4 @@ class RestfulSubversion_Core_RepoLogInterpreter {
 
         return $changesets;
     }
-
 }

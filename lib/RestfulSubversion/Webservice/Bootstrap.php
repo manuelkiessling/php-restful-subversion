@@ -39,10 +39,10 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
-require_once realpath(dirname(__FILE__).'/../../RestfulSubversion/Helper/Bootstrap.php');
-require_once realpath(dirname(__FILE__).'/../../../vendor/Tonic.php');
-require_once realpath(dirname(__FILE__)).'/Helper/Config.php';
-require_once realpath(dirname(__FILE__)).'/Helper/Response.php';
-require_once realpath(dirname(__FILE__)).'/Resource.php';
-require_once realpath(dirname(__FILE__)).'/Resource/Changeset.php';
-require_once realpath(dirname(__FILE__)).'/Resource/Changesets.php';
+require_once realpath(dirname(__FILE__) . '/../../RestfulSubversion/Helper/Bootstrap.php');
+require_once realpath(dirname(__FILE__) . '/../../../vendor/Tonic.php');
+require_once realpath(dirname(__FILE__)) . '/Helper/Config.php';
+require_once realpath(dirname(__FILE__)) . '/Helper/Response.php';
+require_once realpath(dirname(__FILE__)) . '/Resource.php';
+require_once realpath(dirname(__FILE__)) . '/Resource/Changeset.php';
+require_once realpath(dirname(__FILE__)) . '/Resource/Changesets.php';

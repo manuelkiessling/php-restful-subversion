@@ -48,27 +48,28 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Webservice_Helper_Response {
-
-    public function setResponse(Response $response, $body, $callback = NULL) {
+class RestfulSubversion_Webservice_Helper_Response
+{
+    public function setResponse(Response $response, $body, $callback = NULL)
+    {
         $response->code = Response::OK;
         $response->addHeader('Content-Type', 'application/json');
-         if (is_string($callback)) {
-            $response->body = $callback.'('.json_encode($body).');';
+        if (is_string($callback)) {
+            $response->body = $callback . '(' . json_encode($body) . ');';
         } else {
             $response->body = json_encode($body);
         }
         return $response;
     }
 
-    public function setFailedResponse(Response $response, $errorMessage = 'This request is not valid.', $callback = NULL) {
+    public function setFailedResponse(Response $response, $errorMessage = 'This request is not valid.', $callback = NULL)
+    {
         $response->code = Response::BADREQUEST;
         if (is_string($callback)) {
-            $response->body = $callback.'('.json_encode(array('error' => TRUE, 'errorMessage' => $errorMessage)).');';
+            $response->body = $callback . '(' . json_encode(array('error' => TRUE, 'errorMessage' => $errorMessage)) . ');';
         } else {
             $response->body = json_encode(array('error' => TRUE, 'error' => $errorMessage));
         }
         return $response;
     }
-
 }

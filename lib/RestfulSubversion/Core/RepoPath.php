@@ -51,8 +51,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  * @uses       RestfulSubversion_Core_RepoPathInvalidPathCoreException
  */
-class RestfulSubversion_Core_RepoPath {
-
+class RestfulSubversion_Core_RepoPath
+{
     /**
      * Internal string representation of the path
      */
@@ -65,7 +65,8 @@ class RestfulSubversion_Core_RepoPath {
      * @return void
      * @throws RestfulSubversion_Core_RepoPathInvalidPathCoreException if the given string doesn't have the correct format
      */
-    public function __construct($path) {
+    public function __construct($path)
+    {
         if (mb_substr($path, -1) === '/') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
         if ($path[0] !== '/') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
         if (mb_substr($path, -2) === '/.') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
@@ -76,14 +77,15 @@ class RestfulSubversion_Core_RepoPath {
         $this->path = $path;
     }
 
-    public function getAsString() {
+    public function getAsString()
+    {
         return $this->path;
     }
-    
-    public function __toString() {
+
+    public function __toString()
+    {
         return $this->getAsString();
     }
-
 }
 
 /**
@@ -98,4 +100,4 @@ class RestfulSubversion_Core_RepoPath {
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  * @uses       RestfulSubversion_Core_Exception
  */
-class RestfulSubversion_Core_RepoPathInvalidPathCoreException extends RestfulSubversion_Core_Exception {};
+class RestfulSubversion_Core_RepoPathInvalidPathCoreException extends RestfulSubversion_Core_Exception {}

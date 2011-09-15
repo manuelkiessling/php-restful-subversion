@@ -50,11 +50,12 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Core_Revision {
-
+class RestfulSubversion_Core_Revision
+{
     protected $revisionNumber = NULL;
-    
-    public function __construct($revisionNumber) {
+
+    public function __construct($revisionNumber)
+    {
         if ($revisionNumber == 'HEAD') {
             $this->revisionNumber = $revisionNumber;
             return;
@@ -64,23 +65,25 @@ class RestfulSubversion_Core_Revision {
             throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('Revision number must be positive.');
         }
         if ((string)(int)$revisionNumber != $revisionNumber) {
-            throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('"'.$revisionNumber.'" is not a valid revision number.');
+            throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('"' . $revisionNumber . '" is not a valid revision number.');
         }
         $this->revisionNumber = $revisionNumber;
     }
-    
-    public function getAsString() {
+
+    public function getAsString()
+    {
         return (string)($this->revisionNumber);
     }
-    
-    public function sGetRevertedAstring() {
-        return '-'.$this->getAsString();
+
+    public function sGetRevertedAstring()
+    {
+        return '-' . $this->getAsString();
     }
-    
-    public function __toString() {
+
+    public function __toString()
+    {
         return (string)$this->getAsString();
     }
-    
 }
 
 /**
@@ -95,4 +98,4 @@ class RestfulSubversion_Core_Revision {
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  * @uses       RestfulSubversion_Core_Exception
  */
-class RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException extends RestfulSubversion_Core_Exception {};
+class RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException extends RestfulSubversion_Core_Exception {}
