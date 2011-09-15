@@ -45,22 +45,22 @@ EOT;
     exit(1);
 }
 
-function iGetHighestRevisionInRepo(RestfulSubversion_Core_Repo $oRepo) {
-    $oCommandLineExecutor = RestfulSubversion_Core_CommandLineExecutor::oGetInstance();
-    $oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-    $oLogInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
+function getHighestRevisionInRepo(RestfulSubversion_Core_Repo $repo) {
+    $commandLineExecutor = RestfulSubversion_Core_CommandLineExecutor::getInstance();
+    $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+    $logInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
 
-    $oCommandLog = new RestfulSubversion_Core_RepoCommandLog($oRepo, $oCommandLineBuilder);
-    $oCommandLog->enableVerbose();
-    $oCommandLog->enableXml();
-    $oCommandLog->setRevision(new RestfulSubversion_Core_Revision('HEAD'));
-    $sCommandline = $oCommandLog->sGetCommandline();
-    $sLogOutput = $oCommandLineExecutor->sGetCommandResult($sCommandline);
+    $commandLog = new RestfulSubversion_Core_RepoCommandLog($repo, $commandLineBuilder);
+    $commandLog->enableVerbose();
+    $commandLog->enableXml();
+    $commandLog->setRevision(new RestfulSubversion_Core_Revision('HEAD'));
+    $commandline = $commandLog->getCommandline();
+    $logOutput = $commandLineExecutor->getCommandResult($commandline);
 
-    $aoChangesets = $oLogInterpreter->aoCreateChangesetsFromVerboseXml($sLogOutput);
+    $changesets = $logInterpreter->createChangesetsFromVerboseXml($logOutput);
 
-    foreach ($aoChangesets as $oChangeset) {
-        return (int)$oChangeset->oGetRevision()->sGetAsString();
+    foreach ($changesets as $changeset) {
+        return (int)$changeset->getRevision()->getAsString();
     }
 }
 
@@ -70,103 +70,103 @@ if (!array_key_exists(1, $argv)) {
 
 if (is_file($argv[1])) {
     require_once $argv[1];
-    $sRepoLocation = $aConfig['sRepoLocation'];
-    $sRepoUsername = $aConfig['sRepoUsername'];
-    $sRepoPassword = $aConfig['sRepoPassword'];
-    $sRepoCacheConnectionString = $aConfig['sRepoCacheConnectionString'];
-    $iMaxImportsPerRun = 0;
-    if (array_key_exists('iMaxImportsPerRun', $aConfig)) {
-        $iMaxImportsPerRun = $aConfig['iMaxImportsPerRun'];
+    $repoUri = $configValues['repoUri'];
+    $repoUsername = $configValues['repoUsername'];
+    $repoPassword = $configValues['repoPassword'];
+    $repoCacheConnectionString = $configValues['repoCacheConnectionString'];
+    $maxImportsPerRun = 0;
+    if (array_key_exists('maxImportsPerRun', $configValues)) {
+        $maxImportsPerRun = $configValues['maxImportsPerRun'];
     }
 } else {
-    $sRepoLocation = $argv[1];
+    $repoUri = $argv[1];
 
     if (!array_key_exists(2, $argv)) {
         displayErrorWithUsageInformationAndExit("You need to provide a SVN username.");
     }
-    $sRepoUsername = $argv[2];
+    $repoUsername = $argv[2];
 
     if (!array_key_exists(3, $argv)) {
         displayErrorWithUsageInformationAndExit("You need to provide a SVN password.");
     }
-    $sRepoPassword = $argv[3];
+    $repoPassword = $argv[3];
 
     if (!array_key_exists(4, $argv)) {
         displayErrorWithUsageInformationAndExit("You need to provide a PDO compatible connection string.");
     }
-    $sRepoCacheConnectionString = $argv[4];
+    $repoCacheConnectionString = $argv[4];
 
-    $iMaxImportsPerRun = 0;
+    $maxImportsPerRun = 0;
     if (array_key_exists(5, $argv)) {
-        $iMaxImportsPerRun = (int)$argv[5];
+        $maxImportsPerRun = (int)$argv[5];
     }
 }
 
-if (empty($sRepoLocation)) {
+if (empty($repoUri)) {
     displayErrorWithUsageInformationAndExit("No repository URI given.");
 }
 
-if (empty($sRepoUsername)) {
+if (empty($repoUsername)) {
     displayErrorWithUsageInformationAndExit("No repository username given.");
 }
 
-if (empty($sRepoPassword)) {
+if (empty($repoPassword)) {
     displayErrorWithUsageInformationAndExit("No repository password given.");
 }
 
-if (empty($sRepoCacheConnectionString)) {
+if (empty($repoCacheConnectionString)) {
     displayErrorWithUsageInformationAndExit("No cache db connection string given.");
 }
 
 require_once('../lib/RestfulSubversion/Helper/Bootstrap.php');
 
-$oRepo = new RestfulSubversion_Core_Repo();
-$oRepo->setLocation($sRepoLocation);
-$oRepo->setAuthinfo($sRepoUsername, $sRepoPassword);
+$repo = new RestfulSubversion_Core_Repo();
+$repo->setUri($repoUri);
+$repo->setAuthinfo($repoUsername, $repoPassword);
 
-$oCommandLineExecutor = RestfulSubversion_Core_CommandLineExecutor::oGetInstance();
-$oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-$oLogInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
-$oRepoCache = new RestfulSubversion_Core_RepoCache(new PDO($sRepoCacheConnectionString, NULL, NULL));
+$commandLineExecutor = RestfulSubversion_Core_CommandLineExecutor::getInstance();
+$commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+$logInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
+$repoCache = new RestfulSubversion_Core_RepoCache(new PDO($repoCacheConnectionString, NULL, NULL));
 
-$iHighestRevisionInRepo = iGetHighestRevisionInRepo($oRepo);
-$iHighestRevisionInRepoCache = 0;
-$oRevision = $oRepoCache->oGetHighestRevision();
-if (is_object($oRevision)) $iHighestRevisionInRepoCache = (int)$oRevision->sGetAsString();
+$highestRevisionInRepo = getHighestRevisionInRepo($repo);
+$highestRevisionInRepoCache = 0;
+$revision = $repoCache->getHighestRevision();
+if (is_object($revision)) $highestRevisionInRepoCache = (int)$revision->getAsString();
 
-echo 'Highest revision found in repository: '.$iHighestRevisionInRepo."\n";
-if ($iHighestRevisionInRepoCache == 0) {
+echo 'Highest revision found in repository: '.$highestRevisionInRepo."\n";
+if ($highestRevisionInRepoCache == 0) {
     echo 'Cache database is empty, starting from scratch'."\n";
-    $iCurrentRevision = 1;
+    $currentRevision = 1;
 } else {
-    echo 'Highest revision found in cache database: '.$iHighestRevisionInRepoCache."\n";
-    $iCurrentRevision = $iHighestRevisionInRepoCache + 1;
+    echo 'Highest revision found in cache database: '.$highestRevisionInRepoCache."\n";
+    $currentRevision = $highestRevisionInRepoCache + 1;
 }
 
 $i = 0;
-while ($iCurrentRevision <= $iHighestRevisionInRepo) {
-    if ($iMaxImportsPerRun != 0 && $i == $iMaxImportsPerRun) {
+while ($currentRevision <= $highestRevisionInRepo) {
+    if ($maxImportsPerRun != 0 && $i == $maxImportsPerRun) {
         echo "\nImported the maximum number of $i revisions for this run, exiting.\n";
         exit(0);
     }
 
     echo "\n";
-    echo 'About to import revision '.$iCurrentRevision.": ";
+    echo 'About to import revision '.$currentRevision.": ";
 
-    $oRevision = new RestfulSubversion_Core_Revision((string)$iCurrentRevision);
+    $revision = new RestfulSubversion_Core_Revision((string)$currentRevision);
 
-    $oCommandLog = new RestfulSubversion_Core_RepoCommandLog($oRepo, $oCommandLineBuilder);
-    $oCommandLog->enableVerbose();
-    $oCommandLog->enableXml();
-    $oCommandLog->setRevision(new RestfulSubversion_Core_Revision((string)$iCurrentRevision));
-    $sCommandline = $oCommandLog->sGetCommandline();
-    $sLogOutput = $oCommandLineExecutor->sGetCommandResult($sCommandline);
+    $commandLog = new RestfulSubversion_Core_RepoCommandLog($repo, $commandLineBuilder);
+    $commandLog->enableVerbose();
+    $commandLog->enableXml();
+    $commandLog->setRevision(new RestfulSubversion_Core_Revision((string)$currentRevision));
+    $commandline = $commandLog->getCommandline();
+    $logOutput = $commandLineExecutor->getCommandResult($commandline);
 
-    $aoChangesets = $oLogInterpreter->aoCreateChangesetsFromVerboseXml($sLogOutput);
+    $changesets = $logInterpreter->createChangesetsFromVerboseXml($logOutput);
 
-    foreach ($aoChangesets as $oChangeset) {
-        $oRepoCache->addChangeset($oChangeset);
-        $iCurrentRevision++;
+    foreach ($changesets as $changeset) {
+        $repoCache->addChangeset($changeset);
+        $currentRevision++;
     }
     $i++;
 

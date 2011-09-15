@@ -56,48 +56,48 @@
  */
 class RestfulSubversion_Core_RepoCommandLog {
     
-    protected $oRepo = NULL;
-    protected $oRevision = NULL;
-    protected $sRange = NULL;
-    protected $bVerbose = FALSE;
-    protected $bXml = FALSE;
-    protected $oCommandLineBuilder = NULL;
+    protected $repo = NULL;
+    protected $revision = NULL;
+    protected $range = NULL;
+    protected $verbose = FALSE;
+    protected $xml = FALSE;
+    protected $commandLineBuilder = NULL;
     
-    public function __construct(RestfulSubversion_Core_Repo $oRepo, RestfulSubversion_Core_CommandLineBuilderInterface $oCommandLineBuilder) {
-        $this->oRepo = $oRepo;
-        $this->oCommandLineBuilder = $oCommandLineBuilder;
+    public function __construct(RestfulSubversion_Core_Repo $repo, RestfulSubversion_Core_CommandLineBuilderInterface $commandLineBuilder) {
+        $this->repo = $repo;
+        $this->commandLineBuilder = $commandLineBuilder;
     }
     
-    public function setRevision(RestfulSubversion_Core_Revision $oRevision) {
-        $this->oRevision = $oRevision;
+    public function setRevision(RestfulSubversion_Core_Revision $revision) {
+        $this->revision = $revision;
     }
 
     public function enableVerbose() {
-        $this->bVerbose = TRUE;
+        $this->verbose = TRUE;
     }
 
     public function enableXml() {
-        $this->bXml = TRUE;
+        $this->xml = TRUE;
     }
         
-    public function sGetCommandline() {
-        $this->oCommandLineBuilder->reset();
-        $this->oCommandLineBuilder->setCommand('svn');
-        $this->oCommandLineBuilder->addParameter('log');
-        $this->oCommandLineBuilder->addLongSwitch('no-auth-cache');
-        $this->oCommandLineBuilder->addLongSwitchWithValue('username', $this->oRepo->sGetAuthinfoUsername());
-        $this->oCommandLineBuilder->addLongSwitchWithValue('password', $this->oRepo->sGetAuthinfoPassword());
+    public function getCommandline() {
+        $this->commandLineBuilder->reset();
+        $this->commandLineBuilder->setCommand('svn');
+        $this->commandLineBuilder->addParameter('log');
+        $this->commandLineBuilder->addLongSwitch('no-auth-cache');
+        $this->commandLineBuilder->addLongSwitchWithValue('username', $this->repo->getUsername());
+        $this->commandLineBuilder->addLongSwitchWithValue('password', $this->repo->getPassword());
 
-        if (is_object($this->oRevision)) {
-            $this->oCommandLineBuilder->addShortSwitchWithValue('r', $this->oRevision->sGetAsString());
+        if (is_object($this->revision)) {
+            $this->commandLineBuilder->addShortSwitchWithValue('r', $this->revision->getAsString());
         }
 
-        if ($this->bVerbose) $this->oCommandLineBuilder->addShortSwitch('v');
-        if ($this->bXml) $this->oCommandLineBuilder->addLongSwitch('xml');
+        if ($this->verbose) $this->commandLineBuilder->addShortSwitch('v');
+        if ($this->xml) $this->commandLineBuilder->addLongSwitch('xml');
 
-        $this->oCommandLineBuilder->addParameter($this->oRepo->sGetLocation());
+        $this->commandLineBuilder->addParameter($this->repo->getUri());
 
-        return $this->oCommandLineBuilder->sGetCommandLine();
+        return $this->commandLineBuilder->getCommandLine();
     }
 
 }

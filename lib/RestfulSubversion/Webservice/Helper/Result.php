@@ -50,25 +50,25 @@
  */
 class RestfulSubversion_Webservice_Helper_Result {
 
-    public static function aGetChangesetAsArray(RestfulSubversion_Core_Changeset $oChangeset) {
-        $aChangeset = array();
-        $aChangeset['revision'] = $oChangeset->oGetRevision()->sGetAsString();
-        $aChangeset['author'] = $oChangeset->sGetAuthor();
-        $aChangeset['datetime'] = $oChangeset->sGetDateTime();
-        $aChangeset['message'] = $oChangeset->sGetMessage();
+    public static function getChangesetAsArray(RestfulSubversion_Core_Changeset $changeset) {
+        $changesetArray = array();
+        $changesetArray['revision'] = $changeset->getRevision()->getAsString();
+        $changesetArray['author'] = $changeset->getAuthor();
+        $changesetArray['datetime'] = $changeset->getDateTime();
+        $changesetArray['message'] = $changeset->getMessage();
 
-        $aChangeset['pathoperations'] = array();
+        $changesetArray['pathoperations'] = array();
 
-        $aaPathoperations = $oChangeset->aaGetPathOperations();
-        foreach ($aaPathoperations as $aPathoperation) {
-            $aThisPathoperation = array();
-            $aThisPathoperation['action'] = $aPathoperation['sAction'];
-            $aThisPathoperation['path'] = $aPathoperation['oPath']->sGetAsString();
-            if (array_key_exists('copyfrompath', $aPathoperation) && is_object($aPathoperation['oCopyfromPath'])) $aThisPathoperation['sCopyfromPath'] = $aPathoperation['oCopyfromPath']->sGetAsString();
-            if (array_key_exists('copyfromrev', $aPathoperation) && is_object($aPathoperation['oCopyfromRev'])) $aThisPathoperation['sCopyfromRev'] = $aPathoperation['oCopyfromRev']->sGetAsString();
-            $aChangeset['pathoperations'][] = $aThisPathoperation;
+        $pathoperations = $changeset->getPathOperations();
+        foreach ($pathoperations as $pathoperation) {
+            $pathoperationArray = array();
+            $pathoperationArray['action'] = $pathoperation['action'];
+            $pathoperationArray['path'] = $pathoperation['path']->getAsString();
+            if (array_key_exists('copyfrompath', $pathoperation) && is_object($pathoperation['copyfromPath'])) $pathoperationArray['copyfromPath'] = $pathoperation['copyfromPath']->getAsString();
+            if (array_key_exists('copyfromrev', $pathoperation) && is_object($pathoperation['copyfromRev'])) $pathoperationArray['copyfromRev'] = $pathoperation['copyfromRev']->getAsString();
+            $changesetArray['pathoperations'][] = $pathoperationArray;
         }
-        return $aChangeset;
+        return $changesetArray;
     }
 
 }

@@ -53,57 +53,57 @@
 class RestfulSubversion_Webservice_Resource_Changesets extends RestfulSubversion_Webservice_Resource {
 
     public function get($request) {
-        $oResponseHelper = new RestfulSubversion_Webservice_Helper_Response();
+        $responseHelper = new RestfulSubversion_Webservice_Helper_Response();
 
-        $sCallback = NULL;
+        $callback = NULL;
         if (isset($_GET['callback'])) {
-            $sCallback = $_GET['callback'];
+            $callback = $_GET['callback'];
         }
 
         if (isset($_GET['with_message_containing'])) {
-            $sSearchMode = 'with_message_containing';
-            $sSearchTerm = $_GET['with_message_containing'];
+            $searchMode = 'with_message_containing';
+            $searchTerm = $_GET['with_message_containing'];
         } elseif (isset($_GET['with_path_ending_on'])) {
-            $sSearchMode = 'with_path_ending_on';
-            $sSearchTerm = $_GET['with_path_ending_on'];
+            $searchMode = 'with_path_ending_on';
+            $searchTerm = $_GET['with_path_ending_on'];
         } else {
-            return $oResponseHelper->setFailedResponse(new Response($request), "You can't request an unfiltered list of all changesets. Use changesets?with_message_containing=TEXT or changesets?with_path_ending_on=TEXT instead.", $sCallback);
+            return $responseHelper->setFailedResponse(new Response($request), "You can't request an unfiltered list of all changesets. Use changesets?with_message_containing=TEXT or changesets?with_path_ending_on=TEXT instead.", $callback);
         }
 
 
-        $sSortOrder = 'descending';
+        $sortOrder = 'descending';
         if (isset($_GET['sort_order'])) {
-            $sSortOrder = $_GET['sort_order'];
+            $sortOrder = $_GET['sort_order'];
         }
-        if (!($sSortOrder === 'ascending' || $sSortOrder === 'descending')) {
-            return $oResponseHelper->setFailedResponse(new Response($request), "Sort order must be 'ascending' or 'descending'.", $sCallback);
+        if (!($sortOrder === 'ascending' || $sortOrder === 'descending')) {
+            return $responseHelper->setFailedResponse(new Response($request), "Sort order must be 'ascending' or 'descending'.", $callback);
         }
 
-        $iLimit = NULL;
+        $limit = NULL;
         if (isset($_GET['limit'])) {
             if (!is_numeric($_GET['limit']) || (string)(int)$_GET['limit'] !== $_GET['limit']) {
-                return $oResponseHelper->setFailedResponse(new Response($request), "Limit must be an integer value.", $sCallback);
+                return $responseHelper->setFailedResponse(new Response($request), "Limit must be an integer value.", $callback);
             }
-            $iLimit = (int)$_GET['limit'];
+            $limit = (int)$_GET['limit'];
         }
-        if ($iLimit === 0) $iLimit = NULL;
+        if ($limit === 0) $limit = NULL;
 
-        $oCacheDb = new PDO($this->aConfig['sRepoCacheConnectionString'], NULL, NULL);
-        $oRepoCache = new RestfulSubversion_Core_RepoCache($oCacheDb);
-        $aaChangesets = array();
+        $cacheDbHandler = new PDO($this->configValues['repoCacheConnectionString'], NULL, NULL);
+        $repoCache = new RestfulSubversion_Core_RepoCache($cacheDbHandler);
+        $changesets = array();
 
-        if ($sSearchMode == 'with_message_containing') {
-            $aoChangesets = $oRepoCache->aoGetChangesetsWithMessageContainingText($sSearchTerm, $sSortOrder, $iLimit);
-        } elseif ($sSearchMode == 'with_path_ending_on') {
-            $aoChangesets = $oRepoCache->aoGetChangesetsWithPathEndingOn($sSearchTerm, $sSortOrder, $iLimit);
+        if ($searchMode == 'with_message_containing') {
+            $changesets = $repoCache->getChangesetsWithMessageContainingText($searchTerm, $sortOrder, $limit);
+        } elseif ($searchMode == 'with_path_ending_on') {
+            $changesets = $repoCache->getChangesetsWithPathEndingOn($searchTerm, $sortOrder, $limit);
         }
 
-        foreach ($aoChangesets as $oChangeset) {
-            $aaChangesets[] = RestfulSubversion_Webservice_Helper_Result::aGetChangesetAsArray($oChangeset);
+        foreach ($changesets as $changeset) {
+            $changesets[] = RestfulSubversion_Webservice_Helper_Result::getChangesetAsArray($changeset);
         }
-        ksort($aaChangesets);
+        ksort($changesets);
 
-        return $oResponseHelper->setResponse(new Response($request), array('changesets' => $aaChangesets), $sCallback);
+        return $responseHelper->setResponse(new Response($request), array('changesets' => $changesets), $callback);
     }
 
 }

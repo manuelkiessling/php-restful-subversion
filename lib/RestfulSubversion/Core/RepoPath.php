@@ -56,32 +56,32 @@ class RestfulSubversion_Core_RepoPath {
     /**
      * Internal string representation of the path
      */
-    protected $sPath = NULL;
+    protected $path = NULL;
 
     /**
      * Creates the path object based on a given string
      *
-     * @param string $sPath Path to create the object for
+     * @param string $path Path to create the object for
      * @return void
      * @throws RestfulSubversion_Core_RepoPathInvalidPathCoreException if the given string doesn't have the correct format
      */
-    public function __construct($sPath) {
-        if (mb_substr($sPath, -1) === '/') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($sPath);
-        if ($sPath[0] !== '/') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($sPath);
-        if (mb_substr($sPath, -2) === '/.') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($sPath);
-        if (mb_substr($sPath, -3) === '/..') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($sPath);
-        if (mb_substr($sPath, -5) === '/.svn') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($sPath);
-        if (mb_strstr($sPath, '/../')) throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($sPath);
-        if (mb_strstr($sPath, '/./')) throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($sPath);
-        $this->sPath = $sPath;
+    public function __construct($path) {
+        if (mb_substr($path, -1) === '/') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
+        if ($path[0] !== '/') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
+        if (mb_substr($path, -2) === '/.') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
+        if (mb_substr($path, -3) === '/..') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
+        if (mb_substr($path, -5) === '/.svn') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
+        if (mb_strstr($path, '/../')) throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
+        if (mb_strstr($path, '/./')) throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
+        $this->path = $path;
     }
 
-    public function sGetAsString() {
-        return $this->sPath;
+    public function getAsString() {
+        return $this->path;
     }
     
     public function __toString() {
-        return $this->sGetAsString();
+        return $this->getAsString();
     }
 
 }

@@ -112,7 +112,7 @@ class Request {
      * Name of resource class to use for when nothing is found
      * @var str
      */
-    public $noResource = 'NoResource';
+    public $nresource = 'Nresource';
     
     /**
      * The resource classes loaded and how they are wired to URIs
@@ -292,7 +292,7 @@ class Request {
         
         // 404 resource
         if (isset($config['404'])) {
-            $this->noResource = $config['404'];
+            $this->nresource = $config['404'];
         }
         
         // mounts
@@ -495,7 +495,7 @@ class Request {
             }
             return new $resource['class']($parameters);
         }
-        return new $this->noResource();
+        return new $this->nresource();
         
     }
     
@@ -611,7 +611,7 @@ class Resource {
  * 404 resource class
  * @namespace Tonic\Lib
  */
-class NoResource extends Resource {
+class Nresource extends Resource {
     
     /**
      * Always return a 404 response.

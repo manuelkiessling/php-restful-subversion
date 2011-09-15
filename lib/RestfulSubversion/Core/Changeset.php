@@ -52,55 +52,55 @@
  */
 class RestfulSubversion_Core_Changeset {
 
-    protected $oRevision = NULL;
-    protected $sAuthor = NULL;
-    protected $sDateTime = NULL;
-    protected $sMessage = NULL;
-    protected $aaPathOperations = array();
+    protected $revision = NULL;
+    protected $author = NULL;
+    protected $dateTime = NULL;
+    protected $message = NULL;
+    protected $pathOperations = array();
     
-    public function __construct(RestfulSubversion_Core_Revision $oRevision) {
-        $this->oRevision = $oRevision;
+    public function __construct(RestfulSubversion_Core_Revision $revision) {
+        $this->revision = $revision;
     }
     
-    public function setAuthor($sAuthor) {
-        $this->sAuthor = $sAuthor;
+    public function setAuthor($author) {
+        $this->author = $author;
     }
     
-    public function setDateTime($sDateTime) {
-        $this->sDateTime = $sDateTime;
+    public function setDateTime($dateTime) {
+        $this->dateTime = $dateTime;
     }
     
-    public function setMessage($sMessage) {
-        $this->sMessage = $sMessage;
+    public function setMessage($message) {
+        $this->message = $message;
     }
     
-    public function addPathOperation($sAction, RestfulSubversion_Core_RepoPath $oPath, RestfulSubversion_Core_RepoPath $oCopyfromPath = NULL, RestfulSubversion_Core_Revision $oCopyfromRev = NULL) {
-        $aPathOperation = array('sAction' => $sAction,
-                                'oPath' => $oPath
+    public function addPathOperation($action, RestfulSubversion_Core_RepoPath $path, RestfulSubversion_Core_RepoPath $copyfromPath = NULL, RestfulSubversion_Core_Revision $copyfromRev = NULL) {
+        $pathOperation = array('action' => $action,
+                               'path' => $path
                                );
-        if ($oCopyfromPath) $aPathOperation['oCopyfromPath'] = $oCopyfromPath;
-        if ($oCopyfromRev) $aPathOperation['oCopyfromRev'] = $oCopyfromRev;
-        $this->aaPathOperations[] = $aPathOperation;
+        if ($copyfromPath) $pathOperation['copyfromPath'] = $copyfromPath;
+        if ($copyfromRev) $pathOperation['copyfromRev'] = $copyfromRev;
+        $this->pathOperations[] = $pathOperation;
     }
 
-    public function oGetRevision() {
-        return $this->oRevision;
+    public function getRevision() {
+        return $this->revision;
     }
 
-    public function sGetAuthor() {
-        return $this->sAuthor;
+    public function getAuthor() {
+        return $this->author;
     }
 
-    public function sGetDateTime() {
-        return $this->sDateTime;
+    public function getDateTime() {
+        return $this->dateTime;
     }
 
-    public function sGetMessage() {
-        return $this->sMessage;
+    public function getMessage() {
+        return $this->message;
     }
 
-    public function aaGetPathOperations() {
-        return $this->aaPathOperations;
+    public function getPathOperations() {
+        return $this->pathOperations;
     }
     
 }

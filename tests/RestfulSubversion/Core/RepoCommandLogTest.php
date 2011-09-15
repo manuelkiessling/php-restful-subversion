@@ -2,72 +2,71 @@
 
 class RestfulSubversion_Core_RepoCommandLogTest extends PHPUnit_Framework_TestCase {
 
+    protected $repo;
+    
     public function setUp() {
-        $oRepo = new RestfulSubversion_Core_Repo();
+        $repo = new RestfulSubversion_Core_Repo();
 
-        $oRepo->setLocation('file://'.realpath(RestfulSubversion_Helper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'));
-        $oRepo->setAuthinfo('user.name', 'secret');
-        $oRepo->addSourcePath(new RestfulSubversion_Core_RepoPath('/branches/platform/_production'));
-        $oRepo->addSourcePath(new RestfulSubversion_Core_RepoPath('/branches/platform/_project'));
-        $oRepo->setTargetPath(new RestfulSubversion_Core_RepoPath('/branches/platform/_approval'));
+        $repo->setUri('file://'.realpath(RestfulSubversion_Helper_Bootstrap::getLibraryRoot().'/../tests/_testrepo'));
+        $repo->setAuthinfo('user.name', 'secret');
 
-        $this->oRepo = $oRepo;
+        $this->repo = $repo;
     }
 
     public function test_getLogCommandForRevision() {
-        $oLogCommand = new RestfulSubversion_Core_RepoCommandLog($this->oRepo, new RestfulSubversion_Core_CommandLineBuilder());
-        $oLogCommand->setRevision(new RestfulSubversion_Core_Revision('1'));
-        $sCommandline = $oLogCommand->sGetCommandline();
+        $logCommand = new RestfulSubversion_Core_RepoCommandLog($this->repo, new RestfulSubversion_Core_CommandLineBuilder());
+        $logCommand->setRevision(new RestfulSubversion_Core_Revision('1'));
+        $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 1 file://'.realpath(RestfulSubversion_Helper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
-                          $sCommandline);
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 1 file://'.realpath(RestfulSubversion_Helper_Bootstrap::getLibraryRoot().'/../tests/_testrepo'),
+                          $commandline);
     }
 
     public function test_getLogCommandForRevisionXmlAndVerbose() {
-        $oLogCommand = new RestfulSubversion_Core_RepoCommandLog($this->oRepo, new RestfulSubversion_Core_CommandLineBuilder());
-        $oLogCommand->setRevision(new RestfulSubversion_Core_Revision('1'));
-        $oLogCommand->enableVerbose();
-        $oLogCommand->enableXml();
-        $sCommandline = $oLogCommand->sGetCommandline();
+        $logCommand = new RestfulSubversion_Core_RepoCommandLog($this->repo, new RestfulSubversion_Core_CommandLineBuilder());
+        $logCommand->setRevision(new RestfulSubversion_Core_Revision('1'));
+        $logCommand->enableVerbose();
+        $logCommand->enableXml();
+        $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 1 -v --xml file://'.realpath(RestfulSubversion_Helper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
-                          $sCommandline);
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 1 -v --xml file://'.realpath(RestfulSubversion_Helper_Bootstrap::getLibraryRoot().'/../tests/_testrepo'),
+                          $commandline);
     }
 
     public function test_getLogCommandNoRevision() {
-        $oLogCommand = new RestfulSubversion_Core_RepoCommandLog($this->oRepo, new RestfulSubversion_Core_CommandLineBuilder());
-        $sCommandline = $oLogCommand->sGetCommandline();
+        $logCommand = new RestfulSubversion_Core_RepoCommandLog($this->repo, new RestfulSubversion_Core_CommandLineBuilder());
+        $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret file://'.realpath(RestfulSubversion_Helper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
-                          $sCommandline);
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret file://'.realpath(RestfulSubversion_Helper_Bootstrap::getLibraryRoot().'/../tests/_testrepo'),
+                          $commandline);
     }
 
     public function test_getLogCommandNoRevisionVerbose() {
-        $oLogCommand = new RestfulSubversion_Core_RepoCommandLog($this->oRepo, new RestfulSubversion_Core_CommandLineBuilder());
-        $oLogCommand->enableVerbose();
-        $sCommandline = $oLogCommand->sGetCommandline();
+        $logCommand = new RestfulSubversion_Core_RepoCommandLog($this->repo, new RestfulSubversion_Core_CommandLineBuilder());
+        $logCommand->enableVerbose();
+        $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v file://'.realpath(RestfulSubversion_Helper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
-                          $sCommandline);
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v file://'.realpath(RestfulSubversion_Helper_Bootstrap::getLibraryRoot().'/../tests/_testrepo'),
+                          $commandline);
     }
 
-    public function test_getLogCommandNoRevisionsXml() {
-        $oLogCommand = new RestfulSubversion_Core_RepoCommandLog($this->oRepo, new RestfulSubversion_Core_CommandLineBuilder());
-        $oLogCommand->enableXml();
-        $sCommandline = $oLogCommand->sGetCommandline();
+    public function test_getLogCommandNoRevisionXml() {
+        $logCommand = new RestfulSubversion_Core_RepoCommandLog($this->repo, new RestfulSubversion_Core_CommandLineBuilder());
+        $logCommand->enableXml();
+        $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret --xml file://'.realpath(RestfulSubversion_Helper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
-                          $sCommandline);
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret --xml file://'.realpath(RestfulSubversion_Helper_Bootstrap::getLibraryRoot().'/../tests/_testrepo'),
+                          $commandline);
     }
 
     public function test_getLogCommandNoRevisionVerboseAndXml() {
-        $oLogCommand = new RestfulSubversion_Core_RepoCommandLog($this->oRepo, new RestfulSubversion_Core_CommandLineBuilder());
-        $oLogCommand->enableVerbose();
-        $oLogCommand->enableXml();
-        $sCommandline = $oLogCommand->sGetCommandline();
+        $logCommand = new RestfulSubversion_Core_RepoCommandLog($this->repo, new RestfulSubversion_Core_CommandLineBuilder());
+        $logCommand->enableVerbose();
+        $logCommand->enableXml();
+        $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v --xml file://'.realpath(RestfulSubversion_Helper_Bootstrap::sGetPackageRoot().'/../tests/_testrepo'),
-                          $sCommandline);
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v --xml file://'.realpath(RestfulSubversion_Helper_Bootstrap::getLibraryRoot().'/../tests/_testrepo'),
+                          $commandline);
     }
 
 }

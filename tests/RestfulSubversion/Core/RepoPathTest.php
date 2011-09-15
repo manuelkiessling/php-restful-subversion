@@ -3,21 +3,21 @@
 class RestfulSubversion_Core_RepoPathTest extends PHPUnit_Framework_TestCase {
 
     public function test_directoryPath() {
-        $oRepoPath = new RestfulSubversion_Core_RepoPath('/branches/test');
+        $repoPath = new RestfulSubversion_Core_RepoPath('/branches/test');
 
-        $this->assertSame('/branches/test', $oRepoPath->sGetAsString());
+        $this->assertSame('/branches/test', $repoPath->getAsString());
     }
 
     public function test_filePath() {
-        $oRepoPath = new RestfulSubversion_Core_RepoPath('/branches/test/a.php');
+        $repoPath = new RestfulSubversion_Core_RepoPath('/branches/test/a.php');
 
-        $this->assertSame('/branches/test/a.php', $oRepoPath->sGetAsString());
+        $this->assertSame('/branches/test/a.php', $repoPath->getAsString());
     }
 
     public function test_toString() {
-        $oRepoPath = new RestfulSubversion_Core_RepoPath('/branches/test/a.php');
+        $repoPath = new RestfulSubversion_Core_RepoPath('/branches/test/a.php');
 
-        $this->assertSame($oRepoPath->sGetAsString(), "$oRepoPath");
+        $this->assertSame($repoPath->getAsString(), "$repoPath");
     }
 
     public function test_filenameWithTwoDotsWorks() {

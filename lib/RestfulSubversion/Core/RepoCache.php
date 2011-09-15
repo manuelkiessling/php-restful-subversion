@@ -52,151 +52,151 @@
    */
 class RestfulSubversion_Core_RepoCache {
 
-    protected $oDb = NULL;
+    protected $dbHandler = NULL;
 
     protected function setupDatabaseIfNecessary() {
-        $oResult = $this->oDb->query('SELECT revision FROM revisions LIMIT 1');
-        if ($oResult === FALSE) { // Database is not yet created
+        $result = $this->dbHandler->query('SELECT revision FROM revisions LIMIT 1');
+        if ($result === FALSE) { // Database is not yet created
             $this->resetCache();
         }
     }
 
-    public function __construct($oDb) {
-        $this->oDb = $oDb;
+    public function __construct($dbHandler) {
+        $this->dbHandler = $dbHandler;
         $this->setupDatabaseIfNecessary();
     }
 
     public function resetCache() {
-        $asSql = array();
+        $queries = array();
 
-        $asSql[] = 'DROP TABLE IF EXISTS revisions;';
-        $asSql[] = 'CREATE TABLE revisions(revision INTEGER PRIMARY KEY NOT NULL, author TEXT(64), datetime DATETIME, message TEXT(2048));';
+        $queries[] = 'DROP TABLE IF EXISTS revisions;';
+        $queries[] = 'CREATE TABLE revisions(revision INTEGER PRIMARY KEY NOT NULL, author TEXT(64), datetime DATETIME, message TEXT(2048));';
 
-        $asSql[] = 'CREATE INDEX r_revision ON revisions(revision);';
-        $asSql[] = 'CREATE INDEX r_author ON revisions(author);';
-        $asSql[] = 'CREATE INDEX r_message ON revisions(message);';
-        $asSql[] = 'CREATE INDEX r_datetime ON revisions(date, time);';
+        $queries[] = 'CREATE INDEX r_revision ON revisions(revision);';
+        $queries[] = 'CREATE INDEX r_author ON revisions(author);';
+        $queries[] = 'CREATE INDEX r_message ON revisions(message);';
+        $queries[] = 'CREATE INDEX r_datetime ON revisions(date, time);';
 
-        $asSql[] = 'DROP TABLE IF EXISTS pathoperations;';
-        $asSql[] = 'CREATE TABLE pathoperations (id INTEGER PRIMARY KEY, revision INTEGER NOT NULL, action TEXT(1), path TEXT(512), revertedpath TEXT(512), copyfrompath TEXT(512), copyfromrev INTEGER, FOREIGN KEY(revision) REFERENCES revisions(revision));';
+        $queries[] = 'DROP TABLE IF EXISTS pathoperations;';
+        $queries[] = 'CREATE TABLE pathoperations (id INTEGER PRIMARY KEY, revision INTEGER NOT NULL, action TEXT(1), path TEXT(512), revertedpath TEXT(512), copyfrompath TEXT(512), copyfromrev INTEGER, FOREIGN KEY(revision) REFERENCES revisions(revision));';
 
-        $asSql[] = 'CREATE INDEX p_revision ON pathoperations(revision);';
-        $asSql[] = 'CREATE INDEX p_path ON pathoperations(path);';
-        $asSql[] = 'CREATE INDEX p_revertedpath ON pathoperations(revertedpath);';
+        $queries[] = 'CREATE INDEX p_revision ON pathoperations(revision);';
+        $queries[] = 'CREATE INDEX p_path ON pathoperations(path);';
+        $queries[] = 'CREATE INDEX p_revertedpath ON pathoperations(revertedpath);';
 
-        foreach ($asSql as $sSql) {
-            $this->oDb->exec($sSql);
+        foreach ($queries as $query) {
+            $this->dbHandler->exec($query);
         }
     }
 
-    public function addChangeset(RestfulSubversion_Core_Changeset $oChangeset) {
-        $oStatement = $this->oDb->prepare('INSERT INTO revisions (revision, author, datetime, message) VALUES (?, ?, ?, ?)');
+    public function addChangeset(RestfulSubversion_Core_Changeset $changeset) {
+        $preparedStatement = $this->dbHandler->prepare('INSERT INTO revisions (revision, author, datetime, message) VALUES (?, ?, ?, ?)');
 
-        $bSuccessful = $oStatement->execute(array($oChangeset->oGetRevision()->sGetAsString(),
-                                                  $oChangeset->sGetAuthor(),
-                                                  $oChangeset->sGetDateTime(),
-                                                  $oChangeset->sGetMessage()));
-        if (!$bSuccessful) {
+        $successful = $preparedStatement->execute(array($changeset->getRevision()->getAsString(),
+                                                        $changeset->getAuthor(),
+                                                        $changeset->getDateTime(),
+                                                        $changeset->getMessage()));
+        if (!$successful) {
             throw new RestfulSubversion_Core_RepoCacheRevisionAlreadyInCacheCoreException();
         }
 
-        $aaPathOperations = $oChangeset->aaGetPathOperations();
-        foreach($aaPathOperations as $aPathOperation) {
-            $oStatement = $this->oDb->prepare('INSERT INTO pathoperations (revision, action, path, revertedpath, copyfrompath, copyfromrev) VALUES (?, ?, ?, ?, ?, ?)');
-            $oStatement->execute(array($oChangeset->oGetRevision()->sGetAsString(),
-                                       $aPathOperation['sAction'],
-                                       $aPathOperation['oPath']->sGetAsString(),
-                                       strrev($aPathOperation['oPath']->sGetAsString()),
-                                       (array_key_exists('oCopyfromPath', $aPathOperation)) ? $aPathOperation['oCopyfromPath']->sGetAsString() : '',
-                                       (array_key_exists('oCopyfromRev', $aPathOperation)) ? $aPathOperation['oCopyfromRev']->sGetAsString() : 0));
+        $pathOperations = $changeset->getPathOperations();
+        foreach($pathOperations as $pathOperation) {
+            $preparedStatement = $this->dbHandler->prepare('INSERT INTO pathoperations (revision, action, path, revertedpath, copyfrompath, copyfromrev) VALUES (?, ?, ?, ?, ?, ?)');
+            $preparedStatement->execute(array($changeset->getRevision()->getAsString(),
+                                              $pathOperation['action'],
+                                              $pathOperation['path']->getAsString(),
+                                              strrev($pathOperation['path']->getAsString()),
+                                              (array_key_exists('copyfromPath', $pathOperation)) ? $pathOperation['copyfromPath']->getAsString() : '',
+                                              (array_key_exists('copyfromRev', $pathOperation)) ? $pathOperation['copyfromRev']->getAsString() : 0));
         }
     }
 
-    public function oGetHighestRevision() {
-        foreach ($this->oDb->query('SELECT revision
+    public function getHighestRevision() {
+        foreach ($this->dbHandler->query('SELECT revision
                                     FROM revisions
                                     ORDER BY revision DESC
                                     LIMIT 1')
-                 as $asRow) {
-            return new RestfulSubversion_Core_Revision($asRow['revision']);
+                 as $row) {
+            return new RestfulSubversion_Core_Revision($row['revision']);
         }
         return FALSE;
     }
 
-    public function oGetChangesetForRevision(RestfulSubversion_Core_Revision $oRevision) {
-        $oChangeset = new RestfulSubversion_Core_Changeset($oRevision);
+    public function getChangesetForRevision(RestfulSubversion_Core_Revision $revision) {
+        $changeset = new RestfulSubversion_Core_Changeset($revision);
 
-        $oStatement = $this->oDb->prepare('SELECT author, datetime, message FROM revisions WHERE revision = ?');
-        $oStatement->execute(array($oRevision->sGetAsString()));
+        $preparedStatement = $this->dbHandler->prepare('SELECT author, datetime, message FROM revisions WHERE revision = ?');
+        $preparedStatement->execute(array($revision->getAsString()));
 
-        $aaRows = $oStatement->fetchAll();
-        if (sizeof($aaRows) == 0) return NULL;
-        foreach ($aaRows as $asRow) {
-            $oChangeset->setAuthor($asRow['author']);
-            $oChangeset->setDateTime($asRow['datetime']);
-            $oChangeset->setMessage($asRow['message']);
+        $rows = $preparedStatement->fetchAll();
+        if (sizeof($rows) == 0) return NULL;
+        foreach ($rows as $row) {
+            $changeset->setAuthor($row['author']);
+            $changeset->setDateTime($row['datetime']);
+            $changeset->setMessage($row['message']);
         }
 
-        $oStatement = $this->oDb->prepare('SELECT action, path, copyfrompath, copyfromrev FROM pathoperations WHERE revision = ?');
-        $oStatement->execute(array($oRevision->sGetAsString()));
+        $preparedStatement = $this->dbHandler->prepare('SELECT action, path, copyfrompath, copyfromrev FROM pathoperations WHERE revision = ?');
+        $preparedStatement->execute(array($revision->getAsString()));
 
-        $aaRows = $oStatement->fetchAll();
-        foreach ($aaRows as $asRow) {
-            $oChangeset->addPathOperation($asRow['action'],
-                                          new RestfulSubversion_Core_RepoPath($asRow['path']),
-                                          ($asRow['copyfrompath'] != '') ? new RestfulSubversion_Core_RepoPath($asRow['copyfrompath']) : NULL,
-                                          ($asRow['copyfromrev'] != 0) ? new RestfulSubversion_Core_Revision($asRow['copyfromrev']) : NULL);
+        $rows = $preparedStatement->fetchAll();
+        foreach ($rows as $row) {
+            $changeset->addPathOperation($row['action'],
+                                          new RestfulSubversion_Core_RepoPath($row['path']),
+                                          ($row['copyfrompath'] != '') ? new RestfulSubversion_Core_RepoPath($row['copyfrompath']) : NULL,
+                                          ($row['copyfromrev'] != 0) ? new RestfulSubversion_Core_Revision($row['copyfromrev']) : NULL);
         }
 
-        return $oChangeset;
+        return $changeset;
     }
 
-    public function aoGetChangesetsWithPathEndingOn($sString, $sOrder = 'ascending', $iLimit = NULL) {
-        if ($sOrder === 'descending') {
-            $sOrder = 'DESC';
+    public function getChangesetsWithPathEndingOn($string, $order = 'ascending', $limit = NULL) {
+        if ($order === 'descending') {
+            $order = 'DESC';
         } else {
-            $sOrder = 'ASC';
+            $order = 'ASC';
         }
-        $sLimitClause = '';
-        if (!is_null($iLimit)) {
-            $sLimitClause = ' LIMIT '.$this->oDb->quote((int)$iLimit);
+        $limitClause = '';
+        if (!is_null($limit)) {
+            $limitClause = ' LIMIT '.$this->dbHandler->quote((int)$limit);
         }
-        $asReturn = array();
-        $oStatement = $this->oDb->prepare('SELECT revision
+        $return = array();
+        $preparedStatement = $this->dbHandler->prepare('SELECT revision
                                              FROM pathoperations
                                             WHERE revertedpath LIKE ?
                                          GROUP BY revision
-                                         ORDER BY revision '.$sOrder.$sLimitClause);
-        if ($oStatement->execute(array(strrev($sString).'%'))) {
-            while ($asRow = $oStatement->fetch()) {
-                $asReturn[] = $this->oGetChangesetForRevision(new RestfulSubversion_Core_Revision($asRow['revision']));
+                                         ORDER BY revision '.$order.$limitClause);
+        if ($preparedStatement->execute(array(strrev($string).'%'))) {
+            while ($row = $preparedStatement->fetch()) {
+                $return[] = $this->getChangesetForRevision(new RestfulSubversion_Core_Revision($row['revision']));
             }
         }
-        return $asReturn;
+        return $return;
     }
 
-    public function aoGetChangesetsWithMessageContainingText($sText, $sOrder = 'ascending', $iLimit = NULL) {
-        if ((string)$sText === '') return array();
-        if ($sOrder === 'descending') {
-            $sOrder = 'DESC';
+    public function getChangesetsWithMessageContainingText($text, $order = 'ascending', $limit = NULL) {
+        if ((string)$text === '') return array();
+        if ($order === 'descending') {
+            $order = 'DESC';
         } else {
-            $sOrder = 'ASC';
+            $order = 'ASC';
         }
-        $sLimitClause = '';
-        if (!is_null($iLimit)) {
-            $sLimitClause = ' LIMIT '.$this->oDb->quote((int)$iLimit);
+        $limitClause = '';
+        if (!is_null($limit)) {
+            $limitClause = ' LIMIT '.$this->dbHandler->quote((int)$limit);
         }
-        $asReturn = array();
-        $oStatement = $this->oDb->prepare('SELECT revision
+        $return = array();
+        $preparedStatement = $this->dbHandler->prepare('SELECT revision
                                              FROM revisions
                                             WHERE message LIKE ?
-                                         ORDER BY revision '.$sOrder.$sLimitClause);
-        if ($oStatement->execute(array('%'.$sText.'%'))) {
-            while ($asRow = $oStatement->fetch()) {
-                $asReturn[] = $this->oGetChangesetForRevision(new RestfulSubversion_Core_Revision($asRow['revision']));
+                                         ORDER BY revision '.$order.$limitClause);
+        if ($preparedStatement->execute(array('%'.$text.'%'))) {
+            while ($row = $preparedStatement->fetch()) {
+                $return[] = $this->getChangesetForRevision(new RestfulSubversion_Core_Revision($row['revision']));
             }
         }
-        return $asReturn;
+        return $return;
     }
 
 }

@@ -2,75 +2,75 @@
 
 class RestfulSubversion_Core_CommandLineBuilderTest extends PHPUnit_Framework_TestCase {
 
-    public function test_CommandLineBuilderImplementsCommandLineBuilderInterface() {
-        $oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+    public function test_CommandLineBuilderImplementcommandLineBuilderInterface() {
+        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
 
-        $this->assertTrue(is_a($oCommandLineBuilder, 'RestfulSubversion_Core_CommandLineBuilderInterface'));
+        $this->assertTrue(is_a($commandLineBuilder, 'RestfulSubversion_Core_CommandLineBuilderInterface'));
     }
     
     public function test_setCommand() {
-        $oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-        $oCommandLineBuilder->setCommand('ls');
+        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder->setCommand('ls');
 
-        $this->assertSame('ls', $oCommandLineBuilder->sGetCommandLine());
+        $this->assertSame('ls', $commandLineBuilder->getCommandLine());
     }
     
     public function test_addParameter() {
-        $oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-        $oCommandLineBuilder->setCommand('svn');
-        $oCommandLineBuilder->addParameter('info');
+        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder->setCommand('svn');
+        $commandLineBuilder->addParameter('info');
 
-        $this->assertSame('svn info', $oCommandLineBuilder->sGetCommandLine());
+        $this->assertSame('svn info', $commandLineBuilder->getCommandLine());
     }
     
     public function test_addParameters() {
-        $oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-        $oCommandLineBuilder->setCommand('svn');
-        $oCommandLineBuilder->addParameter('help');
-        $oCommandLineBuilder->addParameter('info');
+        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder->setCommand('svn');
+        $commandLineBuilder->addParameter('help');
+        $commandLineBuilder->addParameter('info');
 
-        $this->assertSame('svn help info', $oCommandLineBuilder->sGetCommandLine());
+        $this->assertSame('svn help info', $commandLineBuilder->getCommandLine());
     }
     
     public function test_addShortSwitch() {
-        $oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-        $oCommandLineBuilder->setCommand('ls');
-        $oCommandLineBuilder->addShortSwitch('lah');
+        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder->setCommand('ls');
+        $commandLineBuilder->addShortSwitch('lah');
 
-        $this->assertSame('ls -lah', $oCommandLineBuilder->sGetCommandLine());
+        $this->assertSame('ls -lah', $commandLineBuilder->getCommandLine());
     }
 
     public function test_addShortSwitchWithValue() {
-        $oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-        $oCommandLineBuilder->setCommand('svn');
-        $oCommandLineBuilder->addShortSwitchWithValue('r', '12345');
+        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder->setCommand('svn');
+        $commandLineBuilder->addShortSwitchWithValue('r', '12345');
 
-        $this->assertSame('svn -r 12345', $oCommandLineBuilder->sGetCommandLine());
+        $this->assertSame('svn -r 12345', $commandLineBuilder->getCommandLine());
     }
     
     public function test_addLongSwitch() {
-        $oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-        $oCommandLineBuilder->setCommand('svn');
-        $oCommandLineBuilder->addLongSwitch('xml');
+        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder->setCommand('svn');
+        $commandLineBuilder->addLongSwitch('xml');
 
-        $this->assertSame('svn --xml', $oCommandLineBuilder->sGetCommandLine());
+        $this->assertSame('svn --xml', $commandLineBuilder->getCommandLine());
     }
 
     public function test_addLongSwitchWithValue() {
-        $oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-        $oCommandLineBuilder->setCommand('svn');
-        $oCommandLineBuilder->addLongSwitchWithValue('username', 'manuel');
+        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder->setCommand('svn');
+        $commandLineBuilder->addLongSwitchWithValue('username', 'manuel');
 
-        $this->assertSame('svn --username=manuel', $oCommandLineBuilder->sGetCommandLine());
+        $this->assertSame('svn --username=manuel', $commandLineBuilder->getCommandLine());
     }
     
     public function test_reset() {
-        $oCommandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-        $oCommandLineBuilder->setCommand('svn');
-        $oCommandLineBuilder->addLongSwitchWithValue('username', 'manuel');
-        $oCommandLineBuilder->reset();
+        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder->setCommand('svn');
+        $commandLineBuilder->addLongSwitchWithValue('username', 'manuel');
+        $commandLineBuilder->reset();
 
-        $this->assertSame('', $oCommandLineBuilder->sGetCommandLine());
+        $this->assertSame('', $commandLineBuilder->getCommandLine());
     }
     
 }

@@ -52,33 +52,33 @@
  */
 class RestfulSubversion_Core_Revision {
 
-    protected $sRevisionNumber = NULL;
+    protected $revisionNumber = NULL;
     
-    public function __construct($sRevisionNumber) {
-        if ($sRevisionNumber == 'HEAD') {
-            $this->sRevisionNumber = $sRevisionNumber;
+    public function __construct($revisionNumber) {
+        if ($revisionNumber == 'HEAD') {
+            $this->revisionNumber = $revisionNumber;
             return;
         }
 
-        if ((int)$sRevisionNumber < 0) {
+        if ((int)$revisionNumber < 0) {
             throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('Revision number must be positive.');
         }
-        if ((string)(int)$sRevisionNumber != $sRevisionNumber) {
-            throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('"'.$sRevisionNumber.'" is not a valid revision number.');
+        if ((string)(int)$revisionNumber != $revisionNumber) {
+            throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('"'.$revisionNumber.'" is not a valid revision number.');
         }
-        $this->sRevisionNumber = $sRevisionNumber;
+        $this->revisionNumber = $revisionNumber;
     }
     
-    public function sGetAsString() {
-        return (string)($this->sRevisionNumber);
+    public function getAsString() {
+        return (string)($this->revisionNumber);
     }
     
-    public function sGetRevertedAsString() {
-        return '-'.$this->sGetAsString();
+    public function sGetRevertedAstring() {
+        return '-'.$this->getAsString();
     }
     
     public function __toString() {
-        return (string)$this->sGetAsString();
+        return (string)$this->getAsString();
     }
     
 }

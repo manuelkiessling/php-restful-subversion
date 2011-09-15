@@ -40,7 +40,7 @@
  */
 
 /**
- * @uri /changeset/:sRevisionNumber
+ * @uri /changeset/:revisionNumber
  * @category   VersionControl
  * @package    RestfulSubversion
  * @subpackage Webservice
@@ -51,19 +51,19 @@
  */
 class RestfulSubversion_Webservice_Resource_Changeset extends RestfulSubversion_Webservice_Resource {
 
-    public function get($request, $sRevisionNumber) {
-        $oCacheDb = new PDO($this->aConfig['sRepoCacheConnectionString'], NULL, NULL);
-        $oRepoCache = new RestfulSubversion_Core_RepoCache($oCacheDb);
+    public function get($request, $revisionNumber) {
+        $cacheDbHandler = new PDO($this->configValues['repoCacheConnectionString'], NULL, NULL);
+        $repoCache = new RestfulSubversion_Core_RepoCache($cacheDbHandler);
 
-        $oChangeset = $oRepoCache->oGetChangesetForRevision(new RestfulSubversion_Core_Revision($sRevisionNumber));
-        if (!is_null($oChangeset)) {
-            $aResult = RestfulSubversion_Webservice_Helper_Result::aGetChangesetAsArray($oChangeset);
+        $changeset = $repoCache->getChangesetForRevision(new RestfulSubversion_Core_Revision($revisionNumber));
+        if (!is_null($changeset)) {
+            $result = RestfulSubversion_Webservice_Helper_Result::getChangesetAsArray($changeset);
         } else {
-            $aResult = NULL;
+            $result = NULL;
         }
 
-        $oResponseHelper = new RestfulSubversion_Webservice_Helper_Response();
-        return $oResponseHelper->setResponse(new Response($request), $aResult);
+        $responseHelper = new RestfulSubversion_Webservice_Helper_Response();
+        return $responseHelper->setResponse(new Response($request), $result);
     }
 
 }

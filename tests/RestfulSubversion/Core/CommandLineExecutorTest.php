@@ -7,14 +7,14 @@ class RestfulSubversion_Core_RepoCommandExecutorTest extends PHPUnit_Framework_T
     }
 
     public function test_execution() {
-        $sCommand = "svn log -r 6 -v --xml file://".realpath(RestfulSubversion_Helper_Bootstrap::sGetPackageRoot()."/../../tests/_testrepo")." | grep -v '<paths>' | grep -v '</paths>' | grep '<path' -A 2 | grep 'action'";
+        $command = "svn log -r 6 -v --xml file://".realpath(RestfulSubversion_Helper_Bootstrap::getLibraryRoot()."/../../tests/_testrepo")." | grep -v '<paths>' | grep -v '</paths>' | grep '<path' -A 2 | grep 'action'";
 
         $this->assertSame('   action="M">/branches/my-hammer2/_production/2010-01-02/b.php</path>'."\n",
-                          RestfulSubversion_Core_CommandLineExecutor::oGetInstance()->sGetCommandResult($sCommand));
+                          RestfulSubversion_Core_CommandLineExecutor::getInstance()->getCommandResult($command));
     }
 
     public function test_singletonReturnsSameInstance() {
-        $this->assertTrue(RestfulSubversion_Core_CommandLineExecutor::oGetInstance() === RestfulSubversion_Core_CommandLineExecutor::oGetInstance(),
+        $this->assertTrue(RestfulSubversion_Core_CommandLineExecutor::getInstance() === RestfulSubversion_Core_CommandLineExecutor::getInstance(),
                          'Singleton is not working!'
                         );
 
@@ -29,16 +29,16 @@ class RestfulSubversion_Core_RepoCommandExecutorTest extends PHPUnit_Framework_T
     }
 
     public function test_cloningImpossible() {
-        $bExceptionThrown = FALSE;
-        $o = RestfulSubversion_Core_CommandLineExecutor::oGetInstance();
+        $exceptionThrown = FALSE;
+        $o = RestfulSubversion_Core_CommandLineExecutor::getInstance();
 
         try {
             clone($o);
         } catch (RestfulSubversion_Core_Exception $e) {
-            $bExceptionThrown = TRUE;
+            $exceptionThrown = TRUE;
         }
 
-        $this->assertTrue($bExceptionThrown);
+        $this->assertTrue($exceptionThrown);
     }
 
 }

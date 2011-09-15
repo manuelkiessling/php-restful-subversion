@@ -52,7 +52,7 @@
  */
 interface RestfulSubversion_Core_CommandLineBuilderInterface {
 
-    public function setCommand($sCommand);
+    public function setCommand($command);
     
     public function addParameter($sParameterName);
     
@@ -64,6 +64,6 @@ interface RestfulSubversion_Core_CommandLineBuilderInterface {
     
     public function addLongSwitchWithValue($sSwitchName, $sSwitchValue);
     
-    public function sGetCommandLine();
+    public function getCommandLine();
 
 }

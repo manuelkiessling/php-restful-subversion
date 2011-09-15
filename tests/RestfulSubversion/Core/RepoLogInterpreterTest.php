@@ -3,7 +3,7 @@
 class RestfulSubversion_Core_RepoLogInterpreterTest extends PHPUnit_Framework_TestCase {
 
     public function test_createChangesetsFromXmlOneRevision() {
-        $sXml = <<<EOT
+        $xml = <<<EOT
 <?xml version="1.0"?>
 <log>
 <logentry
@@ -33,28 +33,28 @@ class RestfulSubversion_Core_RepoLogInterpreterTest extends PHPUnit_Framework_Te
 </log>
 EOT;
 
-        $aoExpected = array();
+        $expected = array();
 
-        $oExpected = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
-        $oExpected->setAuthor('Han Solo');
-        $oExpected->setDateTime('2011-02-17 10:58:40');
-        $oExpected->setMessage("DEV-5678: Hello World\n- This is foo bar\n");
-        $oExpected->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
-        $oExpected->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/foo.php'));
-        $oExpected->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/foo/targetfile.php'), new RestfulSubversion_Core_RepoPath('/foo/sourcefile.php'), new RestfulSubversion_Core_Revision('12344'));
-        $oExpected->addPathOperation('D', new RestfulSubversion_Core_RepoPath('/foo/other.php'));
+        $expectedChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
+        $expectedChangeset->setAuthor('Han Solo');
+        $expectedChangeset->setDateTime('2011-02-17 10:58:40');
+        $expectedChangeset->setMessage("DEV-5678: Hello World\n- This is foo bar\n");
+        $expectedChangeset->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
+        $expectedChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/foo.php'));
+        $expectedChangeset->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/foo/targetfile.php'), new RestfulSubversion_Core_RepoPath('/foo/sourcefile.php'), new RestfulSubversion_Core_Revision('12344'));
+        $expectedChangeset->addPathOperation('D', new RestfulSubversion_Core_RepoPath('/foo/other.php'));
 
-        $aoExpected[] = $oExpected;
+        $expected[] = $expectedChangeset;
 
-        $oInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
-        $aoActual = $oInterpreter->aoCreateChangesetsFromVerboseXml($sXml);
+        $logInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
+        $actual = $logInterpreter->createChangesetsFromVerboseXml($xml);
 
-        $this->assertEquals($aoExpected, $aoActual);
+        $this->assertEquals($expected, $actual);
         
     }
 
     public function test_getChangesetFromXmlTwoRevisions() {
-        $sXml = <<<EOT
+        $xml = <<<EOT
 <?xml version="1.0"?>
 <log>
 <logentry
@@ -100,32 +100,32 @@ EOT;
 </log>
 EOT;
 
-        $aoExpected = array();
+        $expected = array();
 
-        $oExpected = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
-        $oExpected->setAuthor('Han Solo');
-        $oExpected->setDateTime('2011-02-17 10:58:40');
-        $oExpected->setMessage("DEV-5678: Hello World\n- This is foo bar\n");
-        $oExpected->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
-        $oExpected->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/foo.php'));
-        $oExpected->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/foo/targetfile.php'), new RestfulSubversion_Core_RepoPath('/foo/sourcefile.php'), new RestfulSubversion_Core_Revision('12344'));
-        $oExpected->addPathOperation('D', new RestfulSubversion_Core_RepoPath('/foo/other.php'));
+        $expectedChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
+        $expectedChangeset->setAuthor('Han Solo');
+        $expectedChangeset->setDateTime('2011-02-17 10:58:40');
+        $expectedChangeset->setMessage("DEV-5678: Hello World\n- This is foo bar\n");
+        $expectedChangeset->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
+        $expectedChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/foo.php'));
+        $expectedChangeset->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/foo/targetfile.php'), new RestfulSubversion_Core_RepoPath('/foo/sourcefile.php'), new RestfulSubversion_Core_Revision('12344'));
+        $expectedChangeset->addPathOperation('D', new RestfulSubversion_Core_RepoPath('/foo/other.php'));
 
-        $aoExpected[] = $oExpected;
+        $expected[] = $expectedChangeset;
 
-        $oExpected = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12346'));
-        $oExpected->setAuthor('Luke Skywalker');
-        $oExpected->setDateTime('2011-02-17 10:59:40');
-        $oExpected->setMessage("DEV-5679: Goodbye World");
-        $oExpected->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/foo/targetfile2.php'), new RestfulSubversion_Core_RepoPath('/foo/sourcefile2.php'), new RestfulSubversion_Core_Revision('999'));
-        $oExpected->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
+        $expectedChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12346'));
+        $expectedChangeset->setAuthor('Luke Skywalker');
+        $expectedChangeset->setDateTime('2011-02-17 10:59:40');
+        $expectedChangeset->setMessage("DEV-5679: Goodbye World");
+        $expectedChangeset->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/foo/targetfile2.php'), new RestfulSubversion_Core_RepoPath('/foo/sourcefile2.php'), new RestfulSubversion_Core_Revision('999'));
+        $expectedChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
 
-        $aoExpected[] = $oExpected;
+        $expected[] = $expectedChangeset;
 
-        $oInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
-        $aoActual = $oInterpreter->aoCreateChangesetsFromVerboseXml($sXml);
+        $logInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
+        $actual = $logInterpreter->createChangesetsFromVerboseXml($xml);
 
-        $this->assertEquals($aoExpected, $aoActual);
+        $this->assertEquals($expected, $actual);
 
     }
 

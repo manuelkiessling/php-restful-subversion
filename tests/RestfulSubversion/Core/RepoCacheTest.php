@@ -3,308 +3,308 @@
 class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
 
     public function setUp() {
-        $oCacheDb = new PDO('sqlite:/var/tmp/PHPRestfulSubversion_TestDb.sqlite', NULL, NULL);
-        $this->oRepoCache = new RestfulSubversion_Core_RepoCache($oCacheDb);
+        $cacheDbHandler = new PDO('sqlite:/var/tmp/PHPRestfulSubversion_TestDb.sqlite', NULL, NULL);
+        $this->repoCache = new RestfulSubversion_Core_RepoCache($cacheDbHandler);
     }
 
     public function tearDown() {
-        $this->oRepoCache->resetCache();
+        $this->repoCache->resetCache();
     }
 
     public function test_getHighestRevisionInCache() {
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-18 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $this->assertEquals(new RestfulSubversion_Core_Revision('12345'), $this->oRepoCache->oGetHighestRevision());
+        $this->assertEquals(new RestfulSubversion_Core_Revision('12345'), $this->repoCache->getHighestRevision());
     }
 
     public function test_getHighestRevisionInCacheForEmptyCache() {
-        $this->assertFalse($this->oRepoCache->oGetHighestRevision());
+        $this->assertFalse($this->repoCache->getHighestRevision());
     }
 
     public function test_getChangesetForRevisionSimple() {
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-18 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        unset($this->oRepoCache);
+        $this->repoCache->addChangeset($changeset);
+        unset($this->repoCache);
         $this->setUp();
 
-        $this->assertEquals($oChangeset, $this->oRepoCache->oGetChangesetForRevision(new RestfulSubversion_Core_Revision('12345')));
+        $this->assertEquals($changeset, $this->repoCache->getChangesetForRevision(new RestfulSubversion_Core_Revision('12345')));
     }
 
     public function test_getChangesetForRevisionComplex() {
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-18 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bar.php'), new RestfulSubversion_Core_RepoPath('/foo/bar/old.php'), new RestfulSubversion_Core_Revision('12344'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bar.php'), new RestfulSubversion_Core_RepoPath('/foo/bar/old.php'), new RestfulSubversion_Core_Revision('12344'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        unset($this->oRepoCache);
+        $this->repoCache->addChangeset($changeset);
+        unset($this->repoCache);
         $this->setUp();
 
-        $this->assertEquals($oChangeset, $this->oRepoCache->oGetChangesetForRevision(new RestfulSubversion_Core_Revision('12345')));
+        $this->assertEquals($changeset, $this->repoCache->getChangesetForRevision(new RestfulSubversion_Core_Revision('12345')));
     }
 
     public function test_getChangesetsWithPathEndingOnAscending() {
-        $aoExpected = array();
+        $expected = array();
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-18 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        $aoExpected[] = $oChangeset;
+        $this->repoCache->addChangeset($changeset);
+        $expected[] = $changeset;
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-19 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-19 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-20 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-20 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        $aoExpected[] = $oChangeset;
+        $this->repoCache->addChangeset($changeset);
+        $expected[] = $changeset;
 
-        $this->assertEquals(array($aoExpected,
-                                  $aoExpected),
-                            array($this->oRepoCache->aoGetChangesetsWithPathEndingOn('a.php'),
-                                  $this->oRepoCache->aoGetChangesetsWithPathEndingOn('a.php', 'ascending')));
+        $this->assertEquals(array($expected,
+                                  $expected),
+                            array($this->repoCache->getChangesetsWithPathEndingOn('a.php'),
+                                  $this->repoCache->getChangesetsWithPathEndingOn('a.php', 'ascending')));
     }
 
     public function test_getChangesetsWithPathEndingOnDescending() {
-        $aoExpected = array();
+        $expected = array();
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-18 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        $aoExpected[1] = $oChangeset;
+        $this->repoCache->addChangeset($changeset);
+        $expected[1] = $changeset;
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-19 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-19 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-20 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-20 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        $aoExpected[0] = $oChangeset;
+        $this->repoCache->addChangeset($changeset);
+        $expected[0] = $changeset;
 
-        $this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithPathEndingOn('a.php', 'descending'));
+        $this->assertEquals($expected, $this->repoCache->getChangesetsWithPathEndingOn('a.php', 'descending'));
     }
 
     public function test_getChangesetsWithPathEndingOnDescendingLimited() {
-        $aoExpected = array();
+        $expected = array();
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-18 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-19 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-19 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-20 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-20 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        $aoExpected[0] = $oChangeset;
+        $this->repoCache->addChangeset($changeset);
+        $expected[0] = $changeset;
 
-        $this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithPathEndingOn('a.php', 'descending', 1));
+        $this->assertEquals($expected, $this->repoCache->getChangesetsWithPathEndingOn('a.php', 'descending', 1));
     }
 
     public function test_getChangesetsWithMessageContainingTextAscending() {
-        $aoExpected = array();
+        $expected = array();
         
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-18 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        $aoExpected[] = $oChangeset;
+        $this->repoCache->addChangeset($changeset);
+        $expected[] = $changeset;
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-19 22:56:00');
-        $oChangeset->setMessage('Helloworlds');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-19 22:56:00');
+        $changeset->setMessage('Helloworlds');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        $aoExpected[] = $oChangeset;
+        $this->repoCache->addChangeset($changeset);
+        $expected[] = $changeset;
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-20 22:56:00');
-        $oChangeset->setMessage('Hello W orld');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-20 22:56:00');
+        $changeset->setMessage('Hello W orld');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $this->assertEquals(array($aoExpected,
-                                  $aoExpected),
-                            array($this->oRepoCache->aoGetChangesetsWithMessageContainingText('world'),
-                                  $this->oRepoCache->aoGetChangesetsWithMessageContainingText('world', 'ascending')));
+        $this->assertEquals(array($expected,
+                                  $expected),
+                            array($this->repoCache->getChangesetsWithMessageContainingText('world'),
+                                  $this->repoCache->getChangesetsWithMessageContainingText('world', 'ascending')));
     }
 
     public function test_getChangesetsWithMessageContainingTextOrderDescending() {
-        $aoExpected = array();
+        $expected = array();
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-18 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        $aoExpected[1] = $oChangeset;
+        $this->repoCache->addChangeset($changeset);
+        $expected[1] = $changeset;
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-19 22:56:00');
-        $oChangeset->setMessage('Helloworlds');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-19 22:56:00');
+        $changeset->setMessage('Helloworlds');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        $aoExpected[0] = $oChangeset;
+        $this->repoCache->addChangeset($changeset);
+        $expected[0] = $changeset;
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-20 22:56:00');
-        $oChangeset->setMessage('Hello W orld');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-20 22:56:00');
+        $changeset->setMessage('Hello W orld');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithMessageContainingText('world', 'descending'));
+        $this->assertEquals($expected, $this->repoCache->getChangesetsWithMessageContainingText('world', 'descending'));
     }
 
     public function test_getChangesetsWithMessageContainingTextOrderDescendingLimited() {
-        $aoExpected = array();
+        $expected = array();
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-18 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-19 22:56:00');
-        $oChangeset->setMessage('Helloworlds');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-19 22:56:00');
+        $changeset->setMessage('Helloworlds');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
-        $aoExpected[] = $oChangeset;
+        $this->repoCache->addChangeset($changeset);
+        $expected[] = $changeset;
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-20 22:56:00');
-        $oChangeset->setMessage('Hello W orld');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-20 22:56:00');
+        $changeset->setMessage('Hello W orld');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        reset($aoExpected);
-        $this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithMessageContainingText('world', 'descending', 1));
+        reset($expected);
+        $this->assertEquals($expected, $this->repoCache->getChangesetsWithMessageContainingText('world', 'descending', 1));
     }
 
     public function test_getChangesetsWithMessageContainingTextNoTextGiven() {
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-18 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/a.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-19 22:56:00');
-        $oChangeset->setMessage('Helloworlds');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1235'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-19 22:56:00');
+        $changeset->setMessage('Helloworlds');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/ar.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-20 22:56:00');
-        $oChangeset->setMessage('Hello W orld');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1236'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-20 22:56:00');
+        $changeset->setMessage('Hello W orld');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar/bla.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $aoExpected = array();
-        $this->assertEquals($aoExpected, $this->oRepoCache->aoGetChangesetsWithMessageContainingText(''));
+        $expected = array();
+        $this->assertEquals($expected, $this->repoCache->getChangesetsWithMessageContainingText(''));
     }
 
     public function test_getNonExistantChangeset() {
-        $this->assertNull($this->oRepoCache->oGetChangesetForRevision(new RestfulSubversion_Core_Revision('98765')));
+        $this->assertNull($this->repoCache->getChangesetForRevision(new RestfulSubversion_Core_Revision('98765')));
     }
 
     /**
      * @expectedException RestfulSubversion_Core_RepoCacheRevisionAlreadyInCacheCoreException
      */
     public function test_cantAddSameRevisionTwice() {
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
-        $oChangeset->setAuthor('Han Solo');
-        $oChangeset->setDateTime('2011-02-18 22:56:00');
-        $oChangeset->setMessage('Hello World');
-        $oChangeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RestfulSubversion_Core_RepoPath('/foo/bar.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
 
-        $oChangeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
-        $oChangeset->setAuthor('Leia Skywalker');
-        $oChangeset->setDateTime('2011-02-19 22:57:00');
-        $oChangeset->setMessage('...');
-        $oChangeset->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/bar/foo.php'));
+        $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
+        $changeset->setAuthor('Leia Skywalker');
+        $changeset->setDateTime('2011-02-19 22:57:00');
+        $changeset->setMessage('...');
+        $changeset->addPathOperation('A', new RestfulSubversion_Core_RepoPath('/bar/foo.php'));
 
-        $this->oRepoCache->addChangeset($oChangeset);
+        $this->repoCache->addChangeset($changeset);
     }
 
 }

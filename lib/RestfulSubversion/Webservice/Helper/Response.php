@@ -50,25 +50,25 @@
  */
 class RestfulSubversion_Webservice_Helper_Response {
 
-    public function setResponse(Response $oResponse, $mBody, $sCallback = NULL) {
-        $oResponse->code = Response::OK;
-        $oResponse->addHeader('Content-Type', 'application/json');
-         if (is_string($sCallback)) {
-            $oResponse->body = $sCallback.'('.json_encode($mBody).');';
+    public function setResponse(Response $response, $body, $callback = NULL) {
+        $response->code = Response::OK;
+        $response->addHeader('Content-Type', 'application/json');
+         if (is_string($callback)) {
+            $response->body = $callback.'('.json_encode($body).');';
         } else {
-            $oResponse->body = json_encode($mBody);
+            $response->body = json_encode($body);
         }
-        return $oResponse;
+        return $response;
     }
 
-    public function setFailedResponse(Response $oResponse, $sErrorMessage = 'This request is not valid.', $sCallback = NULL) {
-        $oResponse->code = Response::BADREQUEST;
-        if (is_string($sCallback)) {
-            $oResponse->body = $sCallback.'('.json_encode(array('error' => TRUE, 'errorMessage' => $sErrorMessage)).');';
+    public function setFailedResponse(Response $response, $errorMessage = 'This request is not valid.', $callback = NULL) {
+        $response->code = Response::BADREQUEST;
+        if (is_string($callback)) {
+            $response->body = $callback.'('.json_encode(array('error' => TRUE, 'errorMessage' => $errorMessage)).');';
         } else {
-            $oResponse->body = json_encode(array('error' => TRUE, 'error' => $sErrorMessage));
+            $response->body = json_encode(array('error' => TRUE, 'error' => $errorMessage));
         }
-        return $oResponse;
+        return $response;
     }
 
 }

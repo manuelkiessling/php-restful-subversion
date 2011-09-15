@@ -13,10 +13,10 @@ if (!is_file('../etc/PHPRestfulSubversion.conf')) {
 require_once '../lib/RestfulSubversion/Webservice/Bootstrap.php';
 require_once '../etc/PHPRestfulSubversion.conf';
 
-RestfulSubversion_Webservice_Helper_Config::getInstance()->setConfig($aConfig);
+RestfulSubversion_Webservice_Helper_Config::getInstance()->setConfig($configValues);
 
-$oRequest = new Request();
-$oResource = $oRequest->loadResource();
+$request = new Request();
+$resource = $request->loadResource();
 
-$oResponse = $oResource->exec($oRequest);
-$oResponse->output();
+$response = $resource->exec($request);
+$response->output();

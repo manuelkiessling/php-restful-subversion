@@ -53,65 +53,29 @@
  */
 class RestfulSubversion_Core_Repo {
 
-    protected $sLocation = NULL;
-    protected $sAuthinfoUsername = NULL;
-    protected $sAuthinfoPassword = NULL;
-    protected $aoSourcePaths = array();
+    protected $uri = NULL;
+    protected $username = NULL;
+    protected $password = NULL;
     protected $oTargetPath = NULL;
 
-    public function setLocation($sLocation) {
-        $this->sLocation = $sLocation;
+    public function setUri($uri) {
+        $this->uri = $uri;
     }
 
-    public function sGetLocation() {
-        return $this->sLocation;
+    public function getUri() {
+        return $this->uri;
     }
 
-    public function sGetLocationBranches() {
-        return $this->sGetLocation().'/branches';
+    public function setAuthinfo($username, $password) {
+        $this->username = $username;
+        $this->password = $password;
     }
 
-      public function setAuthinfo($sUsername, $sPassword) {
-        $this->sAuthinfoUsername = $sUsername;
-        $this->sAuthinfoPassword = $sPassword;
+    public function getUsername() {
+        return $this->username;
     }
 
-    public function sGetAuthinfoUsername() {
-        return $this->sAuthinfoUsername;
+    public function getPassword() {
+        return $this->password;
     }
-
-    public function sGetAuthinfoPassword() {
-        return $this->sAuthinfoPassword;
-    }
-
-    public function addSourcePath(RestfulSubversion_Core_RepoPath $oPath) {
-        $this->aoSourcePaths[] = $oPath;
-    }
-
-    public function aoGetSourcePaths() {
-        return $this->aoSourcePaths;
-    }
-    
-    public function asGetSourceLocations() {
-        $asReturn = array();
-
-        foreach ($this->aoSourcePaths as $oSourcePath) {
-            $asReturn[] = $this->sGetLocation()."$oSourcePath";
-        }
-
-        return $asReturn;
-    }
-        
-    public function setTargetPath(RestfulSubversion_Core_RepoPath $oPath) {
-        $this->oTargetPath = $oPath;
-    }
-
-    public function oGetTargetPath() {
-        return $this->oTargetPath;
-    }
-    
-    public function sGetTargetLocation() {
-        return $this->sGetLocation()."$this->oTargetPath";
-    }
-
 }

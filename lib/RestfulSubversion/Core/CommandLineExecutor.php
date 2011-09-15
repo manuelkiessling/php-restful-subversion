@@ -52,8 +52,8 @@
  */
 class RestfulSubversion_Core_CommandLineExecutor {
     
-    protected static $oInstance = NULL;
-    protected static $asCache = array();
+    protected static $instance = NULL;
+    protected static $cache = array();
 
     protected function __construct() {}
 
@@ -61,13 +61,13 @@ class RestfulSubversion_Core_CommandLineExecutor {
         throw new RestfulSubversion_Core_Exception('You cannot clone the singleton instance RestfulSubversion_Core_CommandLineExecutor');
     }
     
-    public static function oGetInstance() {
-        if (is_null(self::$oInstance)) self::$oInstance = new self;
-        return self::$oInstance;
+    public static function getInstance() {
+        if (is_null(self::$instance)) self::$instance = new self;
+        return self::$instance;
     }
     
-    public function sGetCommandResult($sCommand) {
-        return shell_exec($sCommand);
+    public function getCommandResult($command) {
+        return shell_exec($command);
     }
 
 }
