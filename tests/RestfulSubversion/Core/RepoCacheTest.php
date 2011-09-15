@@ -1,17 +1,20 @@
 <?php
 
-class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
-
-    public function setUp() {
+class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
         $cacheDbHandler = new PDO('sqlite:/var/tmp/PHPRestfulSubversion_TestDb.sqlite', NULL, NULL);
         $this->repoCache = new RestfulSubversion_Core_RepoCache($cacheDbHandler);
     }
 
-    public function tearDown() {
+    public function tearDown()
+    {
         $this->repoCache->resetCache();
     }
 
-    public function test_getHighestRevisionInCache() {
+    public function test_getHighestRevisionInCache()
+    {
         $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
         $changeset->setAuthor('Han Solo');
         $changeset->setDateTime('2011-02-18 22:56:00');
@@ -23,11 +26,13 @@ class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(new RestfulSubversion_Core_Revision('12345'), $this->repoCache->getHighestRevision());
     }
 
-    public function test_getHighestRevisionInCacheForEmptyCache() {
+    public function test_getHighestRevisionInCacheForEmptyCache()
+    {
         $this->assertFalse($this->repoCache->getHighestRevision());
     }
 
-    public function test_getChangesetForRevisionSimple() {
+    public function test_getChangesetForRevisionSimple()
+    {
         $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
         $changeset->setAuthor('Han Solo');
         $changeset->setDateTime('2011-02-18 22:56:00');
@@ -41,7 +46,8 @@ class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($changeset, $this->repoCache->getChangesetForRevision(new RestfulSubversion_Core_Revision('12345')));
     }
 
-    public function test_getChangesetForRevisionComplex() {
+    public function test_getChangesetForRevisionComplex()
+    {
         $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
         $changeset->setAuthor('Han Solo');
         $changeset->setDateTime('2011-02-18 22:56:00');
@@ -56,7 +62,8 @@ class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($changeset, $this->repoCache->getChangesetForRevision(new RestfulSubversion_Core_Revision('12345')));
     }
 
-    public function test_getChangesetsWithPathEndingOnAscending() {
+    public function test_getChangesetsWithPathEndingOnAscending()
+    {
         $expected = array();
 
         $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
@@ -86,12 +93,13 @@ class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
         $expected[] = $changeset;
 
         $this->assertEquals(array($expected,
-                                  $expected),
+                                 $expected),
                             array($this->repoCache->getChangesetsWithPathEndingOn('a.php'),
-                                  $this->repoCache->getChangesetsWithPathEndingOn('a.php', 'ascending')));
+                                 $this->repoCache->getChangesetsWithPathEndingOn('a.php', 'ascending')));
     }
 
-    public function test_getChangesetsWithPathEndingOnDescending() {
+    public function test_getChangesetsWithPathEndingOnDescending()
+    {
         $expected = array();
 
         $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
@@ -123,7 +131,8 @@ class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $this->repoCache->getChangesetsWithPathEndingOn('a.php', 'descending'));
     }
 
-    public function test_getChangesetsWithPathEndingOnDescendingLimited() {
+    public function test_getChangesetsWithPathEndingOnDescendingLimited()
+    {
         $expected = array();
 
         $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
@@ -154,9 +163,10 @@ class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $this->repoCache->getChangesetsWithPathEndingOn('a.php', 'descending', 1));
     }
 
-    public function test_getChangesetsWithMessageContainingTextAscending() {
+    public function test_getChangesetsWithMessageContainingTextAscending()
+    {
         $expected = array();
-        
+
         $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
         $changeset->setAuthor('Han Solo');
         $changeset->setDateTime('2011-02-18 22:56:00');
@@ -184,12 +194,13 @@ class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
         $this->repoCache->addChangeset($changeset);
 
         $this->assertEquals(array($expected,
-                                  $expected),
+                                 $expected),
                             array($this->repoCache->getChangesetsWithMessageContainingText('world'),
-                                  $this->repoCache->getChangesetsWithMessageContainingText('world', 'ascending')));
+                                 $this->repoCache->getChangesetsWithMessageContainingText('world', 'ascending')));
     }
 
-    public function test_getChangesetsWithMessageContainingTextOrderDescending() {
+    public function test_getChangesetsWithMessageContainingTextOrderDescending()
+    {
         $expected = array();
 
         $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
@@ -221,7 +232,8 @@ class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $this->repoCache->getChangesetsWithMessageContainingText('world', 'descending'));
     }
 
-    public function test_getChangesetsWithMessageContainingTextOrderDescendingLimited() {
+    public function test_getChangesetsWithMessageContainingTextOrderDescendingLimited()
+    {
         $expected = array();
 
         $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
@@ -253,7 +265,8 @@ class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $this->repoCache->getChangesetsWithMessageContainingText('world', 'descending', 1));
     }
 
-    public function test_getChangesetsWithMessageContainingTextNoTextGiven() {
+    public function test_getChangesetsWithMessageContainingTextNoTextGiven()
+    {
         $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('1234'));
         $changeset->setAuthor('Han Solo');
         $changeset->setDateTime('2011-02-18 22:56:00');
@@ -282,14 +295,16 @@ class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $this->repoCache->getChangesetsWithMessageContainingText(''));
     }
 
-    public function test_getNonExistantChangeset() {
+    public function test_getNonExistantChangeset()
+    {
         $this->assertNull($this->repoCache->getChangesetForRevision(new RestfulSubversion_Core_Revision('98765')));
     }
 
     /**
      * @expectedException RestfulSubversion_Core_RepoCacheRevisionAlreadyInCacheCoreException
      */
-    public function test_cantAddSameRevisionTwice() {
+    public function test_cantAddSameRevisionTwice()
+    {
         $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision('12345'));
         $changeset->setAuthor('Han Solo');
         $changeset->setDateTime('2011-02-18 22:56:00');
@@ -306,5 +321,4 @@ class RestfulSubversion_Core_RepoCacheTest extends PHPUnit_Framework_TestCase {
 
         $this->repoCache->addChangeset($changeset);
     }
-
 }

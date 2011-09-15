@@ -1,8 +1,9 @@
 <?php
 
-class RestfulSubversion_Core_RepoLogInterpreterTest extends PHPUnit_Framework_TestCase {
-
-    public function test_createChangesetsFromXmlOneRevision() {
+class RestfulSubversion_Core_RepoLogInterpreterTest extends PHPUnit_Framework_TestCase
+{
+    public function test_createChangesetsFromXmlOneRevision()
+    {
         $xml = <<<EOT
 <?xml version="1.0"?>
 <log>
@@ -50,10 +51,10 @@ EOT;
         $actual = $logInterpreter->createChangesetsFromVerboseXml($xml);
 
         $this->assertEquals($expected, $actual);
-        
     }
 
-    public function test_getChangesetFromXmlTwoRevisions() {
+    public function test_getChangesetFromXmlTwoRevisions()
+    {
         $xml = <<<EOT
 <?xml version="1.0"?>
 <log>
@@ -126,7 +127,5 @@ EOT;
         $actual = $logInterpreter->createChangesetsFromVerboseXml($xml);
 
         $this->assertEquals($expected, $actual);
-
     }
-
 }
