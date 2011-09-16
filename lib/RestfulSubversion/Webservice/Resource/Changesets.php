@@ -72,11 +72,11 @@ class RestfulSubversion_Webservice_Resource_Changesets extends RestfulSubversion
         }
 
 
-        $sortOrder = 'descending';
-        if (isset($_GET['sort_order'])) {
-            $sortOrder = $_GET['sort_order'];
+        $order = 'descending';
+        if (isset($_GET['order'])) {
+            $order = $_GET['order'];
         }
-        if (!($sortOrder === 'ascending' || $sortOrder === 'descending')) {
+        if (!($order === 'ascending' || $order === 'descending')) {
             return $responseHelper->setFailedResponse(new Response($request), "Sort order must be 'ascending' or 'descending'.", $callback);
         }
 
@@ -91,19 +91,18 @@ class RestfulSubversion_Webservice_Resource_Changesets extends RestfulSubversion
 
         $cacheDbHandler = new PDO($this->configValues['repoCacheConnectionString'], NULL, NULL);
         $repoCache = new RestfulSubversion_Core_RepoCache($cacheDbHandler);
-        $changesets = array();
 
         if ($searchMode == 'with_message_containing') {
-            $changesets = $repoCache->getChangesetsWithMessageContainingText($searchTerm, $sortOrder, $limit);
+            $changesets = $repoCache->getChangesetsWithMessageContainingText($searchTerm, $order, $limit);
         } elseif ($searchMode == 'with_path_ending_on') {
-            $changesets = $repoCache->getChangesetsWithPathEndingOn($searchTerm, $sortOrder, $limit);
+            $changesets = $repoCache->getChangesetsWithPathEndingOn($searchTerm, $order, $limit);
         }
 
+        $changesetsArray = array();
         foreach ($changesets as $changeset) {
-            $changesets[] = RestfulSubversion_Webservice_Helper_Result::getChangesetAsArray($changeset);
+            $changesetsArray[] = RestfulSubversion_Webservice_Helper_Result::getChangesetAsArray($changeset);
         }
-        ksort($changesets);
 
-        return $responseHelper->setResponse(new Response($request), array('changesets' => $changesets), $callback);
+        return $responseHelper->setResponse(new Response($request), array('changesets' => $changesetsArray), $callback);
     }
 }
