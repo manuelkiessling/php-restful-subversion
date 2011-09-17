@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Webservice\Helper;
+
 /**
  * @category   VersionControl
  * @package    RestfulSubversion
@@ -48,7 +50,7 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Webservice_Helper_Config
+class Config
 {
     static private $instance = NULL;
     static private $configValues = array();

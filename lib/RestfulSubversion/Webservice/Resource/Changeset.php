@@ -39,6 +39,12 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Webservice\Resource;
+use RestfulSubversion\Webservice\Helper\Result;
+use RestfulSubversion\Webservice\Helper\Response;
+use RestfulSubversion\Core\Revision;
+use RestfulSubversion\Core\RepoCache;
+
 /**
  * @uri /changeset/:revisionNumber
  * @category   VersionControl
@@ -49,21 +55,21 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Webservice_Resource_Changeset extends RestfulSubversion_Webservice_Resource
+class Changeset extends \RestfulSubversion\Webservice\Resource
 {
     public function get($request, $revisionNumber)
     {
-        $cacheDbHandler = new PDO($this->configValues['repoCacheConnectionString'], NULL, NULL);
-        $repoCache = new RestfulSubversion_Core_RepoCache($cacheDbHandler);
+        $cacheDbHandler = new \PDO($this->configValues['repoCacheConnectionString'], NULL, NULL);
+        $repoCache = new RepoCache($cacheDbHandler);
 
-        $changeset = $repoCache->getChangesetForRevision(new RestfulSubversion_Core_Revision($revisionNumber));
+        $changeset = $repoCache->getChangesetForRevision(new Revision($revisionNumber));
         if (!is_null($changeset)) {
-            $result = RestfulSubversion_Webservice_Helper_Result::getChangesetAsArray($changeset);
+            $result = Result::getChangesetAsArray($changeset);
         } else {
             $result = NULL;
         }
 
-        $responseHelper = new RestfulSubversion_Webservice_Helper_Response();
-        return $responseHelper->setResponse(new Response($request), $result);
+        $responseHelper = new Response();
+        return $responseHelper->setResponse(new \Response($request), $result);
     }
 }

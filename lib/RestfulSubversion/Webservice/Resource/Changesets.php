@@ -39,6 +39,12 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Webservice\Resource;
+use RestfulSubversion\Webservice\Helper\Result;
+use RestfulSubversion\Webservice\Helper\Response;
+use RestfulSubversion\Core\Revision;
+use RestfulSubversion\Core\RepoCache;
+
 /**
  * Changesets resource
  * @uri /changesets
@@ -50,11 +56,11 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Webservice_Resource_Changesets extends RestfulSubversion_Webservice_Resource
+class Changesets extends \RestfulSubversion\Webservice\Resource
 {
     public function get($request)
     {
-        $responseHelper = new RestfulSubversion_Webservice_Helper_Response();
+        $responseHelper = new Response();
 
         $callback = NULL;
         if (isset($_GET['callback'])) {
@@ -68,7 +74,7 @@ class RestfulSubversion_Webservice_Resource_Changesets extends RestfulSubversion
             $searchMode = 'with_path_ending_on';
             $searchTerm = $_GET['with_path_ending_on'];
         } else {
-            return $responseHelper->setFailedResponse(new Response($request), "You can't request an unfiltered list of all changesets. Use changesets?with_message_containing=TEXT or changesets?with_path_ending_on=TEXT instead.", $callback);
+            return $responseHelper->setFailedResponse(new \Response($request), "You can't request an unfiltered list of all changesets. Use changesets?with_message_containing=TEXT or changesets?with_path_ending_on=TEXT instead.", $callback);
         }
 
 
@@ -77,20 +83,20 @@ class RestfulSubversion_Webservice_Resource_Changesets extends RestfulSubversion
             $order = $_GET['order'];
         }
         if (!($order === 'ascending' || $order === 'descending')) {
-            return $responseHelper->setFailedResponse(new Response($request), "Sort order must be 'ascending' or 'descending'.", $callback);
+            return $responseHelper->setFailedResponse(new \Response($request), "Sort order must be 'ascending' or 'descending'.", $callback);
         }
 
         $limit = NULL;
         if (isset($_GET['limit'])) {
             if (!is_numeric($_GET['limit']) || (string)(int)$_GET['limit'] !== $_GET['limit']) {
-                return $responseHelper->setFailedResponse(new Response($request), "Limit must be an integer value.", $callback);
+                return $responseHelper->setFailedResponse(new \Response($request), "Limit must be an integer value.", $callback);
             }
             $limit = (int)$_GET['limit'];
         }
         if ($limit === 0) $limit = NULL;
 
-        $cacheDbHandler = new PDO($this->configValues['repoCacheConnectionString'], NULL, NULL);
-        $repoCache = new RestfulSubversion_Core_RepoCache($cacheDbHandler);
+        $cacheDbHandler = new \PDO($this->configValues['repoCacheConnectionString'], NULL, NULL);
+        $repoCache = new RepoCache($cacheDbHandler);
 
         if ($searchMode == 'with_message_containing') {
             $changesets = $repoCache->getChangesetsWithMessageContainingText($searchTerm, $order, $limit);
@@ -100,9 +106,9 @@ class RestfulSubversion_Webservice_Resource_Changesets extends RestfulSubversion
 
         $changesetsArray = array();
         foreach ($changesets as $changeset) {
-            $changesetsArray[] = RestfulSubversion_Webservice_Helper_Result::getChangesetAsArray($changeset);
+            $changesetsArray[] = Result::getChangesetAsArray($changeset);
         }
 
-        return $responseHelper->setResponse(new Response($request), array('changesets' => $changesetsArray), $callback);
+        return $responseHelper->setResponse(new \Response($request), array('changesets' => $changesetsArray), $callback);
     }
 }
