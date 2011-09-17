@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Helper;
+
 /**
  * Autoloader for the whole RestfulSubversion library
  *
@@ -49,17 +51,21 @@
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       RestfulSubversion_Helper_Bootstrap::getLibraryRoot()
+ * @uses       Bootstrap::getLibraryRoot()
  */
-class RestfulSubversion_Helper_Autoloader
+class Autoloader
 {
     public static function load($className)
     {
-        $classParts = explode('_', $className);
+        if (strstr($className, '\\')) {
+            $classParts = explode('\\', $className);
+        } else {
+            $classParts = explode('_', $className);
+        }
         unset($classParts[0]);
         $classPath = implode('/', $classParts) . '.php';
 
-        $paths = array(realpath(RestfulSubversion_Helper_Bootstrap::getLibraryRoot()));
+        $paths = array(realpath(Bootstrap::getLibraryRoot()));
         foreach ($paths as $path) {
             if (file_exists(realpath($path . '/' . $classPath))) {
                 require_once realpath($path . '/' . $classPath);

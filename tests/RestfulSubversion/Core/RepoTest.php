@@ -1,10 +1,12 @@
 <?php
 
-class RestfulSubversion_Core_RepoTest extends PHPUnit_Framework_TestCase
+namespace RestfulSubversion\Core;
+
+class RepoTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->repo = new RestfulSubversion_Core_Repo();
+        $this->repo = new Repo();
     }
 
     public function test_newRepoObjectHasNoLocationSet()

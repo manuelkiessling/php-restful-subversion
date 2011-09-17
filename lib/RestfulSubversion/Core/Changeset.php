@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Core;
+
 /**
  * Class representing a set of changes in the repository identified by a revision
  *
@@ -50,7 +52,7 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Core_Changeset
+class Changeset
 {
     protected $revision = NULL;
     protected $author = NULL;
@@ -58,7 +60,7 @@ class RestfulSubversion_Core_Changeset
     protected $message = NULL;
     protected $pathOperations = array();
 
-    public function __construct(RestfulSubversion_Core_Revision $revision)
+    public function __construct(Revision $revision)
     {
         $this->revision = $revision;
     }
@@ -78,7 +80,7 @@ class RestfulSubversion_Core_Changeset
         $this->message = $message;
     }
 
-    public function addPathOperation($action, RestfulSubversion_Core_RepoPath $path, RestfulSubversion_Core_RepoPath $copyfromPath = NULL, RestfulSubversion_Core_Revision $copyfromRev = NULL)
+    public function addPathOperation($action, RepoPath $path, RepoPath $copyfromPath = NULL, Revision $copyfromRev = NULL)
     {
         $pathOperation = array('action' => $action,
                                'path' => $path);

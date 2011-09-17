@@ -39,9 +39,11 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Helper;
+
 require_once realpath(dirname(__FILE__)) . '/Autoloader.php';
 
-spl_autoload_register('RestfulSubversion_Helper_Autoloader::load');
+spl_autoload_register('RestfulSubversion\Helper\Autoloader::load');
 date_default_timezone_set('Europe/Berlin');
 
 /**
@@ -54,9 +56,9 @@ date_default_timezone_set('Europe/Berlin');
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       RestfulSubversion_Helper_Autoloader::load
+ * @uses       Autoloader::load
  */
-class RestfulSubversion_Helper_Bootstrap
+class Bootstrap
 {
     public static function getLibraryRoot()
     {

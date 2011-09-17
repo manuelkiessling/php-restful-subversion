@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Core;
+
 /**
  * Class which allows to build a svn log command line
  *
@@ -49,12 +51,12 @@
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       RestfulSubversion_Core_Repo
- * @uses       RestfulSubversion_Core_Revision
- * @uses       RestfulSubversion_Core_CommandLineExecutor
- * @uses       RestfulSubversion_Core_RepoPath
+ * @uses       Repo
+ * @uses       Revision
+ * @uses       CommandLineExecutor
+ * @uses       RepoPath
  */
-class RestfulSubversion_Core_RepoCommandLog
+class RepoCommandLog
 {
     protected $repo = NULL;
     protected $revision = NULL;
@@ -63,13 +65,13 @@ class RestfulSubversion_Core_RepoCommandLog
     protected $xml = FALSE;
     protected $commandLineBuilder = NULL;
 
-    public function __construct(RestfulSubversion_Core_Repo $repo, RestfulSubversion_Core_CommandLineBuilderInterface $commandLineBuilder)
+    public function __construct(Repo $repo, CommandLineBuilderInterface $commandLineBuilder)
     {
         $this->repo = $repo;
         $this->commandLineBuilder = $commandLineBuilder;
     }
 
-    public function setRevision(RestfulSubversion_Core_Revision $revision)
+    public function setRevision(Revision $revision)
     {
         $this->revision = $revision;
     }

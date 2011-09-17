@@ -1,17 +1,19 @@
 <?php
 
-class RestfulSubversion_Core_CommandLineBuilderTest extends PHPUnit_Framework_TestCase
+namespace RestfulSubversion\Core;
+
+class CommandLineBuilderTest extends \PHPUnit_Framework_TestCase
 {
     public function test_CommandLineBuilderImplementcommandLineBuilderInterface()
     {
-        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder = new CommandLineBuilder();
 
-        $this->assertTrue(is_a($commandLineBuilder, 'RestfulSubversion_Core_CommandLineBuilderInterface'));
+        $this->assertTrue(is_a($commandLineBuilder, 'RestfulSubversion\Core\CommandLineBuilderInterface'));
     }
 
     public function test_setCommand()
     {
-        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder = new CommandLineBuilder();
         $commandLineBuilder->setCommand('ls');
 
         $this->assertSame('ls', $commandLineBuilder->getCommandLine());
@@ -19,7 +21,7 @@ class RestfulSubversion_Core_CommandLineBuilderTest extends PHPUnit_Framework_Te
 
     public function test_addParameter()
     {
-        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder = new CommandLineBuilder();
         $commandLineBuilder->setCommand('svn');
         $commandLineBuilder->addParameter('info');
 
@@ -28,7 +30,7 @@ class RestfulSubversion_Core_CommandLineBuilderTest extends PHPUnit_Framework_Te
 
     public function test_addParameters()
     {
-        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder = new CommandLineBuilder();
         $commandLineBuilder->setCommand('svn');
         $commandLineBuilder->addParameter('help');
         $commandLineBuilder->addParameter('info');
@@ -38,7 +40,7 @@ class RestfulSubversion_Core_CommandLineBuilderTest extends PHPUnit_Framework_Te
 
     public function test_addShortSwitch()
     {
-        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder = new CommandLineBuilder();
         $commandLineBuilder->setCommand('ls');
         $commandLineBuilder->addShortSwitch('lah');
 
@@ -47,7 +49,7 @@ class RestfulSubversion_Core_CommandLineBuilderTest extends PHPUnit_Framework_Te
 
     public function test_addShortSwitchWithValue()
     {
-        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder = new CommandLineBuilder();
         $commandLineBuilder->setCommand('svn');
         $commandLineBuilder->addShortSwitchWithValue('r', '12345');
 
@@ -56,7 +58,7 @@ class RestfulSubversion_Core_CommandLineBuilderTest extends PHPUnit_Framework_Te
 
     public function test_addLongSwitch()
     {
-        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder = new CommandLineBuilder();
         $commandLineBuilder->setCommand('svn');
         $commandLineBuilder->addLongSwitch('xml');
 
@@ -65,7 +67,7 @@ class RestfulSubversion_Core_CommandLineBuilderTest extends PHPUnit_Framework_Te
 
     public function test_addLongSwitchWithValue()
     {
-        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder = new CommandLineBuilder();
         $commandLineBuilder->setCommand('svn');
         $commandLineBuilder->addLongSwitchWithValue('username', 'manuel');
 
@@ -74,7 +76,7 @@ class RestfulSubversion_Core_CommandLineBuilderTest extends PHPUnit_Framework_Te
 
     public function test_reset()
     {
-        $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
+        $commandLineBuilder = new CommandLineBuilder();
         $commandLineBuilder->setCommand('svn');
         $commandLineBuilder->addLongSwitchWithValue('username', 'manuel');
         $commandLineBuilder->reset();

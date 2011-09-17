@@ -50,7 +50,7 @@
  */
 class RestfulSubversion_Webservice_Helper_Result
 {
-    public static function getChangesetAsArray(RestfulSubversion_Core_Changeset $changeset)
+    public static function getChangesetAsArray(Changeset $changeset)
     {
         $changesetArray = array();
         $changesetArray['revision'] = $changeset->getRevision()->getAsString();

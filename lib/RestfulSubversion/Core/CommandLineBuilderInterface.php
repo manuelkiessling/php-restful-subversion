@@ -39,8 +39,10 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Core;
+
 /**
- * Interface for RestfulSubversion_Core_CommandLine classes
+ * Interface for CommandLine classes
  *
  * @category   VersionControl
  * @package    RestfulSubversion
@@ -50,7 +52,7 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-interface RestfulSubversion_Core_CommandLineBuilderInterface
+interface CommandLineBuilderInterface
 {
     public function setCommand($command);
 

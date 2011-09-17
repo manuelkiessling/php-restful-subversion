@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Core;
+
 /**
  * Singleton which represents the means to execute a command line on the shell
  *
@@ -50,7 +52,7 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Core_CommandLineExecutor
+class CommandLineExecutor
 {
     protected static $instance = NULL;
     protected static $cache = array();
@@ -59,7 +61,7 @@ class RestfulSubversion_Core_CommandLineExecutor
 
     public function __clone()
     {
-        throw new RestfulSubversion_Core_Exception('You cannot clone the singleton instance RestfulSubversion_Core_CommandLineExecutor');
+        throw new Exception('You cannot clone the singleton instance CommandLineExecutor');
     }
 
     public static function getInstance()

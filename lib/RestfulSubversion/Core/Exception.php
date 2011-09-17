@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Core;
+
 /**
  * Generic exception thrown by some of the core libary methods
  *
@@ -51,7 +53,7 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  * @uses       Exception
  */
-class RestfulSubversion_Core_Exception extends Exception
+class Exception extends \Exception
 {
     public function __construct($message = NULL, $code = 0)
     {

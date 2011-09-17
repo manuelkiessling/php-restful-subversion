@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Core;
+
 /**
  * Class representing a revision number in a SVN repository
  *
@@ -50,7 +52,7 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Core_Revision
+class Revision
 {
     protected $revisionNumber = NULL;
 
@@ -62,10 +64,10 @@ class RestfulSubversion_Core_Revision
         }
 
         if ((int)$revisionNumber < 0) {
-            throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('Revision number must be positive.');
+            throw new RevisionInvalidRevisionNumberCoreException('Revision number must be positive.');
         }
         if ((string)(int)$revisionNumber != $revisionNumber) {
-            throw new RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException('"' . $revisionNumber . '" is not a valid revision number.');
+            throw new RevisionInvalidRevisionNumberCoreException('"' . $revisionNumber . '" is not a valid revision number.');
         }
         $this->revisionNumber = $revisionNumber;
     }
@@ -87,7 +89,7 @@ class RestfulSubversion_Core_Revision
 }
 
 /**
- * Exception for errors in RestfulSubversion_Core_Revision
+ * Exception for errors in Revision
  *
  * @category   VersionControl
  * @package    RestfulSubversion
@@ -96,6 +98,6 @@ class RestfulSubversion_Core_Revision
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       RestfulSubversion_Core_Exception
+ * @uses       Exception
  */
-class RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException extends RestfulSubversion_Core_Exception {}
+class RevisionInvalidRevisionNumberCoreException extends Exception {}

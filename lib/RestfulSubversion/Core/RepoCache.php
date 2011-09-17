@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Core;
+
 /**
  * Class representing the cache of a RestfulSubversion_Repo SVN repository
  *
@@ -50,7 +52,7 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Core_RepoCache
+class RepoCache
 {
     protected $dbHandler = NULL;
 
@@ -92,7 +94,7 @@ class RestfulSubversion_Core_RepoCache
         }
     }
 
-    public function addChangeset(RestfulSubversion_Core_Changeset $changeset)
+    public function addChangeset(Changeset $changeset)
     {
         $preparedStatement = $this->dbHandler->prepare('INSERT INTO revisions (revision, author, datetime, message) VALUES (?, ?, ?, ?)');
 
@@ -101,7 +103,7 @@ class RestfulSubversion_Core_RepoCache
                                                        $changeset->getDateTime(),
                                                        $changeset->getMessage()));
         if (!$successful) {
-            throw new RestfulSubversion_Core_RepoCacheRevisionAlreadyInCacheCoreException();
+            throw new RepoCacheRevisionAlreadyInCacheCoreException();
         }
 
         $pathOperations = $changeset->getPathOperations();
@@ -125,14 +127,14 @@ class RestfulSubversion_Core_RepoCache
                                     ORDER BY revision DESC
                                     LIMIT 1')
             as $row) {
-            return new RestfulSubversion_Core_Revision($row['revision']);
+            return new Revision($row['revision']);
         }
         return FALSE;
     }
 
-    public function getChangesetForRevision(RestfulSubversion_Core_Revision $revision)
+    public function getChangesetForRevision(Revision $revision)
     {
-        $changeset = new RestfulSubversion_Core_Changeset($revision);
+        $changeset = new Changeset($revision);
 
         $preparedStatement = $this->dbHandler->prepare('SELECT author, datetime, message FROM revisions WHERE revision = ?');
         $preparedStatement->execute(array($revision->getAsString()));
@@ -151,11 +153,11 @@ class RestfulSubversion_Core_RepoCache
         $rows = $preparedStatement->fetchAll();
         foreach ($rows as $row) {
             $changeset->addPathOperation($row['action'],
-                                         new RestfulSubversion_Core_RepoPath($row['path']),
+                                         new RepoPath($row['path']),
                                          ($row['copyfrompath'] != '')
-                                                 ? new RestfulSubversion_Core_RepoPath($row['copyfrompath']) : NULL,
+                                                 ? new RepoPath($row['copyfrompath']) : NULL,
                                          ($row['copyfromrev'] != 0)
-                                                 ? new RestfulSubversion_Core_Revision($row['copyfromrev']) : NULL);
+                                                 ? new Revision($row['copyfromrev']) : NULL);
         }
 
         return $changeset;
@@ -180,7 +182,7 @@ class RestfulSubversion_Core_RepoCache
                                          ORDER BY revision ' . $order . $limitClause);
         if ($preparedStatement->execute(array(strrev($string) . '%'))) {
             while ($row = $preparedStatement->fetch()) {
-                $return[] = $this->getChangesetForRevision(new RestfulSubversion_Core_Revision($row['revision']));
+                $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
             }
         }
         return $return;
@@ -205,7 +207,7 @@ class RestfulSubversion_Core_RepoCache
                                          ORDER BY revision ' . $order . $limitClause);
         if ($preparedStatement->execute(array('%' . $text . '%'))) {
             while ($row = $preparedStatement->fetch()) {
-                $return[] = $this->getChangesetForRevision(new RestfulSubversion_Core_Revision($row['revision']));
+                $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
             }
         }
         return $return;
@@ -213,7 +215,7 @@ class RestfulSubversion_Core_RepoCache
 }
 
 /**
- * Exception for errors in RestfulSubversion_Core_RepoCache
+ * Exception for errors in RepoCache
  *
  * @category   VersionControl
  * @package    RestfulSubversion
@@ -222,6 +224,6 @@ class RestfulSubversion_Core_RepoCache
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       RestfulSubversion_Core_Exception
+ * @uses       Exception
  */
-class RestfulSubversion_Core_RepoCacheRevisionAlreadyInCacheCoreException extends RestfulSubversion_Core_Exception {}
+class RepoCacheRevisionAlreadyInCacheCoreException extends Exception {}

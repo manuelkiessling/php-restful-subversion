@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Core;
+
 /**
  * Class representing the path to a file or folder in a SVN repository
  *
@@ -49,9 +51,9 @@
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       RestfulSubversion_Core_RepoPathInvalidPathCoreException
+ * @uses       RepoPathInvalidPathCoreException
  */
-class RestfulSubversion_Core_RepoPath
+class RepoPath
 {
     /**
      * Internal string representation of the path
@@ -63,17 +65,17 @@ class RestfulSubversion_Core_RepoPath
      *
      * @param string $path Path to create the object for
      * @return void
-     * @throws RestfulSubversion_Core_RepoPathInvalidPathCoreException if the given string doesn't have the correct format
+     * @throws RepoPathInvalidPathCoreException if the given string doesn't have the correct format
      */
     public function __construct($path)
     {
-        if (mb_substr($path, -1) === '/') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
-        if ($path[0] !== '/') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
-        if (mb_substr($path, -2) === '/.') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
-        if (mb_substr($path, -3) === '/..') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
-        if (mb_substr($path, -5) === '/.svn') throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
-        if (mb_strstr($path, '/../')) throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
-        if (mb_strstr($path, '/./')) throw new RestfulSubversion_Core_RepoPathInvalidPathCoreException($path);
+        if (mb_substr($path, -1) === '/') throw new RepoPathInvalidPathCoreException($path);
+        if ($path[0] !== '/') throw new RepoPathInvalidPathCoreException($path);
+        if (mb_substr($path, -2) === '/.') throw new RepoPathInvalidPathCoreException($path);
+        if (mb_substr($path, -3) === '/..') throw new RepoPathInvalidPathCoreException($path);
+        if (mb_substr($path, -5) === '/.svn') throw new RepoPathInvalidPathCoreException($path);
+        if (mb_strstr($path, '/../')) throw new RepoPathInvalidPathCoreException($path);
+        if (mb_strstr($path, '/./')) throw new RepoPathInvalidPathCoreException($path);
         $this->path = $path;
     }
 
@@ -89,7 +91,7 @@ class RestfulSubversion_Core_RepoPath
 }
 
 /**
- * Exception for errors in RestfulSubversion_Core_RepoPath
+ * Exception for errors in RepoPath
  *
  * @category   VersionControl
  * @package    RestfulSubversion
@@ -98,6 +100,6 @@ class RestfulSubversion_Core_RepoPath
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       RestfulSubversion_Core_Exception
+ * @uses       Exception
  */
-class RestfulSubversion_Core_RepoPathInvalidPathCoreException extends RestfulSubversion_Core_Exception {}
+class RepoPathInvalidPathCoreException extends Exception {}

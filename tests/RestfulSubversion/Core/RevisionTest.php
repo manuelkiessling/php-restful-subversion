@@ -1,58 +1,60 @@
 <?php
 
-class RestfulSubversion_Core_RevisionTest extends PHPUnit_Framework_TestCase
+namespace RestfulSubversion\Core;
+
+class RevisionTest extends \PHPUnit_Framework_TestCase
 {
     public function test_setAndGetRevisionNumber()
     {
-        $revision = new RestfulSubversion_Core_Revision('12345');
+        $revision = new Revision('12345');
         $this->assertSame('12345', $revision->getAsString());
     }
 
     public function test_setAndGetRevisionHead()
     {
-        $revision = new RestfulSubversion_Core_Revision('HEAD');
+        $revision = new Revision('HEAD');
         $this->assertSame('HEAD', $revision->getAsString());
     }
 
     /**
-     * @expectedException RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException
+     * @expectedException RestfulSubversion\Core\RevisionInvalidRevisionNumberCoreException
      */
     public function test_invalidNumbersThrowExceptionFloat()
     {
-        $revision = new RestfulSubversion_Core_Revision(1.3234);
+        $revision = new Revision(1.3234);
     }
 
     /**
-     * @expectedException RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException
+     * @expectedException RestfulSubversion\Core\RevisionInvalidRevisionNumberCoreException
      */
     public function test_invalidNumbersThrowExceptionArbitraryString()
     {
-        $revision = new RestfulSubversion_Core_Revision('Hello World');
+        $revision = new Revision('Hello World');
     }
 
     /**
-     * @expectedException RestfulSubversion_Core_RevisionInvalidRevisionNumberCoreException
+     * @expectedException RestfulSubversion\Core\RevisionInvalidRevisionNumberCoreException
      */
     public function test_invalidNumbersThrowExceptionNegative()
     {
-        $revision = new RestfulSubversion_Core_Revision('-12345');
+        $revision = new Revision('-12345');
     }
 
     public function test_getRevertedAstring()
     {
-        $revision = new RestfulSubversion_Core_Revision('12345');
+        $revision = new Revision('12345');
         $this->assertSame('-12345', $revision->sGetRevertedAstring());
     }
 
     public function test_getAsString()
     {
-        $revision = new RestfulSubversion_Core_Revision('12345');
+        $revision = new Revision('12345');
         $this->assertSame('12345', $revision->getAsString());
     }
 
     public function test_toString()
     {
-        $revision = new RestfulSubversion_Core_Revision('12345');
+        $revision = new Revision('12345');
         $this->assertSame('12345', "$revision");
     }
 }

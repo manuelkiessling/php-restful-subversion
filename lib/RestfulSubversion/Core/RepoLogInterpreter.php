@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Core;
+
 /**
  * Class that can interprete the XML output of an executed svn log commandline to create Changeset objects from it
  *
@@ -50,15 +52,15 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RestfulSubversion_Core_RepoLogInterpreter
+class RepoLogInterpreter
 {
     public function createChangesetsFromVerboseXml($xml)
     {
         $changesets = array();
 
-        $xmlObject = new SimpleXMLElement($xml);
+        $xmlObject = new \SimpleXMLElement($xml);
         foreach ($xmlObject->logentry as $logentry) {
-            $changeset = new RestfulSubversion_Core_Changeset(new RestfulSubversion_Core_Revision((string)$logentry['revision']));
+            $changeset = new Changeset(new Revision((string)$logentry['revision']));
             $changeset->setAuthor((string)$logentry->author);
             $changeset->setDateTime(date('Y-m-d H:i:s', strtotime($logentry->date)));
             $changeset->setMessage((string)$logentry->msg);
@@ -66,10 +68,10 @@ class RestfulSubversion_Core_RepoLogInterpreter
             foreach ($logentry->paths[0] as $path) {
                 $copyfromPath = NULL;
                 $copyfromRev = NULL;
-                if ($path['copyfrom-path']) $copyfromPath = new RestfulSubversion_Core_RepoPath((string)$path['copyfrom-path']);
-                if ($path['copyfrom-rev']) $copyfromRev = new RestfulSubversion_Core_Revision((string)$path['copyfrom-rev']);
+                if ($path['copyfrom-path']) $copyfromPath = new RepoPath((string)$path['copyfrom-path']);
+                if ($path['copyfrom-rev']) $copyfromRev = new Revision((string)$path['copyfrom-rev']);
                 $changeset->addPathOperation((string)$path['action'],
-                                             new RestfulSubversion_Core_RepoPath((string)$path),
+                                             new RepoPath((string)$path),
                                              $copyfromPath,
                                              $copyfromRev);
             }

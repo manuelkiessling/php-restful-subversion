@@ -39,6 +39,8 @@
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
+namespace RestfulSubversion\Core;
+
 /**
  * Class which allows construction of a command line
  *
@@ -49,9 +51,9 @@
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @implements RestfulSubversion_Core_CommandLineBuilderInterface
+ * @implements CommandLineBuilderInterface
  */
-class RestfulSubversion_Core_CommandLineBuilder implements RestfulSubversion_Core_CommandLineBuilderInterface
+class CommandLineBuilder implements CommandLineBuilderInterface
 {
     protected $numberOfArguments;
     protected $command;
