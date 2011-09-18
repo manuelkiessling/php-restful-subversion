@@ -47,7 +47,7 @@ use RestfulSubversion\Core\RepoCache;
 
 /**
  * Changesets resource
- * @uri /changesets
+ * @uri        /changesets
  * @category   VersionControl
  * @package    RestfulSubversion
  * @subpackage Webservice
@@ -55,13 +55,17 @@ use RestfulSubversion\Core\RepoCache;
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       RestfulSubversion\Webservice\Helper\ResultTransformer;
- * @uses       RestfulSubversion\Webservice\Helper\ResponseTransformer;
- * @uses       RestfulSubversion\Core\Revision;
- * @uses       RestfulSubversion\Core\RepoCache;
+ * @uses       RestfulSubversion\Webservice\Helper\ResultTransformer
+ * @uses       RestfulSubversion\Webservice\Helper\ResponseTransformer
+ * @uses       RestfulSubversion\Core\Revision
+ * @uses       RestfulSubversion\Core\RepoCache
  */
 class Changesets extends \RestfulSubversion\Webservice\Resource
 {
+    /**
+     * @param $request
+     * @return \Response
+     */
     public function get($request)
     {
         $responseTransformer = new ResponseTransformer();

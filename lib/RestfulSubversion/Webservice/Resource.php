@@ -56,6 +56,9 @@ class Resource extends \Resource
 {
     protected $configValues = array();
 
+    /**
+     * @param array $parameters
+     */
     function  __construct($parameters = array())
     {
         $this->configValues = Config::getInstance()->aGetConfig();
