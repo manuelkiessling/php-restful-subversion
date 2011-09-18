@@ -1,7 +1,17 @@
 #!/usr/bin/php
 <?php
 
-function displayErrorWithUsageInformationAndExit($sError) {
+use RestfulSubversion\Core\Repo;
+use RestfulSubversion\Core\RepoCache;
+use RestfulSubversion\Core\CommandLineBuilder;
+use RestfulSubversion\Core\CommandLineExecutor;
+use RestfulSubversion\Core\RepoLogInterpreter;
+use RestfulSubversion\Core\RepoCommandLog;
+use RestfulSubversion\Core\Revision;
+
+
+function displayErrorWithUsageInformationAndExit($sError)
+{
     echo "\n";
     echo 'ERROR: '.$sError;
 
@@ -45,15 +55,16 @@ EOT;
     exit(1);
 }
 
-function getHighestRevisionInRepo(RestfulSubversion_Core_Repo $repo) {
-    $commandLineExecutor = RestfulSubversion_Core_CommandLineExecutor::getInstance();
-    $commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-    $logInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
+function getHighestRevisionInRepo(Repo $repo)
+{
+    $commandLineExecutor = CommandLineExecutor::getInstance();
+    $commandLineBuilder = new CommandLineBuilder();
+    $logInterpreter = new RepoLogInterpreter();
 
-    $commandLog = new RestfulSubversion_Core_RepoCommandLog($repo, $commandLineBuilder);
+    $commandLog = new RepoCommandLog($repo, $commandLineBuilder);
     $commandLog->enableVerbose();
     $commandLog->enableXml();
-    $commandLog->setRevision(new RestfulSubversion_Core_Revision('HEAD'));
+    $commandLog->setRevision(new Revision('HEAD'));
     $commandline = $commandLog->getCommandline();
     $logOutput = $commandLineExecutor->getCommandResult($commandline);
 
@@ -120,14 +131,14 @@ if (empty($repoCacheConnectionString)) {
 
 require_once('../lib/RestfulSubversion/Helper/Bootstrap.php');
 
-$repo = new RestfulSubversion_Core_Repo();
+$repo = new Repo();
 $repo->setUri($repoUri);
 $repo->setAuthinfo($repoUsername, $repoPassword);
 
-$commandLineExecutor = RestfulSubversion_Core_CommandLineExecutor::getInstance();
-$commandLineBuilder = new RestfulSubversion_Core_CommandLineBuilder();
-$logInterpreter = new RestfulSubversion_Core_RepoLogInterpreter();
-$repoCache = new RestfulSubversion_Core_RepoCache(new PDO($repoCacheConnectionString, NULL, NULL));
+$commandLineExecutor = CommandLineExecutor::getInstance();
+$commandLineBuilder = new CommandLineBuilder();
+$logInterpreter = new RepoLogInterpreter();
+$repoCache = new RepoCache(new PDO($repoCacheConnectionString, NULL, NULL));
 
 $highestRevisionInRepo = getHighestRevisionInRepo($repo);
 $highestRevisionInRepoCache = 0;
@@ -153,12 +164,12 @@ while ($currentRevision <= $highestRevisionInRepo) {
     echo "\n";
     echo 'About to import revision '.$currentRevision.": ";
 
-    $revision = new RestfulSubversion_Core_Revision((string)$currentRevision);
+    $revision = new Revision((string)$currentRevision);
 
-    $commandLog = new RestfulSubversion_Core_RepoCommandLog($repo, $commandLineBuilder);
+    $commandLog = new RepoCommandLog($repo, $commandLineBuilder);
     $commandLog->enableVerbose();
     $commandLog->enableXml();
-    $commandLog->setRevision(new RestfulSubversion_Core_Revision((string)$currentRevision));
+    $commandLog->setRevision(new Revision((string)$currentRevision));
     $commandline = $commandLog->getCommandline();
     $logOutput = $commandLineExecutor->getCommandResult($commandline);
 
