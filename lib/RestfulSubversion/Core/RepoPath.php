@@ -100,6 +100,5 @@ class RepoPath
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       Exception
  */
-class RepoPathInvalidPathCoreException extends Exception {}
+class RepoPathInvalidPathCoreException extends \Exception {}

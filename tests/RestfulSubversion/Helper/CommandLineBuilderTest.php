@@ -1,6 +1,6 @@
 <?php
 
-namespace RestfulSubversion\Core;
+namespace RestfulSubversion\Helper;
 
 class CommandLineBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -8,7 +8,7 @@ class CommandLineBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $commandLineBuilder = new CommandLineBuilder();
 
-        $this->assertTrue(is_a($commandLineBuilder, 'RestfulSubversion\Core\CommandLineBuilderInterface'));
+        $this->assertTrue(is_a($commandLineBuilder, 'RestfulSubversion\Helper\CommandLineBuilderInterface'));
     }
 
     public function test_setCommand()

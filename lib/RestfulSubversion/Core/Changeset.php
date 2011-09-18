@@ -51,6 +51,8 @@ namespace RestfulSubversion\Core;
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
+ * @uses       Revision
+ * @uses       RepoPath
  */
 class Changeset
 {

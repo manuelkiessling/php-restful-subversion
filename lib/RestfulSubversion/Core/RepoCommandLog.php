@@ -40,6 +40,7 @@
  */
 
 namespace RestfulSubversion\Core;
+use RestfulSubversion\Helper\CommandLineBuilderInterface;
 
 /**
  * Class which allows to build a svn log command line

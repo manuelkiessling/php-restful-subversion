@@ -3,11 +3,11 @@
 
 use RestfulSubversion\Core\Repo;
 use RestfulSubversion\Core\RepoCache;
-use RestfulSubversion\Core\CommandLineBuilder;
-use RestfulSubversion\Core\CommandLineExecutor;
 use RestfulSubversion\Core\RepoLogInterpreter;
 use RestfulSubversion\Core\RepoCommandLog;
 use RestfulSubversion\Core\Revision;
+use RestfulSubversion\Helper\CommandLineBuilder;
+use RestfulSubversion\Helper\CommandLineExecutor;
 
 
 function displayErrorWithUsageInformationAndExit($sError)
@@ -57,7 +57,7 @@ EOT;
 
 function getHighestRevisionInRepo(Repo $repo)
 {
-    $commandLineExecutor = CommandLineExecutor::getInstance();
+    $commandLineExecutor = new CommandLineExecutor();
     $commandLineBuilder = new CommandLineBuilder();
     $logInterpreter = new RepoLogInterpreter();
 
@@ -135,7 +135,7 @@ $repo = new Repo();
 $repo->setUri($repoUri);
 $repo->setAuthinfo($repoUsername, $repoPassword);
 
-$commandLineExecutor = CommandLineExecutor::getInstance();
+$commandLineExecutor = new CommandLineExecutor();
 $commandLineBuilder = new CommandLineBuilder();
 $logInterpreter = new RepoLogInterpreter();
 $repoCache = new RepoCache(new PDO($repoCacheConnectionString, NULL, NULL));

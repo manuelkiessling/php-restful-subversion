@@ -2,6 +2,7 @@
 
 namespace RestfulSubversion\Core;
 use RestfulSubversion\Helper\Bootstrap;
+use RestfulSubversion\Helper\CommandLineBuilder;
 
 class RepoCommandLogTest extends \PHPUnit_Framework_TestCase
 {
