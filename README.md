@@ -138,11 +138,11 @@ is and where your Subversion cache is going to be.
 Have a look at _/opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.sample.conf_ - it looks
 like this:
 
-    $aConfig['sRepoCacheConnectionString'] = 'sqlite:/var/tmp/PHPRestfulSubversion.RepoCache.sqlite';
-    $aConfig['sRepoLocation'] = 'http://svn.example.com/';
-    $aConfig['sRepoUsername'] = 'user';
-    $aConfig['sRepoPassword'] = 'password';
-    $aConfig['iMaxImportsPerRun'] = 100;
+    $config['repoCacheConnectionString'] = 'sqlite:/var/tmp/PHPRestfulSubversion.RepoCache.sqlite';
+    $config['repoUri'] = 'http://svn.example.com/';
+    $config['repoUsername'] = 'user';
+    $config['repoPassword'] = 'password';
+    $config['maxImportsPerRun'] = 100;
 
 
 We are going to copy this example file to _/opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.conf_
@@ -154,14 +154,14 @@ and fill in real values according to our environment.
 
 (You can of course use any text editor you like for editing this file).
 
-The first value, _sRepoCacheConnectionString_, is probably fine for you as it
+The first value, _repoCacheConnectionString_, is probably fine for you as it
 is and you don't have to change it.
 
-_sRepoLocation_ is the full URI to your Subversion repository, and
-_sRepoUsername_ and _sRepoPassword_ are the credentials needed to access this
+_repoUri_ is the full URI to your Subversion repository, and
+_repoUsername_ and _repoPassword_ are the credentials needed to access this
 repository. PHPRestfulSubversion only needs read access.
 
-The buildCache script will stop after importing _iMaxImportsPerRun_ revisions.
+The buildCache script will stop after importing _maxImportsPerRun_ revisions.
 If started again, it will continue with the next batch of revisions. It's
 designed that way because some Subversion repositories might be really big,
 and it makes sense to not import the whole repository at once.
@@ -220,8 +220,7 @@ Then add the following at the end of _/etc/apache2/sites-available/default_:
     <VirtualHost 0.0.0.0:10000>
       DocumentRoot "/opt/PHPRestfulSubversion/public"
       DirectoryIndex index.html
-      <Directory "/opt/PHPRestfulSubversion//public">
-        AllowOverride All
+      <Directory "/opt/PHPRestfulSubversion/public">
         Allow from All
         RewriteEngine On
         RewriteRule !\.(js|ico|gif|jpg|png|css|html)$ ResourceDispatcher.php
@@ -255,13 +254,15 @@ If you want to use the PHP library that works under the hood of
 PHPRestfulSubversion, here is how to integrate it into your code:
 
     <?php
+    
+    use RestfulSubversion\Core\RepoCache;
 
     require_once '/opt/PHPRestfulSubversion/lib/RestfulSubversion/Helper/Bootstrap.php';
 
-    $oRepoCache = new RestfulSubversion_Core_RepoCache(new PDO($sRepoCacheConnectionString, NULL, NULL));
-    $oChangeset = $oRepoCache->oGetChangesetForRevision('12345');
+    $repoCache = new RepoCache(new PDO('sqlite:/var/tmp/PHPRestfulSubversion.RepoCache.sqlite', NULL, NULL));
+    $changeset = $repoCache->getChangesetForRevision('12345');
 
-    echo $oChangeset->sGetAuthor();
+    echo $changeset->getAuthor();
 
 
 ## Feedback
