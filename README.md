@@ -256,11 +256,13 @@ PHPRestfulSubversion, here is how to integrate it into your code:
     <?php
     
     use RestfulSubversion\Core\RepoCache;
+    use RestfulSubversion\Core\Revision;
 
     require_once '/opt/PHPRestfulSubversion/lib/RestfulSubversion/Helper/Bootstrap.php';
 
     $repoCache = new RepoCache(new PDO('sqlite:/var/tmp/PHPRestfulSubversion.RepoCache.sqlite', NULL, NULL));
-    $changeset = $repoCache->getChangesetForRevision('12345');
+    $revision = new Revision('12345');
+    $changeset = $repoCache->getChangesetForRevision($revision);
 
     echo $changeset->getAuthor();
 
