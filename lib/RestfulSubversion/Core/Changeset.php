@@ -56,33 +56,55 @@ namespace RestfulSubversion\Core;
  */
 class Changeset
 {
-    protected $revision = NULL;
-    protected $author = NULL;
-    protected $dateTime = NULL;
-    protected $message = NULL;
+    protected $revision = null;
+    protected $author = null;
+    protected $dateTime = null;
+    protected $message = null;
     protected $pathOperations = array();
 
+    /**
+     * @param Revision $revision
+     */
     public function __construct(Revision $revision)
     {
         $this->revision = $revision;
     }
 
+    /**
+     * @param string $author
+     * @return void
+     */
     public function setAuthor($author)
     {
         $this->author = $author;
     }
 
+    /**
+     * @param string $dateTime
+     * @return void
+     */
     public function setDateTime($dateTime)
     {
         $this->dateTime = $dateTime;
     }
 
+    /**
+     * @param string $message
+     * @return void
+     */
     public function setMessage($message)
     {
         $this->message = $message;
     }
 
-    public function addPathOperation($action, RepoPath $path, RepoPath $copyfromPath = NULL, Revision $copyfromRev = NULL)
+    /**
+     * @param string $action
+     * @param RepoPath $path
+     * @param null|RepoPath $copyfromPath
+     * @param null|Revision $copyfromRev
+     * @return void
+     */
+    public function addPathOperation($action, RepoPath $path, RepoPath $copyfromPath = null, Revision $copyfromRev = null)
     {
         $pathOperation = array('action' => $action,
                                'path' => $path);
@@ -91,26 +113,41 @@ class Changeset
         $this->pathOperations[] = $pathOperation;
     }
 
+    /**
+     * @return Revision of this changeset
+     */
     public function getRevision()
     {
         return $this->revision;
     }
 
+    /**
+     * @return Author of the commit
+     */
     public function getAuthor()
     {
         return $this->author;
     }
 
+    /**
+     * @return Date and time of the commit
+     */
     public function getDateTime()
     {
         return $this->dateTime;
     }
 
+    /**
+     * @return Commit message
+     */
     public function getMessage()
     {
         return $this->message;
     }
 
+    /**
+     * @return Path operations of this commit
+     */
     public function getPathOperations()
     {
         return $this->pathOperations;

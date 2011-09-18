@@ -51,31 +51,42 @@ namespace RestfulSubversion\Core;
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
+ * @uses       Changeset
+ * @uses       Revision
+ * @uses       RepoPath
+ * @uses       RepoCacheRevisionAlreadyInCacheCoreException
  */
 class RepoCache
 {
-    protected $dbHandler = NULL;
+    protected $dbHandler = null;
 
     protected function setupDatabaseIfNecessary()
     {
         $result = $this->dbHandler->query('SELECT revision FROM revisions LIMIT 1');
-        if ($result === FALSE) { // Database is not yet created
+        if ($result === false) { // Database is not yet created
             $this->resetCache();
         }
     }
 
-    public function __construct($dbHandler)
+    /**
+     * @param \PDO $dbHandler
+     */
+    public function __construct(\PDO $dbHandler)
     {
         $this->dbHandler = $dbHandler;
         $this->setupDatabaseIfNecessary();
     }
 
+    /**
+     * Delete all data in the repository cache database and rebuild its structure 
+     * @return void
+     */
     public function resetCache()
     {
         $queries = array();
 
         $queries[] = 'DROP TABLE IF EXISTS revisions;';
-        $queries[] = 'CREATE TABLE revisions(revision INTEGER PRIMARY KEY NOT NULL, author TEXT(64), datetime DATETIME, message TEXT(2048));';
+        $queries[] = 'CREATE TABLE revisions(revision INTEGER PRIMARY KEY NOT null, author TEXT(64), datetime DATETIME, message TEXT(2048));';
 
         $queries[] = 'CREATE INDEX r_revision ON revisions(revision);';
         $queries[] = 'CREATE INDEX r_author ON revisions(author);';
@@ -83,7 +94,7 @@ class RepoCache
         $queries[] = 'CREATE INDEX r_datetime ON revisions(date, time);';
 
         $queries[] = 'DROP TABLE IF EXISTS pathoperations;';
-        $queries[] = 'CREATE TABLE pathoperations (id INTEGER PRIMARY KEY, revision INTEGER NOT NULL, action TEXT(1), path TEXT(512), revertedpath TEXT(512), copyfrompath TEXT(512), copyfromrev INTEGER, FOREIGN KEY(revision) REFERENCES revisions(revision));';
+        $queries[] = 'CREATE TABLE pathoperations (id INTEGER PRIMARY KEY, revision INTEGER NOT null, action TEXT(1), path TEXT(512), revertedpath TEXT(512), copyfrompath TEXT(512), copyfromrev INTEGER, FOREIGN KEY(revision) REFERENCES revisions(revision));';
 
         $queries[] = 'CREATE INDEX p_revision ON pathoperations(revision);';
         $queries[] = 'CREATE INDEX p_path ON pathoperations(path);';
@@ -94,6 +105,11 @@ class RepoCache
         }
     }
 
+    /**
+     * @throws RepoCacheRevisionAlreadyInCacheCoreException
+     * @param Changeset $changeset
+     * @return void
+     */
     public function addChangeset(Changeset $changeset)
     {
         $preparedStatement = $this->dbHandler->prepare('INSERT INTO revisions (revision, author, datetime, message) VALUES (?, ?, ?, ?)');
@@ -120,6 +136,9 @@ class RepoCache
         }
     }
 
+    /**
+     * @return bool|Revision false if the repository cache is empty, highest saved Revision otherwise
+     */
     public function getHighestRevision()
     {
         foreach ($this->dbHandler->query('SELECT revision
@@ -129,9 +148,13 @@ class RepoCache
             as $row) {
             return new Revision($row['revision']);
         }
-        return FALSE;
+        return false;
     }
 
+    /**
+     * @param Revision $revision
+     * @return null|Changeset null if no Changeset found for this Revision, and the matching Changeset if found
+     */
     public function getChangesetForRevision(Revision $revision)
     {
         $changeset = new Changeset($revision);
@@ -140,7 +163,7 @@ class RepoCache
         $preparedStatement->execute(array($revision->getAsString()));
 
         $rows = $preparedStatement->fetchAll();
-        if (sizeof($rows) == 0) return NULL;
+        if (sizeof($rows) == 0) return null;
         foreach ($rows as $row) {
             $changeset->setAuthor($row['author']);
             $changeset->setDateTime($row['datetime']);
@@ -155,15 +178,21 @@ class RepoCache
             $changeset->addPathOperation($row['action'],
                                          new RepoPath($row['path']),
                                          ($row['copyfrompath'] != '')
-                                                 ? new RepoPath($row['copyfrompath']) : NULL,
+                                                 ? new RepoPath($row['copyfrompath']) : null,
                                          ($row['copyfromrev'] != 0)
-                                                 ? new Revision($row['copyfromrev']) : NULL);
+                                                 ? new Revision($row['copyfromrev']) : null);
         }
 
         return $changeset;
     }
 
-    public function getChangesetsWithPathEndingOn($string, $order = 'ascending', $limit = NULL)
+    /**
+     * @param string $string String to search for
+     * @param string $order 'ascending' or 'descending'
+     * @param null|int $limit Limits how many results are returned, unlimited if null
+     * @return array
+     */
+    public function getChangesetsWithPathEndingOn($string, $order = 'ascending', $limit = null)
     {
         if ($order === 'descending') {
             $order = 'DESC';
@@ -176,10 +205,10 @@ class RepoCache
         }
         $return = array();
         $preparedStatement = $this->dbHandler->prepare('SELECT revision
-                                             FROM pathoperations
-                                            WHERE revertedpath LIKE ?
-                                         GROUP BY revision
-                                         ORDER BY revision ' . $order . $limitClause);
+                                                          FROM pathoperations
+                                                         WHERE revertedpath LIKE ?
+                                                         GROUP BY revision
+                                                         ORDER BY revision ' . $order . $limitClause);
         if ($preparedStatement->execute(array(strrev($string) . '%'))) {
             while ($row = $preparedStatement->fetch()) {
                 $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
@@ -188,7 +217,13 @@ class RepoCache
         return $return;
     }
 
-    public function getChangesetsWithMessageContainingText($text, $order = 'ascending', $limit = NULL)
+    /**
+     * @param $text Text to search for in commit messages
+     * @param string $order
+     * @param null $limit
+     * @return array Array of changesets found
+     */
+    public function getChangesetsWithMessageContainingText($text, $order = 'ascending', $limit = null)
     {
         if ((string)$text === '') return array();
         if ($order === 'descending') {

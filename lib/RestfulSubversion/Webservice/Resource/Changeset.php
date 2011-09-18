@@ -40,13 +40,13 @@
  */
 
 namespace RestfulSubversion\Webservice\Resource;
-use RestfulSubversion\Webservice\Helper\Result;
-use RestfulSubversion\Webservice\Helper\Response;
+use RestfulSubversion\Webservice\Helper\ResultTransformer;
+use RestfulSubversion\Webservice\Helper\ResponseTransformer;
 use RestfulSubversion\Core\Revision;
 use RestfulSubversion\Core\RepoCache;
 
 /**
- * @uri /changeset/:revisionNumber
+ * @uri        /changeset/:revisionNumber
  * @category   VersionControl
  * @package    RestfulSubversion
  * @subpackage Webservice
@@ -54,22 +54,32 @@ use RestfulSubversion\Core\RepoCache;
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
+ * @uses       RestfulSubversion\Webservice\Helper\ResultTransformer;
+ * @uses       RestfulSubversion\Webservice\Helper\ResponseTransformer;
+ * @uses       RestfulSubversion\Core\Revision;
+ * @uses       RestfulSubversion\Core\RepoCache;
  */
 class Changeset extends \RestfulSubversion\Webservice\Resource
 {
     public function get($request, $revisionNumber)
     {
-        $cacheDbHandler = new \PDO($this->configValues['repoCacheConnectionString'], NULL, NULL);
+        $callback = null;
+        if (isset($_GET['callback'])) {
+            $callback = $_GET['callback'];
+        }   
+        
+        $cacheDbHandler = new \PDO($this->configValues['repoCacheConnectionString'], null, null);
         $repoCache = new RepoCache($cacheDbHandler);
 
         $changeset = $repoCache->getChangesetForRevision(new Revision($revisionNumber));
         if (!is_null($changeset)) {
-            $result = Result::getChangesetAsArray($changeset);
+            $resultTransformer = new ResultTransformer();
+            $result = $resultTransformer->getChangesetAsArray($changeset);
         } else {
-            $result = NULL;
+            $result = null;
         }
 
-        $responseHelper = new Response();
-        return $responseHelper->setResponse(new \Response($request), $result);
+        $responseTransformer = new ResponseTransformer();
+        return $responseTransformer->setResponse(new \Response($request), $result, $callback);
     }
 }

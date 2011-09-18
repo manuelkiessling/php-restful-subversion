@@ -50,28 +50,32 @@ namespace RestfulSubversion\Webservice\Helper;
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class Response
+class ResultTransformer
 {
-    public function setResponse(\Response $response, $body, $callback = NULL)
+    /**
+     * @static
+     * @param \RestfulSubversion\Core\Changeset $changeset
+     * @return array The Changeset transformed to an array
+     */
+    public static function getChangesetAsArray(\RestfulSubversion\Core\Changeset $changeset)
     {
-        $response->code = \Response::OK;
-        $response->addHeader('Content-Type', 'application/json');
-        if (is_string($callback)) {
-            $response->body = $callback . '(' . json_encode($body) . ');';
-        } else {
-            $response->body = json_encode($body);
-        }
-        return $response;
-    }
+        $changesetArray = array();
+        $changesetArray['revision'] = $changeset->getRevision()->getAsString();
+        $changesetArray['author'] = $changeset->getAuthor();
+        $changesetArray['datetime'] = $changeset->getDateTime();
+        $changesetArray['message'] = $changeset->getMessage();
 
-    public function setFailedResponse(\Response $response, $errorMessage = 'This request is not valid.', $callback = NULL)
-    {
-        $response->code = \Response::BADREQUEST;
-        if (is_string($callback)) {
-            $response->body = $callback . '(' . json_encode(array('error' => TRUE, 'errorMessage' => $errorMessage)) . ');';
-        } else {
-            $response->body = json_encode(array('error' => TRUE, 'error' => $errorMessage));
+        $changesetArray['pathoperations'] = array();
+
+        $pathoperations = $changeset->getPathOperations();
+        foreach ($pathoperations as $pathoperation) {
+            $pathoperationArray = array();
+            $pathoperationArray['action'] = $pathoperation['action'];
+            $pathoperationArray['path'] = $pathoperation['path']->getAsString();
+            if (array_key_exists('copyfrompath', $pathoperation) && is_object($pathoperation['copyfromPath'])) $pathoperationArray['copyfromPath'] = $pathoperation['copyfromPath']->getAsString();
+            if (array_key_exists('copyfromrev', $pathoperation) && is_object($pathoperation['copyfromRev'])) $pathoperationArray['copyfromRev'] = $pathoperation['copyfromRev']->getAsString();
+            $changesetArray['pathoperations'][] = $pathoperationArray;
         }
-        return $response;
+        return $changesetArray;
     }
 }

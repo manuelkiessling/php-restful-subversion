@@ -52,12 +52,16 @@ namespace RestfulSubversion\Webservice\Helper;
  */
 class Config
 {
-    static private $instance = NULL;
+    static private $instance = null;
     static private $configValues = array();
 
+    /**
+     * @static
+     * @return Config
+     */
     static public function getInstance()
     {
-        if (NULL === self::$instance) {
+        if (null === self::$instance) {
             self::$instance = new self;
         }
         return self::$instance;
@@ -67,11 +71,18 @@ class Config
 
     private function __clone() {}
 
-    public function setConfig($configValues)
+    /**
+     * @param array $configValues
+     * @return void
+     */
+    public function setConfig(Array $configValues)
     {
         $this->configValues = $configValues;
     }
 
+    /**
+     * @return array
+     */
     public function aGetConfig()
     {
         return $this->configValues;

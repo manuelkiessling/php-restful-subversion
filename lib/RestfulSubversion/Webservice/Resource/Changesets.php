@@ -40,8 +40,8 @@
  */
 
 namespace RestfulSubversion\Webservice\Resource;
-use RestfulSubversion\Webservice\Helper\Result;
-use RestfulSubversion\Webservice\Helper\Response;
+use RestfulSubversion\Webservice\Helper\ResultTransformer;
+use RestfulSubversion\Webservice\Helper\ResponseTransformer;
 use RestfulSubversion\Core\Revision;
 use RestfulSubversion\Core\RepoCache;
 
@@ -55,14 +55,18 @@ use RestfulSubversion\Core\RepoCache;
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
+ * @uses       RestfulSubversion\Webservice\Helper\ResultTransformer;
+ * @uses       RestfulSubversion\Webservice\Helper\ResponseTransformer;
+ * @uses       RestfulSubversion\Core\Revision;
+ * @uses       RestfulSubversion\Core\RepoCache;
  */
 class Changesets extends \RestfulSubversion\Webservice\Resource
 {
     public function get($request)
     {
-        $responseHelper = new Response();
+        $responseTransformer = new ResponseTransformer();
 
-        $callback = NULL;
+        $callback = null;
         if (isset($_GET['callback'])) {
             $callback = $_GET['callback'];
         }
@@ -74,7 +78,7 @@ class Changesets extends \RestfulSubversion\Webservice\Resource
             $searchMode = 'with_path_ending_on';
             $searchTerm = $_GET['with_path_ending_on'];
         } else {
-            return $responseHelper->setFailedResponse(new \Response($request), "You can't request an unfiltered list of all changesets. Use changesets?with_message_containing=TEXT or changesets?with_path_ending_on=TEXT instead.", $callback);
+            return $responseTransformer->setFailedResponse(new \ResponseTransformer($request), "You can't request an unfiltered list of all changesets. Use changesets?with_message_containing=TEXT or changesets?with_path_ending_on=TEXT instead.", $callback);
         }
 
 
@@ -83,19 +87,19 @@ class Changesets extends \RestfulSubversion\Webservice\Resource
             $order = $_GET['order'];
         }
         if (!($order === 'ascending' || $order === 'descending')) {
-            return $responseHelper->setFailedResponse(new \Response($request), "Sort order must be 'ascending' or 'descending'.", $callback);
+            return $responseTransformer->setFailedResponse(new \ResponseTransformer($request), "Sort order must be 'ascending' or 'descending'.", $callback);
         }
 
-        $limit = NULL;
+        $limit = null;
         if (isset($_GET['limit'])) {
             if (!is_numeric($_GET['limit']) || (string)(int)$_GET['limit'] !== $_GET['limit']) {
-                return $responseHelper->setFailedResponse(new \Response($request), "Limit must be an integer value.", $callback);
+                return $responseTransformer->setFailedResponse(new \ResponseTransformer($request), "Limit must be an integer value.", $callback);
             }
             $limit = (int)$_GET['limit'];
         }
-        if ($limit === 0) $limit = NULL;
+        if ($limit === 0) $limit = null;
 
-        $cacheDbHandler = new \PDO($this->configValues['repoCacheConnectionString'], NULL, NULL);
+        $cacheDbHandler = new \PDO($this->configValues['repoCacheConnectionString'], null, null);
         $repoCache = new RepoCache($cacheDbHandler);
 
         if ($searchMode == 'with_message_containing') {
@@ -104,11 +108,12 @@ class Changesets extends \RestfulSubversion\Webservice\Resource
             $changesets = $repoCache->getChangesetsWithPathEndingOn($searchTerm, $order, $limit);
         }
 
+        $resultTransformer = new ResultTransformer();
         $changesetsArray = array();
         foreach ($changesets as $changeset) {
-            $changesetsArray[] = Result::getChangesetAsArray($changeset);
+            $changesetsArray[] = $resultTransformer->getChangesetAsArray($changeset);
         }
 
-        return $responseHelper->setResponse(new \Response($request), array('changesets' => $changesetsArray), $callback);
+        return $responseTransformer->setResponse(new \Response($request), array('changesets' => $changesetsArray), $callback);
     }
 }

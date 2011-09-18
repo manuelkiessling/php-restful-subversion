@@ -10,12 +10,12 @@ use RestfulSubversion\Helper\CommandLineBuilder;
 use RestfulSubversion\Helper\CommandLineExecutor;
 
 
-function displayErrorWithUsageInformationAndExit($sError)
+function displayErrorWithUsageInformationAndExit($error)
 {
     echo "\n";
-    echo 'ERROR: '.$sError;
+    echo 'ERROR: '.$error;
 
-    $sInfo = <<<EOT
+    $info = <<<EOT
 
 
 Usage information:
@@ -51,7 +51,7 @@ of revisions that are in your repository).
 
 EOT;
 
-    echo $sInfo;
+    echo $info;
     exit(1);
 }
 
@@ -138,7 +138,7 @@ $repo->setAuthinfo($repoUsername, $repoPassword);
 $commandLineExecutor = new CommandLineExecutor();
 $commandLineBuilder = new CommandLineBuilder();
 $logInterpreter = new RepoLogInterpreter();
-$repoCache = new RepoCache(new PDO($repoCacheConnectionString, NULL, NULL));
+$repoCache = new RepoCache(new PDO($repoCacheConnectionString, null, null));
 
 $highestRevisionInRepo = getHighestRevisionInRepo($repo);
 $highestRevisionInRepoCache = 0;

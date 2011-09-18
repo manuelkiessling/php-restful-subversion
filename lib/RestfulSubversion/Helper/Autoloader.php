@@ -55,6 +55,11 @@ namespace RestfulSubversion\Helper;
  */
 class Autoloader
 {
+    /**
+     * @static
+     * @param $className
+     * @return bool|string
+     */
     public static function load($className)
     {
         if (strstr($className, '\\')) {
@@ -73,6 +78,6 @@ class Autoloader
             }
         }
 
-        return FALSE;
+        return false;
     }
 }

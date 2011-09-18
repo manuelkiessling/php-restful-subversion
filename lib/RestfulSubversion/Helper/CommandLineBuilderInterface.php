@@ -32,7 +32,7 @@
  *
  * @category   VersionControl
  * @package    RestfulSubversion
- * @subpackage Core
+ * @subpackage Helper
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -54,17 +54,53 @@ namespace RestfulSubversion\Helper;
  */
 interface CommandLineBuilderInterface
 {
+    /**
+     * @abstract
+     * @param string $command
+     * @return void
+     */
     public function setCommand($command);
 
+    /**
+     * @abstract
+     * @param string $parameterName
+     * @return void
+     */
     public function addParameter($parameterName);
 
+    /**
+     * @abstract
+     * @param string $switchName
+     * @return void
+     */
     public function addShortSwitch($switchName);
 
+    /**
+     * @abstract
+     * @param string $switchName
+     * @param string $switchValue
+     * @return void
+     */
     public function addShortSwitchWithValue($switchName, $switchValue);
 
+    /**
+     * @abstract
+     * @param string $switchName
+     * @return void
+     */
     public function addLongSwitch($switchName);
 
+    /**
+     * @abstract
+     * @param string $switchName
+     * @param string $switchValue
+     * @return void
+     */
     public function addLongSwitchWithValue($switchName, $switchValue);
 
+    /**
+     * @abstract
+     * @return string The built command line
+     */
     public function getCommandLine();
 }

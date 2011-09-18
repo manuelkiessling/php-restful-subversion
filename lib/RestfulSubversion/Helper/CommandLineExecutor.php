@@ -32,7 +32,7 @@
  *
  * @category   VersionControl
  * @package    RestfulSubversion
- * @subpackage Core
+ * @subpackage Helper
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -54,6 +54,10 @@ namespace RestfulSubversion\Helper;
  */
 class CommandLineExecutor
 {
+    /**
+     * @param string $command
+     * @return string
+     */
     public function getCommandResult($command)
     {
         return shell_exec($command);

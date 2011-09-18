@@ -54,39 +54,57 @@ use RestfulSubversion\Helper\CommandLineBuilderInterface;
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  * @uses       Repo
  * @uses       Revision
- * @uses       CommandLineExecutor
- * @uses       RepoPath
+ * @uses       CommandLineBuilderInterface
  */
 class RepoCommandLog
 {
-    protected $repo = NULL;
-    protected $revision = NULL;
-    protected $range = NULL;
-    protected $verbose = FALSE;
-    protected $xml = FALSE;
-    protected $commandLineBuilder = NULL;
+    protected $repo = null;
+    protected $revision = null;
+    protected $range = null;
+    protected $verbose = false;
+    protected $xml = false;
+    protected $commandLineBuilder = null;
 
+    /**
+     * @param Repo $repo
+     * @param \RestfulSubversion\Helper\CommandLineBuilderInterface $commandLineBuilder
+     */
     public function __construct(Repo $repo, CommandLineBuilderInterface $commandLineBuilder)
     {
         $this->repo = $repo;
         $this->commandLineBuilder = $commandLineBuilder;
     }
 
+    /**
+     * @param Revision $revision
+     * @return void
+     */
     public function setRevision(Revision $revision)
     {
         $this->revision = $revision;
     }
 
+    /**
+     * Makes this a verbose svn log command
+     * @return void
+     */
     public function enableVerbose()
     {
-        $this->verbose = TRUE;
+        $this->verbose = true;
     }
 
+    /**
+     * Enable XML result format
+     * @return void
+     */
     public function enableXml()
     {
-        $this->xml = TRUE;
+        $this->xml = true;
     }
 
+    /**
+     * @return string The built command line
+     */
     public function getCommandline()
     {
         $this->commandLineBuilder->reset();

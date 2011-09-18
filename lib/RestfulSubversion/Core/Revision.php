@@ -51,11 +51,16 @@ namespace RestfulSubversion\Core;
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
+ * @uses       RevisionInvalidRevisionNumberCoreException
  */
 class Revision
 {
-    protected $revisionNumber = NULL;
+    protected $revisionNumber = null;
 
+    /**
+     * @throws RevisionInvalidRevisionNumberCoreException
+     * @param $revisionNumber
+     */
     public function __construct($revisionNumber)
     {
         if ($revisionNumber == 'HEAD') {
@@ -72,16 +77,25 @@ class Revision
         $this->revisionNumber = $revisionNumber;
     }
 
+    /**
+     * @return string
+     */
     public function getAsString()
     {
-        return (string)($this->revisionNumber);
+        return (string)$this->revisionNumber;
     }
 
+    /**
+     * @return string
+     */
     public function sGetRevertedAstring()
     {
         return '-' . $this->getAsString();
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return (string)$this->getAsString();

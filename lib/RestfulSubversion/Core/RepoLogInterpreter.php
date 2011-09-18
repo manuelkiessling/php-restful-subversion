@@ -51,9 +51,16 @@ namespace RestfulSubversion\Core;
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
+ * @uses       Changeset
+ * @uses       Revision
+ * @uses       RepoPath
  */
 class RepoLogInterpreter
 {
+    /**
+     * @param string $xml The verbose XML output of a svn log command
+     * @return array
+     */
     public function createChangesetsFromVerboseXml($xml)
     {
         $changesets = array();
@@ -66,8 +73,8 @@ class RepoLogInterpreter
             $changeset->setMessage((string)$logentry->msg);
 
             foreach ($logentry->paths[0] as $path) {
-                $copyfromPath = NULL;
-                $copyfromRev = NULL;
+                $copyfromPath = null;
+                $copyfromRev = null;
                 if ($path['copyfrom-path']) $copyfromPath = new RepoPath((string)$path['copyfrom-path']);
                 if ($path['copyfrom-rev']) $copyfromRev = new Revision((string)$path['copyfrom-rev']);
                 $changeset->addPathOperation((string)$path['action'],

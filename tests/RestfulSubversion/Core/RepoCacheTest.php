@@ -6,7 +6,7 @@ class RepoCacheTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $cacheDbHandler = new \PDO('sqlite:/var/tmp/PHPRestfulSubversion_TestDb.sqlite', NULL, NULL);
+        $cacheDbHandler = new \PDO('sqlite:/var/tmp/PHPRestfulSubversion_TestDb.sqlite', null, null);
         $this->repoCache = new RepoCache($cacheDbHandler);
     }
 

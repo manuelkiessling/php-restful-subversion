@@ -50,27 +50,40 @@ namespace RestfulSubversion\Webservice\Helper;
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class Result
+class ResponseTransformer
 {
-    public static function getChangesetAsArray(\RestfulSubversion\Core\Changeset $changeset)
+    /**
+     * @param \Response $response
+     * @param $body
+     * @param null|string $callback Callback name to put the response into
+     * @return \Response
+     */
+    public function setResponse(\Response $response, $body, $callback = null)
     {
-        $changesetArray = array();
-        $changesetArray['revision'] = $changeset->getRevision()->getAsString();
-        $changesetArray['author'] = $changeset->getAuthor();
-        $changesetArray['datetime'] = $changeset->getDateTime();
-        $changesetArray['message'] = $changeset->getMessage();
-
-        $changesetArray['pathoperations'] = array();
-
-        $pathoperations = $changeset->getPathOperations();
-        foreach ($pathoperations as $pathoperation) {
-            $pathoperationArray = array();
-            $pathoperationArray['action'] = $pathoperation['action'];
-            $pathoperationArray['path'] = $pathoperation['path']->getAsString();
-            if (array_key_exists('copyfrompath', $pathoperation) && is_object($pathoperation['copyfromPath'])) $pathoperationArray['copyfromPath'] = $pathoperation['copyfromPath']->getAsString();
-            if (array_key_exists('copyfromrev', $pathoperation) && is_object($pathoperation['copyfromRev'])) $pathoperationArray['copyfromRev'] = $pathoperation['copyfromRev']->getAsString();
-            $changesetArray['pathoperations'][] = $pathoperationArray;
+        $response->code = \Response::OK;
+        $response->addHeader('Content-Type', 'application/json');
+        if (is_string($callback)) {
+            $response->body = $callback . '(' . json_encode($body) . ');';
+        } else {
+            $response->body = json_encode($body);
         }
-        return $changesetArray;
+        return $response;
+    }
+
+    /**
+     * @param \Response $response
+     * @param string $errorMessage
+     * @param null|string $callback Callback name to put the response into
+     * @return \Response
+     */
+    public function setFailedResponse(\Response $response, $errorMessage = 'This request is not valid.', $callback = null)
+    {
+        $response->code = \Response::BADREQUEST;
+        if (is_string($callback)) {
+            $response->body = $callback . '(' . json_encode(array('error' => true, 'errorMessage' => $errorMessage)) . ');';
+        } else {
+            $response->body = json_encode(array('error' => true, 'error' => $errorMessage));
+        }
+        return $response;
     }
 }

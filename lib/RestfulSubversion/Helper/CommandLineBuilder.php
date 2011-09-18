@@ -32,7 +32,7 @@
  *
  * @category   VersionControl
  * @package    RestfulSubversion
- * @subpackage Core
+ * @subpackage Helper
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
@@ -66,6 +66,10 @@ class CommandLineBuilder implements CommandLineBuilderInterface
         $this->reset();
     }
 
+    /**
+     * Reset all switches, parameters, and the command
+     * @return void
+     */
     public function reset()
     {
         $this->numberOfArguments = 0;
@@ -75,39 +79,68 @@ class CommandLineBuilder implements CommandLineBuilderInterface
         $this->longSwitches = array();
     }
 
+    /**
+     * @param string $command
+     * @return void
+     */
     public function setCommand($command)
     {
         $this->command = $command;
     }
 
+    /**
+     * @param string $parameterName
+     * @return void
+     */
     public function addParameter($parameterName)
     {
         $this->parameters[$this->numberOfArguments] = $parameterName;
         $this->numberOfArguments++;
     }
 
+    /**
+     * @param string $switchName
+     * @return void
+     */
     public function addShortSwitch($switchName)
     {
         $this->addShortSwitchWithValue($switchName, '');
     }
 
+    /**
+     * @param string $switchName
+     * @param string $switchValue
+     * @return void
+     */
     public function addShortSwitchWithValue($switchName, $switchValue)
     {
         $this->shortSwitches[$this->numberOfArguments] = array('switchName' => $switchName, 'switchValue' => $switchValue);
         $this->numberOfArguments++;
     }
 
+    /**
+     * @param string $switchName
+     * @return void
+     */
     public function addLongSwitch($switchName)
     {
         $this->addLongSwitchWithValue($switchName, '');
     }
 
+    /**
+     * @param string $switchName
+     * @param string $switchValue
+     * @return void
+     */
     public function addLongSwitchWithValue($switchName, $switchValue)
     {
         $this->longSwitches[$this->numberOfArguments] = array('switchName' => $switchName, 'switchValue' => $switchValue);
         $this->numberOfArguments++;
     }
 
+    /**
+     * @return string The built command line
+     */
     public function getCommandLine()
     {
         $return = $this->command;

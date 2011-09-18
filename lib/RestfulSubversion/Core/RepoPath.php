@@ -58,13 +58,12 @@ class RepoPath
     /**
      * Internal string representation of the path
      */
-    protected $path = NULL;
+    protected $path = null;
 
     /**
      * Creates the path object based on a given string
      *
      * @param string $path Path to create the object for
-     * @return void
      * @throws RepoPathInvalidPathCoreException if the given string doesn't have the correct format
      */
     public function __construct($path)
@@ -79,11 +78,17 @@ class RepoPath
         $this->path = $path;
     }
 
+    /**
+     * @return string
+     */
     public function getAsString()
     {
-        return $this->path;
+        return (string)$this->path;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->getAsString();

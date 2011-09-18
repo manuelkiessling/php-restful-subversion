@@ -51,36 +51,53 @@ namespace RestfulSubversion\Core;
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       RepoPath
  */
 class Repo
 {
-    protected $uri = NULL;
-    protected $username = NULL;
-    protected $password = NULL;
-    protected $oTargetPath = NULL;
+    protected $uri = null;
+    protected $username = null;
+    protected $password = null;
+    protected $oTargetPath = null;
 
+    /**
+     * @param string $uri
+     * @return void
+     */
     public function setUri($uri)
     {
         $this->uri = $uri;
     }
 
+    /**
+     * @return URI of the repository
+     */
     public function getUri()
     {
         return $this->uri;
     }
 
+    /**
+     * @param string $username
+     * @param string $password
+     * @return void
+     */
     public function setAuthinfo($username, $password)
     {
         $this->username = $username;
         $this->password = $password;
     }
-
+    
+    /**
+     * @return Username for accessing this repository
+     */
     public function getUsername()
     {
         return $this->username;
     }
 
+    /**
+     * @return Password for accessing this repository
+     */
     public function getPassword()
     {
         return $this->password;
