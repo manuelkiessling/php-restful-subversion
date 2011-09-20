@@ -54,7 +54,7 @@ namespace RestfulSubversion\Core;
  * @uses       Changeset
  * @uses       Revision
  * @uses       RepoPath
- * @uses       RepoCacheRevisionAlreadyInCacheCoreException
+ * @uses       RepoCacheException
  */
 class RepoCache
 {
@@ -106,7 +106,7 @@ class RepoCache
     }
 
     /**
-     * @throws RepoCacheRevisionAlreadyInCacheCoreException
+     * @throws RepoCacheException
      * @param Changeset $changeset
      * @return void
      */
@@ -119,7 +119,7 @@ class RepoCache
                                                        $changeset->getDateTime(),
                                                        $changeset->getMessage()));
         if (!$successful) {
-            throw new RepoCacheRevisionAlreadyInCacheCoreException();
+            throw new RepoCacheException('Couldn\'t insert changeset into cache: '.print_r($changeset, true));
         }
 
         $pathOperations = $changeset->getPathOperations();
@@ -260,4 +260,4 @@ class RepoCache
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class RepoCacheRevisionAlreadyInCacheCoreException extends \Exception {}
+class RepoCacheException extends \Exception {}

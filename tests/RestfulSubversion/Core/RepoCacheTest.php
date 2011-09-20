@@ -303,7 +303,7 @@ class RepoCacheTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RestfulSubversion\Core\RepoCacheRevisionAlreadyInCacheCoreException
+     * @expectedException RestfulSubversion\Core\RepoCacheException
      */
     public function test_cantAddSameRevisionTwice()
     {
