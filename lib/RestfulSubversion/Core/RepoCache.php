@@ -186,6 +186,12 @@ class RepoCache
         return $changeset;
     }
 
+    /**
+     * @param string $order ascending|descending
+     * @param null|int $startAtRevision
+     * @param null|int $limit
+     * @return array Array of Changesets
+     */
     public function getChangesets($order = 'ascending', $startAtRevision = null, $limit = null)
     {
         $orderClause = 'ASC';
