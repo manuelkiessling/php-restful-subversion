@@ -397,4 +397,37 @@ class RepoCacheTest extends \PHPUnit_Framework_TestCase
         
         $this->assertEquals($expected, $this->repoCache->getChangesets('desc'));
     }
+    
+    public function test_getChangesetsWithStartAt()
+    {
+        $expected = array();
+        
+        $changeset = new Changeset(new Revision('1234'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-18 22:56:00');
+        $changeset->setMessage('Hello World');
+        $changeset->addPathOperation('M', new RepoPath('/foo/a.php'));
+
+        $this->repoCache->addChangeset($changeset);
+
+        $changeset = new Changeset(new Revision('1235'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-19 22:56:00');
+        $changeset->setMessage('Helloworlds');
+        $changeset->addPathOperation('M', new RepoPath('/foo/ar.php'));
+
+        $this->repoCache->addChangeset($changeset);
+        $expected[] = $changeset;
+
+        $changeset = new Changeset(new Revision('1236'));
+        $changeset->setAuthor('Han Solo');
+        $changeset->setDateTime('2011-02-20 22:56:00');
+        $changeset->setMessage('Hello W orld');
+        $changeset->addPathOperation('M', new RepoPath('/foo/bar/bla.php'));
+
+        $this->repoCache->addChangeset($changeset);
+        $expected[] = $changeset;
+        
+        $this->assertEquals($expected, $this->repoCache->getChangesets('asc', '1235'));
+    }
 }
