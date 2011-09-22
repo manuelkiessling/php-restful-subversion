@@ -186,25 +186,25 @@ class RepoCache
         return $changeset;
     }
 
-    public function getChangesets($order = 'asc', $startAtRevision = null)
+    public function getChangesets($order = 'ascending', $startAtRevision = 0, $limit = null)
     {
         $orderClause = 'ASC';
-        if ($order == 'desc') {
+        if ($order == 'descending') {
             $orderClause = 'DESC';
         }
         
-        if ($startAtRevision === null) {
-            $startAtRevisionClause = '0';
-        } else {
-            $startAtRevisionClause = $startAtRevision;
+        $limitClause = '';
+        if ($limit !== null) {
+            $limitClause = ' LIMIT '.$limit;
         }
         
         $return = array();
         $preparedStatement = $this->dbHandler->prepare('SELECT revision
                                                           FROM revisions
                                                          WHERE revision >= ?
-                                                         ORDER BY revision '.$orderClause);
-        if ($preparedStatement->execute(array($startAtRevisionClause))) {
+                                                      ORDER BY revision '.$orderClause.'
+                                                               '.$limitClause);
+        if ($preparedStatement->execute(array($startAtRevision))) {
             while ($row = $preparedStatement->fetch()) {
                 $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
             }
