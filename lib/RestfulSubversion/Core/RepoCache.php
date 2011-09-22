@@ -186,11 +186,20 @@ class RepoCache
         return $changeset;
     }
 
-    public function getChangesets($order = 'ascending', $startAtRevision = 0, $limit = null)
+    public function getChangesets($order = 'ascending', $startAtRevision = null, $limit = null)
     {
         $orderClause = 'ASC';
+        $revisionStartClause = '>=';
         if ($order == 'descending') {
             $orderClause = 'DESC';
+            $revisionStartClause = '<=';
+            if ($startAtRevision === null) {
+                $startAtRevision = 2147483647; // see http://stackoverflow.com/questions/816523/what-is-the-maximum-revision-number-supported-by-svn/816529#816529
+            }
+        } else {
+            if ($startAtRevision === null) {
+                $startAtRevision = 1;
+            }
         }
         
         $limitClause = '';
@@ -201,9 +210,9 @@ class RepoCache
         $return = array();
         $preparedStatement = $this->dbHandler->prepare('SELECT revision
                                                           FROM revisions
-                                                         WHERE revision >= ?
+                                                         WHERE revision '.$revisionStartClause.' ?
                                                       ORDER BY revision '.$orderClause.'
-                                                               '.$limitClause);
+                                                       '.$limitClause);
         if ($preparedStatement->execute(array($startAtRevision))) {
             while ($row = $preparedStatement->fetch()) {
                 $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
