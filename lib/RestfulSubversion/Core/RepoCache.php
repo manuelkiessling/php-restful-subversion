@@ -186,6 +186,24 @@ class RepoCache
         return $changeset;
     }
 
+    public function getChangesets($order = 'asc')
+    {
+        $orderClause = 'ASC';
+        if ($order == 'desc') {
+            $orderClause = 'DESC';
+        }
+        $return = array();
+        $preparedStatement = $this->dbHandler->prepare('SELECT revision
+                                                          FROM revisions
+                                                         ORDER BY revision '.$orderClause);
+        if ($preparedStatement->execute()) {
+            while ($row = $preparedStatement->fetch()) {
+                $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
+            }
+        }
+        return $return;
+    }
+    
     /**
      * @param string $string String to search for
      * @param string $order 'ascending' or 'descending'
