@@ -56,7 +56,7 @@ use RestfulSubversion\Helper\CommandLineBuilderInterface;
  * @uses       Revision
  * @uses       CommandLineBuilderInterface
  */
-class RepoCommandCat
+class RepoCommandInfo
 {
     protected $repo = null;
     protected $revision = null;
@@ -98,7 +98,7 @@ class RepoCommandCat
     {
         $this->commandLineBuilder->reset();
         $this->commandLineBuilder->setCommand('svn');
-        $this->commandLineBuilder->addParameter('cat');
+        $this->commandLineBuilder->addParameter('info');
         $this->commandLineBuilder->addLongSwitch('no-auth-cache');
         $this->commandLineBuilder->addLongSwitchWithValue('username', $this->repo->getUsername());
         $this->commandLineBuilder->addLongSwitchWithValue('password', $this->repo->getPassword());

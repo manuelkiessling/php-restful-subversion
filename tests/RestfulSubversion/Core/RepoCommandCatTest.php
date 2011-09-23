@@ -24,7 +24,7 @@ class RepoCommandCatTest extends \PHPUnit_Framework_TestCase
         $catCommand->setPath(new RepoPath('/branches/test/a.php'));
         $commandline = $catCommand->getCommandline();
 
-        $this->assertSame('svn cat --no-auth-cache --username=user.name --password=secret http://svn.example.com/repo/branches/test/a.php',
+        $this->assertSame('svn cat --no-auth-cache --username=user.name --password=secret "http://svn.example.com/repo/branches/test/a.php"',
                           $commandline);
     }
 }

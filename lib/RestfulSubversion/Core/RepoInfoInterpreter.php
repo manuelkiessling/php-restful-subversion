@@ -40,10 +40,9 @@
  */
 
 namespace RestfulSubversion\Core;
-use RestfulSubversion\Helper\CommandLineBuilderInterface;
 
 /**
- * Class which allows to build a svn cat command line
+ * Class that can interprete the XML output of an executed svn log commandline to create Changeset objects from it
  *
  * @category   VersionControl
  * @package    RestfulSubversion
@@ -52,63 +51,21 @@ use RestfulSubversion\Helper\CommandLineBuilderInterface;
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       Repo
+ * @uses       Changeset
  * @uses       Revision
- * @uses       CommandLineBuilderInterface
+ * @uses       RepoPath
  */
-class RepoCommandCat
+class RepoInfoInterpreter
 {
-    protected $repo = null;
-    protected $revision = null;
-    protected $path = null;
-    protected $commandLineBuilder = null;
-
     /**
-     * @param Repo $repo
-     * @param \RestfulSubversion\Helper\CommandLineBuilderInterface $commandLineBuilder
+     * @param string $xml The verbose XML output of a svn log command
+     * @return array
      */
-    public function __construct(Repo $repo, CommandLineBuilderInterface $commandLineBuilder)
+    public function getKindFromXml($xml)
     {
-        $this->repo = $repo;
-        $this->commandLineBuilder = $commandLineBuilder;
-    }
-
-    /**
-     * @param Revision $revision
-     * @return void
-     */
-    public function setRevision(Revision $revision)
-    {
-        $this->revision = $revision;
-    }
-
-    /**
-     * @param RepoPath $path
-     * @return void
-     */
-    public function setPath(RepoPath $path)
-    {
-        $this->path = $path;
-    }
-    
-    /**
-     * @return string The built command line
-     */
-    public function getCommandline()
-    {
-        $this->commandLineBuilder->reset();
-        $this->commandLineBuilder->setCommand('svn');
-        $this->commandLineBuilder->addParameter('cat');
-        $this->commandLineBuilder->addLongSwitch('no-auth-cache');
-        $this->commandLineBuilder->addLongSwitchWithValue('username', $this->repo->getUsername());
-        $this->commandLineBuilder->addLongSwitchWithValue('password', $this->repo->getPassword());
-
-        if (is_object($this->revision)) {
-            $this->commandLineBuilder->addShortSwitchWithValue('r', $this->revision->getAsString());
+        $xmlObject = new \SimpleXMLElement($xml);
+        foreach ($xmlObject->entry as $entry) {
+            return (string)$entry['kind'][0];
         }
-        
-        $this->commandLineBuilder->addParameter('"'.$this->repo->getUri().$this->path->getAsString().'"');
-                
-        return $this->commandLineBuilder->getCommandLine();
     }
 }

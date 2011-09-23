@@ -56,11 +56,12 @@ use RestfulSubversion\Helper\CommandLineBuilderInterface;
  * @uses       Revision
  * @uses       CommandLineBuilderInterface
  */
-class RepoCommandCat
+class RepoCommandPropget
 {
     protected $repo = null;
     protected $revision = null;
     protected $path = null;
+    protected $propname = null;
     protected $commandLineBuilder = null;
 
     /**
@@ -92,13 +93,22 @@ class RepoCommandCat
     }
     
     /**
+     * @param string $propname
+     * @return void
+     */
+    public function setPropname($propname)
+    {
+        $this->propname = $propname;
+    }
+    
+    /**
      * @return string The built command line
      */
     public function getCommandline()
     {
         $this->commandLineBuilder->reset();
         $this->commandLineBuilder->setCommand('svn');
-        $this->commandLineBuilder->addParameter('cat');
+        $this->commandLineBuilder->addParameter('propget');
         $this->commandLineBuilder->addLongSwitch('no-auth-cache');
         $this->commandLineBuilder->addLongSwitchWithValue('username', $this->repo->getUsername());
         $this->commandLineBuilder->addLongSwitchWithValue('password', $this->repo->getPassword());
@@ -106,6 +116,8 @@ class RepoCommandCat
         if (is_object($this->revision)) {
             $this->commandLineBuilder->addShortSwitchWithValue('r', $this->revision->getAsString());
         }
+        
+        $this->commandLineBuilder->addParameter("'".$this->propname."'");
         
         $this->commandLineBuilder->addParameter('"'.$this->repo->getUri().$this->path->getAsString().'"');
                 

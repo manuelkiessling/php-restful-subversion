@@ -5,6 +5,7 @@ use RestfulSubversion\Core\Repo;
 use RestfulSubversion\Core\RepoCache;
 use RestfulSubversion\Core\RepoLogInterpreter;
 use RestfulSubversion\Core\RepoCommandLog;
+use RestfulSubversion\Core\RepoCommandPropget;
 use RestfulSubversion\Core\Revision;
 use RestfulSubversion\Helper\CommandLineBuilder;
 use RestfulSubversion\Helper\CommandLineExecutor;
@@ -175,7 +176,22 @@ while ($currentRevision <= $highestRevisionInRepo) {
 
     $changesets = $logInterpreter->createChangesetsFromVerboseXml($logOutput);
 
+    $commandPropget = new RepoCommandPropget($repo, $commandLineBuilder);
     foreach ($changesets as $changeset) {
+        $pathOperations = $changeset->getPathOperations();
+        foreach ($pathOperations as $pathOperation) {
+            $commandPropget->setRevision($changeset->getRevision());
+            $commandPropget->setPath($pathOperation['path']);
+            $commandPropget->setPropname('svn:mime-type');
+            $commandline = $commandPropget->getCommandline();
+            $logOutput = $commandLineExecutor->getCommandResult($commandline);
+            $mimeType = trim($logOutput);
+            //
+        }
+        
+        // für jeden pfad in jeder revision mithilfe von RepoCommandCat einen Content erzeugen, wenn mime-type != application/octet-stream
+        // Table: 1 - /la/lu.php - "hello world"
+        
         $repoCache->addChangeset($changeset);
         $currentRevision++;
     }
