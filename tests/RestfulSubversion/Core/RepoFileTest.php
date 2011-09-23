@@ -1,13 +1,19 @@
 <?php
-/**
+
 namespace RestfulSubversion\Core;
 
-class ContentTest extends \PHPUnit_Framework_TestCase
+class RepoFileTest extends \PHPUnit_Framework_TestCase
 {
     public function test()
     {
-        $content = new Content();
-        $content->setRevision(new Revision('1234'));
-        $content->setMimeType();
+        $revision = new Revision('1234');
+        $path = new RepoPath('/a/b.php');
+        
+        $file = new RepoFile($revision, $path);
+        $file->setContent('Hello World');
+        
+        $this->assertEquals($path, $file->getPath());
+        $this->assertEquals($revision, $file->getRevision());
+        $this->assertEquals('Hello World', $file->getContent());
     }
-} */
+}
