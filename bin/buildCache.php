@@ -5,8 +5,12 @@ use RestfulSubversion\Core\Repo;
 use RestfulSubversion\Core\RepoCache;
 use RestfulSubversion\Core\RepoLogInterpreter;
 use RestfulSubversion\Core\RepoCommandLog;
+use RestfulSubversion\Core\RepoInfoInterpreter;
+use RestfulSubversion\Core\RepoCommandInfo;
 use RestfulSubversion\Core\RepoCommandPropget;
+use RestfulSubversion\Core\RepoCommandCat;
 use RestfulSubversion\Core\Revision;
+use RestfulSubversion\Core\RepoFile;
 use RestfulSubversion\Helper\CommandLineBuilder;
 use RestfulSubversion\Helper\CommandLineExecutor;
 
@@ -177,20 +181,40 @@ while ($currentRevision <= $highestRevisionInRepo) {
     $changesets = $logInterpreter->createChangesetsFromVerboseXml($logOutput);
 
     $commandPropget = new RepoCommandPropget($repo, $commandLineBuilder);
+    $commandInfo = new RepoCommandInfo($repo, $commandLineBuilder);
+    $commandCat = new RepoCommandCat($repo, $commandLineBuilder);
+    $infoInterpreter = new RepoInfoInterpreter();
     foreach ($changesets as $changeset) {
         $pathOperations = $changeset->getPathOperations();
         foreach ($pathOperations as $pathOperation) {
+            // get mime-type
             $commandPropget->setRevision($changeset->getRevision());
             $commandPropget->setPath($pathOperation['path']);
             $commandPropget->setPropname('svn:mime-type');
             $commandline = $commandPropget->getCommandline();
             $logOutput = $commandLineExecutor->getCommandResult($commandline);
             $mimeType = trim($logOutput);
-            //
+            
+            if ($mimeType === '') {
+                // get kind
+                $commandInfo->setRevision($changeset->getRevision());
+                $commandInfo->setPath($pathOperation['path']);
+                $commandInfo->enableXml();
+                $commandline = $commandInfo->getCommandline();
+                $logOutput = $commandLineExecutor->getCommandResult($commandline);
+                
+                $kind = $infoInterpreter->getKindFromXml($logOutput);
+                if ($kind == 'file') {
+                    $file = new RepoFile($changeset->getRevision(), $pathOperation['path']);
+                    $commandCat->setRevision($changeset->getRevision());
+                    $commandCat->setPath($pathOperation['path']);
+                    $commandline = $commandCat->getCommandline();
+                    $content = $commandLineExecutor->getCommandResult($commandline);
+                    $file->setContent($content);
+                    $repoCache->addRepoFile($file);
+                }
+            }
         }
-        
-        // für jeden pfad in jeder revision mithilfe von RepoCommandCat einen Content erzeugen, wenn mime-type != application/octet-stream
-        // Table: 1 - /la/lu.php - "hello world"
         
         $repoCache->addChangeset($changeset);
         $currentRevision++;
@@ -200,5 +224,6 @@ while ($currentRevision <= $highestRevisionInRepo) {
     echo "done";
 }
 
+echo "\n";
 echo "All revisions imported to cache.\n";
 exit(0);

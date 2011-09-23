@@ -61,6 +61,7 @@ class RepoCommandInfo
     protected $repo = null;
     protected $revision = null;
     protected $path = null;
+    protected $xml = false;    
     protected $commandLineBuilder = null;
 
     /**
@@ -92,6 +93,15 @@ class RepoCommandInfo
     }
     
     /**
+     * Enable XML result format
+     * @return void
+     */
+    public function enableXml()
+    {
+        $this->xml = true;
+    }
+    
+    /**
      * @return string The built command line
      */
     public function getCommandline()
@@ -106,6 +116,8 @@ class RepoCommandInfo
         if (is_object($this->revision)) {
             $this->commandLineBuilder->addShortSwitchWithValue('r', $this->revision->getAsString());
         }
+        
+        if ($this->xml) $this->commandLineBuilder->addLongSwitch('xml');        
         
         $this->commandLineBuilder->addParameter('"'.$this->repo->getUri().$this->path->getAsString().'"');
                 

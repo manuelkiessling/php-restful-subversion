@@ -4,6 +4,8 @@ namespace RestfulSubversion\Core;
 
 class RepoCacheTest extends \PHPUnit_Framework_TestCase
 {
+    protected $repoCache;
+    
     public function setUp()
     {
         $cacheDbHandler = new \PDO('sqlite:/var/tmp/PHPRestfulSubversion_TestDb.sqlite', null, null);
@@ -62,6 +64,43 @@ class RepoCacheTest extends \PHPUnit_Framework_TestCase
         $this->setUp();
 
         $this->assertEquals($changeset, $this->repoCache->getChangesetForRevision(new Revision('12345')));
+    }
+    
+    public function test_getRepoFileForRevisionAndPath()
+    {
+        $revision = new Revision('1234');
+        $path = new RepoPath('/a/b.php');
+        $file = new RepoFile($revision, $path);
+        $file->setContent('Hello World');
+        
+        $this->repoCache->addRepoFile($file);
+        unset($this->repoCache);
+        $this->setUp();
+        
+        $actual = $this->repoCache->getRepoFileForRevisionAndPath($revision, $path);
+        
+        $this->assertEquals($file, $actual);
+    }
+    
+    public function test_getRepoFileForRevisionAndPathAskingForHigherRevision()
+    {
+        $revision = new Revision('1234');
+        $path = new RepoPath('/a/b.php');
+        $file = new RepoFile($revision, $path);
+        $file->setContent('Hello World');
+        
+        $this->repoCache->addRepoFile($file);
+        unset($this->repoCache);
+        $this->setUp();
+        
+        $revision = new Revision('9999');
+        $path = new RepoPath('/a/b.php');
+        $file = new RepoFile($revision, $path);
+        $file->setContent('Hello World');
+        
+        $actual = $this->repoCache->getRepoFileForRevisionAndPath(new Revision('9999'), $path);
+        
+        $this->assertEquals($file, $actual);
     }
 
     public function test_getChangesetsWithPathEndingOnAscending()

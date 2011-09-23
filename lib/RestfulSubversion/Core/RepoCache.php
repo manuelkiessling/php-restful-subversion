@@ -99,6 +99,11 @@ class RepoCache
         $queries[] = 'CREATE INDEX p_revision ON pathoperations(revision);';
         $queries[] = 'CREATE INDEX p_path ON pathoperations(path);';
         $queries[] = 'CREATE INDEX p_revertedpath ON pathoperations(revertedpath);';
+        
+        $queries[] = 'DROP TABLE IF EXISTS files;';
+        $queries[] = 'CREATE TABLE files(id INTEGER PRIMARY KEY, revision INTEGER NOT null, path TEXT(512), content BLOB);';
+
+        $queries[] = 'CREATE INDEX r_revision_path ON files(revision, path);';
 
         foreach ($queries as $query) {
             $this->dbHandler->exec($query);
@@ -133,6 +138,41 @@ class RepoCache
                                                      ? $pathOperation['copyfromPath']->getAsString() : '',
                                              (array_key_exists('copyfromRev', $pathOperation))
                                                      ? $pathOperation['copyfromRev']->getAsString() : 0));
+        }
+    }
+    
+    public function addRepoFile(RepoFile $file)
+    {
+        $preparedStatement = $this->dbHandler->prepare('INSERT INTO files (revision, path, content) VALUES (?, ?, ?)');
+        $successful = $preparedStatement->execute(array($file->getRevision()->getAsString(),
+                                                        $file->getPath()->getAsString(),
+                                                        $file->getContent()));
+        if (!$successful) {
+            throw new RepoCacheException('Couldn\'t insert file into cache: '.print_r($file, true));
+        }
+    }
+    
+    /**
+     * Get file and content for a given revision
+     * 
+     * Gets the content of the file from the last revision equal or below the given revision
+     * 
+     * @param Revision $revision
+     * @param RepoPath $path
+     * @return null|RepoFile
+     */
+    public function getRepoFileForRevisionAndPath(Revision $revision, RepoPath $path)
+    {
+        $file = new RepoFile($revision, $path);
+
+        $preparedStatement = $this->dbHandler->prepare('SELECT content FROM files WHERE revision <= ? AND path = ?');
+        $preparedStatement->execute(array($revision->getAsString(), $path->getAsString()));
+
+        $rows = $preparedStatement->fetchAll();
+        if (sizeof($rows) == 0) return null;
+        foreach ($rows as $row) {
+            $file->setContent($row['content']);
+            return $file;
         }
     }
 

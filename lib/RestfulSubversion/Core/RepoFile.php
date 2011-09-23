@@ -88,7 +88,7 @@ class RepoFile
     }
 
     /**
-     * @return Path of this file
+     * @return RepoPath of this file
      */
     public function getPath()
     {
