@@ -90,13 +90,20 @@ class RepoCacheTest extends \PHPUnit_Framework_TestCase
         $file->setContent('Hello World');
         
         $this->repoCache->addRepoFile($file);
+        
+        $revision = new Revision('1235');
+        $path = new RepoPath('/a/b.php');
+        $file = new RepoFile($revision, $path);
+        $file->setContent('Goodbye World');
+        
+        $this->repoCache->addRepoFile($file);
         unset($this->repoCache);
         $this->setUp();
         
         $revision = new Revision('9999');
         $path = new RepoPath('/a/b.php');
         $file = new RepoFile($revision, $path);
-        $file->setContent('Hello World');
+        $file->setContent('Goodbye World');
         
         $actual = $this->repoCache->getRepoFileForRevisionAndPath(new Revision('9999'), $path);
         

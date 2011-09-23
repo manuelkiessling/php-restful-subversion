@@ -165,7 +165,7 @@ class RepoCache
     {
         $file = new RepoFile($revision, $path);
 
-        $preparedStatement = $this->dbHandler->prepare('SELECT content FROM files WHERE revision <= ? AND path = ?');
+        $preparedStatement = $this->dbHandler->prepare('SELECT content FROM files WHERE revision <= ? AND path = ? ORDER BY revision DESC');
         $preparedStatement->execute(array($revision->getAsString(), $path->getAsString()));
 
         $rows = $preparedStatement->fetchAll();
