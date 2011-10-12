@@ -195,7 +195,7 @@ while ($currentRevision <= $highestRevisionInRepo) {
             $logOutput = $commandLineExecutor->getCommandResult($commandline);
             $mimeType = trim($logOutput);
             
-            if ($mimeType === '') {
+            if ($mimeType === '' && ($pathOperation['action'] == 'A' || $pathOperation['action'] == 'M')) {
                 // get kind
                 $commandInfo->setRevision($changeset->getRevision());
                 $commandInfo->setPath($pathOperation['path']);
