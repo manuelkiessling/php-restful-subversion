@@ -187,31 +187,33 @@ while ($currentRevision <= $highestRevisionInRepo) {
     foreach ($changesets as $changeset) {
         $pathOperations = $changeset->getPathOperations();
         foreach ($pathOperations as $pathOperation) {
-            // get mime-type
-            $commandPropget->setRevision($changeset->getRevision());
-            $commandPropget->setPath($pathOperation['path']);
-            $commandPropget->setPropname('svn:mime-type');
-            $commandline = $commandPropget->getCommandline();
-            $logOutput = $commandLineExecutor->getCommandResult($commandline);
-            $mimeType = trim($logOutput);
-            
-            if ($mimeType === '' && ($pathOperation['action'] == 'A' || $pathOperation['action'] == 'M')) {
-                // get kind
-                $commandInfo->setRevision($changeset->getRevision());
-                $commandInfo->setPath($pathOperation['path']);
-                $commandInfo->enableXml();
-                $commandline = $commandInfo->getCommandline();
+            if ($pathOperation['action'] == 'A' || $pathOperation['action'] == 'M') {
+                // get mime-type
+                $commandPropget->setRevision($changeset->getRevision());
+                $commandPropget->setPath($pathOperation['path']);
+                $commandPropget->setPropname('svn:mime-type');
+                $commandline = $commandPropget->getCommandline();
                 $logOutput = $commandLineExecutor->getCommandResult($commandline);
+                $mimeType = trim($logOutput);
                 
-                $kind = $infoInterpreter->getKindFromXml($logOutput);
-                if ($kind == 'file') {
-                    $file = new RepoFile($changeset->getRevision(), $pathOperation['path']);
-                    $commandCat->setRevision($changeset->getRevision());
-                    $commandCat->setPath($pathOperation['path']);
-                    $commandline = $commandCat->getCommandline();
-                    $content = $commandLineExecutor->getCommandResult($commandline);
-                    $file->setContent($content);
-                    $repoCache->addRepoFile($file);
+                if ($mimeType === '') {
+                    // get kind
+                    $commandInfo->setRevision($changeset->getRevision());
+                    $commandInfo->setPath($pathOperation['path']);
+                    $commandInfo->enableXml();
+                    $commandline = $commandInfo->getCommandline();
+                    $logOutput = $commandLineExecutor->getCommandResult($commandline);
+                    
+                    $kind = $infoInterpreter->getKindFromXml($logOutput);
+                    if ($kind == 'file') {
+                        $file = new RepoFile($changeset->getRevision(), $pathOperation['path']);
+                        $commandCat->setRevision($changeset->getRevision());
+                        $commandCat->setPath($pathOperation['path']);
+                        $commandline = $commandCat->getCommandline();
+                        $content = $commandLineExecutor->getCommandResult($commandline);
+                        $file->setContent($content);
+                        $repoCache->addRepoFile($file);
+                    }
                 }
             }
         }
