@@ -179,6 +179,7 @@ $i = 0;
 while ($currentRevision <= $highestRevisionInRepo) {
     if ($maxImportsPerRun != 0 && $i == $maxImportsPerRun) {
         echo "\nImported the maximum number of $i revisions for this run, exiting.\n";
+        unlink($lockfile);
         exit(0);
     }
 
