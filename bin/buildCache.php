@@ -142,6 +142,14 @@ if (empty($repoCacheConnectionString)) {
     displayErrorWithUsageInformationAndExit("No cache db connection string given.");
 }
 
+$lockfile = '/var/tmp/PHPRestfulSubversion.buildCache.'.sha1($repoCacheConnectionString).'.lock';
+if (is_file($lockfile)) {
+    echo "Another instance of this build cache script is still running, exiting...\n";
+    exit(0);
+} else {
+    touch($lockfile);
+}
+
 require_once('../lib/RestfulSubversion/Helper/Bootstrap.php');
 
 $repo = new Repo();
@@ -258,4 +266,6 @@ while ($currentRevision <= $highestRevisionInRepo) {
 
 echo "\n";
 echo "All revisions imported to cache.\n";
+
+unlink($lockfile);
 exit(0);
