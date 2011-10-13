@@ -107,7 +107,12 @@ class RepoCommandCat
             $this->commandLineBuilder->addShortSwitchWithValue('r', $this->revision->getAsString());
         }
         
-        $this->commandLineBuilder->addParameter('"'.$this->repo->getUri().$this->path->getAsString().'"');
+        $path = '"'.$this->repo->getUri().$this->path->getAsString().'"';
+        if (is_object($this->revision)) {
+            $path .= '@'.$this->revision->getAsString();
+        }
+        
+        $this->commandLineBuilder->addParameter($path);
                 
         return $this->commandLineBuilder->getCommandLine();
     }

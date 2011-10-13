@@ -91,6 +91,7 @@ if (is_file($argv[1])) {
     $repoPassword = $configValues['repoPassword'];
     $repoCacheConnectionString = $configValues['repoCacheConnectionString'];
     $maxImportsPerRun = 0;
+    $checkForFileContentInPreviousRevisions = $configValues['checkForFileContentInPreviousRevisions'];
     if (array_key_exists('maxImportsPerRun', $configValues)) {
         $maxImportsPerRun = $configValues['maxImportsPerRun'];
     }
@@ -115,6 +116,13 @@ if (is_file($argv[1])) {
     $maxImportsPerRun = 0;
     if (array_key_exists(5, $argv)) {
         $maxImportsPerRun = (int)$argv[5];
+    }
+    
+    $checkForFileContentInPreviousRevisions = false;
+    if (array_key_exists(6, $argv)) {
+        if ($argv[5] === '1' || $argv[5] === 'true') {
+            $checkForFileContentInPreviousRevisions = true;
+        }
     }
 }
 
@@ -213,6 +221,28 @@ while ($currentRevision <= $highestRevisionInRepo) {
                         $content = $commandLineExecutor->getCommandResult($commandline);
                         $file->setContent($content);
                         $repoCache->addRepoFile($file);
+                        
+                        if ($checkForFileContentInPreviousRevisions) {
+                            if ($pathOperation['action'] !== 'A') { // The file already exists at earlier revisions
+                                $previousFile = $repoCache->getRepoFileForRevisionAndPath(new Revision($currentRevision - 1), $pathOperation['path']);
+                                if (is_null($previousFile)) { // The file existed before but there is no content
+                                    echo "\n";
+                                    echo ' additionally getting previous file contents for '.$pathOperation['path'].'...';
+                                    $previousChangesets = $repoCache->getChangesetsWithPathEndingOn($pathOperation['path'], 'ascending');
+                                    foreach ($previousChangesets as $previousChangeset) {
+                                        echo "\n";
+                                        echo ' at revision '.$previousChangeset->getRevision()->getAsString();
+                                        $file = new RepoFile($previousChangeset->getRevision(), $pathOperation['path']);
+                                        $commandCat->setRevision($previousChangeset->getRevision());
+                                        $commandCat->setPath($pathOperation['path']);
+                                        $commandline = $commandCat->getCommandline();
+                                        $content = $commandLineExecutor->getCommandResult($commandline);
+                                        $file->setContent($content);
+                                        $repoCache->addRepoFile($file);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -223,7 +253,7 @@ while ($currentRevision <= $highestRevisionInRepo) {
     }
     $i++;
 
-    echo "done";
+    echo "\n done";
 }
 
 echo "\n";
