@@ -238,16 +238,28 @@ while ($currentRevision <= $highestRevisionInRepo) {
                                     echo "\n";
                                     echo ' additionally getting previous file contents for '.$pathOperation['path'].'...';
                                     $previousChangesets = $repoCache->getChangesetsWithPathEndingOn($pathOperation['path'], 'ascending');
-                                    foreach ($previousChangesets as $previousChangeset) {
+                                    if (sizeof($previousChangesets) == 0) { // No changesets found because file was copied from elsewhere
                                         echo "\n";
-                                        echo ' at revision '.$previousChangeset->getRevision()->getAsString();
-                                        $file = new RepoFile($previousChangeset->getRevision(), $pathOperation['path']);
-                                        $commandCat->setRevision($previousChangeset->getRevision());
+                                        echo ' at revision '.($currentRevision - 1).' (state after copy)';
+                                        $file = new RepoFile(new Revision($currentRevision - 1), $pathOperation['path']);
+                                        $commandCat->setRevision(new Revision($currentRevision - 1));
                                         $commandCat->setPath($pathOperation['path']);
                                         $commandline = $commandCat->getCommandline();
                                         $content = $commandLineExecutor->getCommandResult($commandline);
                                         $file->setContent($content);
                                         $repoCache->addRepoFile($file);
+                                    } else {
+                                        foreach ($previousChangesets as $previousChangeset) {
+                                            echo "\n";
+                                            echo ' at revision '.$previousChangeset->getRevision()->getAsString();
+                                            $file = new RepoFile($previousChangeset->getRevision(), $pathOperation['path']);
+                                            $commandCat->setRevision($previousChangeset->getRevision());
+                                            $commandCat->setPath($pathOperation['path']);
+                                            $commandline = $commandCat->getCommandline();
+                                            $content = $commandLineExecutor->getCommandResult($commandline);
+                                            $file->setContent($content);
+                                            $repoCache->addRepoFile($file);
+                                        }
                                     }
                                 }
                             }
