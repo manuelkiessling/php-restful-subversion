@@ -240,7 +240,7 @@ while ($currentRevision <= $highestRevisionInRepo) {
                                     $previousChangesets = $repoCache->getChangesetsWithPathEndingOn($pathOperation['path'], 'ascending');
                                     if (sizeof($previousChangesets) == 0) { // No changesets found because file was copied from elsewhere
                                         echo "\n";
-                                        echo ' at revision '.($currentRevision - 1).' (state after copy)';
+                                        echo '  at revision '.($currentRevision - 1).' (state after copy)';
                                         $file = new RepoFile(new Revision($currentRevision - 1), $pathOperation['path']);
                                         $commandCat->setRevision(new Revision($currentRevision - 1));
                                         $commandCat->setPath($pathOperation['path']);
@@ -251,7 +251,7 @@ while ($currentRevision <= $highestRevisionInRepo) {
                                     } else {
                                         foreach ($previousChangesets as $previousChangeset) {
                                             echo "\n";
-                                            echo ' at revision '.$previousChangeset->getRevision()->getAsString();
+                                            echo '  at revision '.$previousChangeset->getRevision()->getAsString();
                                             $file = new RepoFile($previousChangeset->getRevision(), $pathOperation['path']);
                                             $commandCat->setRevision($previousChangeset->getRevision());
                                             $commandCat->setPath($pathOperation['path']);
@@ -274,7 +274,7 @@ while ($currentRevision <= $highestRevisionInRepo) {
     }
     $i++;
 
-    echo "\n done";
+    echo "\ndone\n";
 }
 
 echo "\n";
