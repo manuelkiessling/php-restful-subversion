@@ -35,7 +35,7 @@ class RepoCommandInfoTest extends \PHPUnit_Framework_TestCase
         $infoCommand->setPath(new RepoPath('/branches/test/a.php'));
         $commandline = $infoCommand->getCommandline();
 
-        $this->assertSame('svn info --no-auth-cache --username=user.name --password=secret -r 1234 "http://svn.example.com/repo/branches/test/a.php"',
+        $this->assertSame('svn info --no-auth-cache --username=user.name --password=secret -r 1234 "http://svn.example.com/repo/branches/test/a.php"@1234',
                           $commandline);
     }
     
@@ -47,7 +47,7 @@ class RepoCommandInfoTest extends \PHPUnit_Framework_TestCase
         $infoCommand->enableXml();
         $commandline = $infoCommand->getCommandline();
 
-        $this->assertSame('svn info --no-auth-cache --username=user.name --password=secret -r 1234 --xml "http://svn.example.com/repo/branches/test/a.php"',
+        $this->assertSame('svn info --no-auth-cache --username=user.name --password=secret -r 1234 --xml "http://svn.example.com/repo/branches/test/a.php"@1234',
                           $commandline);
     }
 }

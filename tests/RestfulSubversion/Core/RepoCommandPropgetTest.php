@@ -37,7 +37,7 @@ class RepoCommandPropgetTest extends \PHPUnit_Framework_TestCase
         $propgetCommand->setPropname('svn:mime-type');
         $commandline = $propgetCommand->getCommandline();
 
-        $this->assertSame('svn propget --no-auth-cache --username=user.name --password=secret -r 2 \'svn:mime-type\' "http://svn.example.com/repo/branches/test/a.php"',
+        $this->assertSame('svn propget --no-auth-cache --username=user.name --password=secret -r 2 \'svn:mime-type\' "http://svn.example.com/repo/branches/test/a.php"@2',
                           $commandline);
     }
 }

@@ -121,7 +121,12 @@ class RepoCommandLog
         if ($this->verbose) $this->commandLineBuilder->addShortSwitch('v');
         if ($this->xml) $this->commandLineBuilder->addLongSwitch('xml');
 
-        $this->commandLineBuilder->addParameter($this->repo->getUri());
+        $uri = '"'.$this->repo->getUri().'"';
+        if (is_object($this->revision)) {
+            $uri .= '@'.$this->revision->getAsString();
+        }
+        
+        $this->commandLineBuilder->addParameter($uri);
 
         return $this->commandLineBuilder->getCommandLine();
     }

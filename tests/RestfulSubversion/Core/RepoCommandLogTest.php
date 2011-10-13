@@ -12,7 +12,7 @@ class RepoCommandLogTest extends \PHPUnit_Framework_TestCase
     {
         $repo = new Repo();
 
-        $repo->setUri('file://' . realpath(Bootstrap::getLibraryRoot() . '/../tests/_testrepo'));
+        $repo->setUri('http://svn.example.com/repo');
         $repo->setAuthinfo('user.name', 'secret');
 
         $this->repo = $repo;
@@ -24,7 +24,7 @@ class RepoCommandLogTest extends \PHPUnit_Framework_TestCase
         $logCommand->setRevision(new Revision('1'));
         $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 1 file://' . realpath(Bootstrap::getLibraryRoot() . '/../tests/_testrepo'),
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 1 "http://svn.example.com/repo"@1',
                           $commandline);
     }
 
@@ -36,7 +36,7 @@ class RepoCommandLogTest extends \PHPUnit_Framework_TestCase
         $logCommand->enableXml();
         $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 1 -v --xml file://' . realpath(Bootstrap::getLibraryRoot() . '/../tests/_testrepo'),
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -r 1 -v --xml "http://svn.example.com/repo"@1',
                           $commandline);
     }
 
@@ -45,7 +45,7 @@ class RepoCommandLogTest extends \PHPUnit_Framework_TestCase
         $logCommand = new RepoCommandLog($this->repo, new CommandLineBuilder());
         $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret file://' . realpath(Bootstrap::getLibraryRoot() . '/../tests/_testrepo'),
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret "http://svn.example.com/repo"',
                           $commandline);
     }
 
@@ -55,7 +55,7 @@ class RepoCommandLogTest extends \PHPUnit_Framework_TestCase
         $logCommand->enableVerbose();
         $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v file://' . realpath(Bootstrap::getLibraryRoot() . '/../tests/_testrepo'),
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v "http://svn.example.com/repo"',
                           $commandline);
     }
 
@@ -65,7 +65,7 @@ class RepoCommandLogTest extends \PHPUnit_Framework_TestCase
         $logCommand->enableXml();
         $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret --xml file://' . realpath(Bootstrap::getLibraryRoot() . '/../tests/_testrepo'),
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret --xml "http://svn.example.com/repo"',
                           $commandline);
     }
 
@@ -76,7 +76,7 @@ class RepoCommandLogTest extends \PHPUnit_Framework_TestCase
         $logCommand->enableXml();
         $commandline = $logCommand->getCommandline();
 
-        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v --xml file://' . realpath(Bootstrap::getLibraryRoot() . '/../tests/_testrepo'),
+        $this->assertSame('svn log --no-auth-cache --username=user.name --password=secret -v --xml "http://svn.example.com/repo"',
                           $commandline);
     }
 }
