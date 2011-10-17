@@ -40,6 +40,8 @@
  */
 
 namespace RestfulSubversion\Core;
+use RestfulSubversion\Logger\LoggableInterface;
+use RestfulSubversion\Logger\LoggerInterface;
 
 /**
  * Class representing the cache of a RestfulSubversion_Repo SVN repository
@@ -56,9 +58,10 @@ namespace RestfulSubversion\Core;
  * @uses       RepoPath
  * @uses       RepoCacheException
  */
-class RepoCache
+class RepoCache implements LoggableInterface
 {
     protected $dbHandler = null;
+    protected $logger = null;
 
     protected function setupDatabaseIfNecessary()
     {
@@ -75,6 +78,11 @@ class RepoCache
     {
         $this->dbHandler = $dbHandler;
         $this->setupDatabaseIfNecessary();
+    }
+    
+    public function attachLogger(LoggerInterface $logger)
+    {
+         $this->logger = $logger;
     }
 
     /**

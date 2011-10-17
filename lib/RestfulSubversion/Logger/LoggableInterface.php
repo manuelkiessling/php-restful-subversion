@@ -54,5 +54,5 @@ namespace RestfulSubversion\Logger;
  */
 interface LoggableInterface
 {
-    public function attachLogger(Logger $logger);
+    public function attachLogger(LoggerInterface $logger);
 }
