@@ -109,6 +109,54 @@ class RepoCacheTest extends \PHPUnit_Framework_TestCase
         
         $this->assertEquals($file, $actual);
     }
+    
+    public function test_getRepoFilesForRevisionAndPaths()
+    {
+        $paths = array();
+        $files = array();
+
+        // This should not be in the result, because the same path exists at revision 1234
+        $revision = new Revision('700');
+        $path = new RepoPath('/a/a.php');
+        $file = new RepoFile($revision, $path);
+        $file->setContent('Hello 700');
+        $this->repoCache->addRepoFile($file);
+        
+        $revision = new Revision('1234');
+        $path = new RepoPath('/a/a.php');
+        $file = new RepoFile($revision, $path);
+        $file->setContent('Hello World');
+        $this->repoCache->addRepoFile($file);
+        $paths[] = $path;
+        $files[] = $file;
+        
+        $revision = new Revision('1234');
+        $path = new RepoPath('/a/b.php');
+        $file = new RepoFile($revision, $path);
+        $file->setContent('Foo Bar');
+        $this->repoCache->addRepoFile($file);
+        $paths[] = $path;
+        $files[] = $file;
+
+        // This should be in the result, but with revision 1234
+        $revision = new Revision('900');
+        $path = new RepoPath('/a/c.php');
+        $file = new RepoFile($revision, $path);
+        $file->setContent('Hello World');
+        $this->repoCache->addRepoFile($file);
+        $revision = new Revision('1234');
+        $file = new RepoFile($revision, $path);
+        $file->setContent('Hello World');
+        $paths[] = $path;
+        $files[] = $file;
+        
+        unset($this->repoCache);
+        $this->setUp();
+        
+        $actual = $this->repoCache->getRepoFilesForRevisionAndPaths($revision, $paths);
+        
+        $this->assertEquals($files, $actual);
+    }
 
     public function test_getChangesetsWithPathEndingOnAscending()
     {

@@ -194,7 +194,7 @@ class RepoCache implements LoggableInterface
     {
         $file = new RepoFile($revision, $path);
 
-        $preparedStatement = $this->dbHandler->prepare('SELECT content FROM files WHERE revision <= ? AND path = ? ORDER BY revision DESC');
+        $preparedStatement = $this->dbHandler->prepare('SELECT content FROM files WHERE revision <= ? AND path = ? ORDER BY revision DESC LIMIT 1');
         $values = array($revision->getAsString(), $path->getAsString());
         $preparedStatement->execute($values);
         
@@ -206,6 +206,40 @@ class RepoCache implements LoggableInterface
             $file->setContent($row['content']);
             return $file;
         }
+    }
+    
+    /**
+     * Get files for a given revision and list of paths
+     * 
+     * Gets the contents of the files from the last revision equal or below the given revision, for the given list of paths
+     * 
+     * @param Revision $revision
+     * @param Array $paths Array of RepoPath objects
+     * @return null|RepoFile
+     */
+    public function getRepoFilesForRevisionAndPaths(Revision $revision, Array $paths)
+    {
+        $pathWhereCondition = '(';
+        foreach ($paths as $path) {
+            $pathWhereCondition .= 'path = "'.sqlite_escape_string($path->getAsString()).'" OR ';
+        }
+        $pathWhereCondition .= '1=2)';
+
+        $preparedStatement = $this->dbHandler->prepare('SELECT path, content FROM files WHERE revision <= ? AND '.$pathWhereCondition.' GROUP BY path ORDER BY revision DESC');
+        $values = array($revision->getAsString());
+        $preparedStatement->execute($values);
+        
+        $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
+        
+        $rows = $preparedStatement->fetchAll();
+        if (sizeof($rows) == 0) return null;
+        $files = array();
+        foreach ($rows as $row) {
+            $file = new RepoFile($revision, new RepoPath($row['path']));
+            $file->setContent($row['content']);
+            $files[] = $file;
+        }
+        return $files;
     }
 
     /**
