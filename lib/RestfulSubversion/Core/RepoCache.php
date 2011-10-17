@@ -84,6 +84,15 @@ class RepoCache implements LoggableInterface
     {
          $this->logger = $logger;
     }
+    
+    protected function log($message)
+    {
+        if (is_object($this->logger)) {
+            $this->logger->log($message);
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Delete all data in the repository cache database and rebuild its structure 
@@ -115,6 +124,7 @@ class RepoCache implements LoggableInterface
 
         foreach ($queries as $query) {
             $this->dbHandler->exec($query);
+            #$this->log($query);
         }
     }
 
@@ -127,10 +137,14 @@ class RepoCache implements LoggableInterface
     {
         $preparedStatement = $this->dbHandler->prepare('INSERT INTO revisions (revision, author, datetime, message) VALUES (?, ?, ?, ?)');
 
-        $successful = $preparedStatement->execute(array($changeset->getRevision()->getAsString(),
-                                                       $changeset->getAuthor(),
-                                                       $changeset->getDateTime(),
-                                                       $changeset->getMessage()));
+        $values = array($changeset->getRevision()->getAsString(),
+                        $changeset->getAuthor(),
+                        $changeset->getDateTime(),
+                        $changeset->getMessage());
+        $successful = $preparedStatement->execute($values);
+
+        $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
+
         if (!$successful) {
             throw new RepoCacheException('Couldn\'t insert changeset into cache: '.print_r($changeset, true));
         }
@@ -138,23 +152,30 @@ class RepoCache implements LoggableInterface
         $pathOperations = $changeset->getPathOperations();
         foreach ($pathOperations as $pathOperation) {
             $preparedStatement = $this->dbHandler->prepare('INSERT INTO pathoperations (revision, action, path, revertedpath, copyfrompath, copyfromrev) VALUES (?, ?, ?, ?, ?, ?)');
-            $preparedStatement->execute(array($changeset->getRevision()->getAsString(),
-                                             $pathOperation['action'],
-                                             $pathOperation['path']->getAsString(),
-                                             strrev($pathOperation['path']->getAsString()),
-                                             (array_key_exists('copyfromPath', $pathOperation))
-                                                     ? $pathOperation['copyfromPath']->getAsString() : '',
-                                             (array_key_exists('copyfromRev', $pathOperation))
-                                                     ? $pathOperation['copyfromRev']->getAsString() : 0));
+            $values = array($changeset->getRevision()->getAsString(),
+                            $pathOperation['action'],
+                            $pathOperation['path']->getAsString(),
+                            strrev($pathOperation['path']->getAsString()),
+                            (array_key_exists('copyfromPath', $pathOperation))
+                                    ? $pathOperation['copyfromPath']->getAsString() : '',
+                            (array_key_exists('copyfromRev', $pathOperation))
+                                    ? $pathOperation['copyfromRev']->getAsString() : 0);
+            $preparedStatement->execute($values);
+            
+            $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
         }
     }
     
     public function addRepoFile(RepoFile $file)
     {
         $preparedStatement = $this->dbHandler->prepare('INSERT INTO files (revision, path, content) VALUES (?, ?, ?)');
-        $successful = $preparedStatement->execute(array($file->getRevision()->getAsString(),
-                                                        $file->getPath()->getAsString(),
-                                                        $file->getContent()));
+        $values = array($file->getRevision()->getAsString(),
+                        $file->getPath()->getAsString(),
+                        $file->getContent());
+        $successful = $preparedStatement->execute($values);
+
+        $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
+
         if (!$successful) {
             throw new RepoCacheException('Couldn\'t insert file into cache: '.print_r($file, true));
         }
@@ -174,8 +195,11 @@ class RepoCache implements LoggableInterface
         $file = new RepoFile($revision, $path);
 
         $preparedStatement = $this->dbHandler->prepare('SELECT content FROM files WHERE revision <= ? AND path = ? ORDER BY revision DESC');
-        $preparedStatement->execute(array($revision->getAsString(), $path->getAsString()));
-
+        $values = array($revision->getAsString(), $path->getAsString());
+        $preparedStatement->execute($values);
+        
+        $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
+        
         $rows = $preparedStatement->fetchAll();
         if (sizeof($rows) == 0) return null;
         foreach ($rows as $row) {
@@ -189,11 +213,13 @@ class RepoCache implements LoggableInterface
      */
     public function getHighestRevision()
     {
-        foreach ($this->dbHandler->query('SELECT revision
-                                    FROM revisions
-                                    ORDER BY revision DESC
-                                    LIMIT 1')
-            as $row) {
+        $query = 'SELECT revision
+                    FROM revisions
+                ORDER BY revision DESC
+                   LIMIT 1';
+                
+        foreach ($this->dbHandler->query($query) as $row) {
+            $this->log($query);
             return new Revision($row['revision']);
         }
         return false;
@@ -208,7 +234,10 @@ class RepoCache implements LoggableInterface
         $changeset = new Changeset($revision);
 
         $preparedStatement = $this->dbHandler->prepare('SELECT author, datetime, message FROM revisions WHERE revision = ?');
-        $preparedStatement->execute(array($revision->getAsString()));
+        $values = array($revision->getAsString());
+        $preparedStatement->execute($values);
+        
+        $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
 
         $rows = $preparedStatement->fetchAll();
         if (sizeof($rows) == 0) return null;
@@ -267,7 +296,9 @@ class RepoCache implements LoggableInterface
                                                          WHERE revision '.$revisionStartClause.' ?
                                                       ORDER BY revision '.$orderClause.'
                                                        '.$limitClause);
-        if ($preparedStatement->execute(array($startAtRevision))) {
+        $values = array($startAtRevision);
+        if ($preparedStatement->execute($values)) {
+            $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
             while ($row = $preparedStatement->fetch()) {
                 $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
             }
@@ -298,7 +329,9 @@ class RepoCache implements LoggableInterface
                                                          WHERE revertedpath LIKE ?
                                                          GROUP BY revision
                                                          ORDER BY revision ' . $order . $limitClause);
-        if ($preparedStatement->execute(array(strrev($string) . '%'))) {
+        $values = array(strrev($string) . '%');
+        if ($preparedStatement->execute($values)) {
+            $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
             while ($row = $preparedStatement->fetch()) {
                 $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
             }
@@ -326,10 +359,12 @@ class RepoCache implements LoggableInterface
         }
         $return = array();
         $preparedStatement = $this->dbHandler->prepare('SELECT revision
-                                             FROM revisions
-                                            WHERE message LIKE ?
-                                         ORDER BY revision ' . $order . $limitClause);
-        if ($preparedStatement->execute(array('%' . $text . '%'))) {
+                                                          FROM revisions
+                                                         WHERE message LIKE ?
+                                                      ORDER BY revision ' . $order . $limitClause);
+        $values = array('%' . $text . '%');
+        if ($preparedStatement->execute($values)) {
+            $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
             while ($row = $preparedStatement->fetch()) {
                 $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
             }

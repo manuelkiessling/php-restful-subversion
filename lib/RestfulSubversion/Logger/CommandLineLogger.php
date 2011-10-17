@@ -56,7 +56,7 @@ class CommandLineLogger implements LoggerInterface
 {
     public function log($message)
     {
-       echo $message;
+       echo "\nLOG: ".$message;
        return true;
     }
 }
