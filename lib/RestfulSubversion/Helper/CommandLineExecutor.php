@@ -44,7 +44,7 @@ use RestfulSubversion\Logger\LoggableInterface;
 use RestfulSubversion\Logger\LoggerInterface;
 
 /**
- * Singleton which represents the means to execute a command line on the shell
+ * Class which represents the means to execute a command line on the shell
  *
  * @category   VersionControl
  * @package    RestfulSubversion
