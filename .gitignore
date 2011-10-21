@@ -3,3 +3,4 @@ nbproject
 readmeexample
 .idea
 etc/PHPRestfulSubversion.conf
+vendor/doctrine
