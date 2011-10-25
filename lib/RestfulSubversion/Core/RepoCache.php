@@ -58,7 +58,7 @@ use RestfulSubversion\Logger\LoggerInterface;
  * @uses       RepoPath
  * @uses       RepoCacheException
  */
-class RepoCache implements LoggableInterface
+class RepoCache implements RepoCacheInterface, LoggableInterface
 {
     protected $dbHandler = null;
     protected $logger = null;
