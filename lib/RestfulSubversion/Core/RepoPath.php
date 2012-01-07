@@ -81,6 +81,19 @@ class RepoPath
     /**
      * @return string
      */
+    public function getAsUriSafeString()
+    {
+        $convertedPathParts = array();
+        $pathParts = explode('/', $this->path);
+        foreach ($pathParts as $pathPart) {
+            $convertedPathParts[] = urlencode($pathPart);
+        }
+        return implode('/', $convertedPathParts);
+    }
+
+    /**
+     * @return string
+     */
     public function getAsString()
     {
         return (string)$this->path;

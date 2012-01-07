@@ -119,7 +119,7 @@ class RepoCommandInfo
         
         if ($this->xml) $this->commandLineBuilder->addLongSwitch('xml');        
         
-        $path = '"'.$this->repo->getUri().$this->path->getAsString().'"';
+        $path = '"'.$this->repo->getUri().$this->path->getAsUriSafeString().'"';
         if (is_object($this->revision)) {
             $path .= '@'.$this->revision->getAsString();
         }
