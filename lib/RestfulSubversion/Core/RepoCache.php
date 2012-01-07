@@ -40,6 +40,8 @@
  */
 
 namespace RestfulSubversion\Core;
+use RestfulSubversion\Logger\LoggableInterface;
+use RestfulSubversion\Logger\LoggerInterface;
 
 /**
  * Class representing the cache of a RestfulSubversion_Repo SVN repository
@@ -56,9 +58,10 @@ namespace RestfulSubversion\Core;
  * @uses       RepoPath
  * @uses       RepoCacheException
  */
-class RepoCache
+class RepoCache implements RepoCacheInterface, LoggableInterface
 {
     protected $dbHandler = null;
+    protected $logger = null;
 
     protected function setupDatabaseIfNecessary()
     {
@@ -75,6 +78,20 @@ class RepoCache
     {
         $this->dbHandler = $dbHandler;
         $this->setupDatabaseIfNecessary();
+    }
+    
+    public function attachLogger(LoggerInterface $logger)
+    {
+         $this->logger = $logger;
+    }
+    
+    protected function log($message)
+    {
+        if (is_object($this->logger)) {
+            $this->logger->log($message);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -107,6 +124,7 @@ class RepoCache
 
         foreach ($queries as $query) {
             $this->dbHandler->exec($query);
+            #$this->log($query);
         }
     }
 
@@ -119,10 +137,14 @@ class RepoCache
     {
         $preparedStatement = $this->dbHandler->prepare('INSERT INTO revisions (revision, author, datetime, message) VALUES (?, ?, ?, ?)');
 
-        $successful = $preparedStatement->execute(array($changeset->getRevision()->getAsString(),
-                                                       $changeset->getAuthor(),
-                                                       $changeset->getDateTime(),
-                                                       $changeset->getMessage()));
+        $values = array($changeset->getRevision()->getAsString(),
+                        $changeset->getAuthor(),
+                        $changeset->getDateTime(),
+                        $changeset->getMessage());
+        $successful = $preparedStatement->execute($values);
+
+        $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
+
         if (!$successful) {
             throw new RepoCacheException('Couldn\'t insert changeset into cache: '.print_r($changeset, true));
         }
@@ -130,23 +152,30 @@ class RepoCache
         $pathOperations = $changeset->getPathOperations();
         foreach ($pathOperations as $pathOperation) {
             $preparedStatement = $this->dbHandler->prepare('INSERT INTO pathoperations (revision, action, path, revertedpath, copyfrompath, copyfromrev) VALUES (?, ?, ?, ?, ?, ?)');
-            $preparedStatement->execute(array($changeset->getRevision()->getAsString(),
-                                             $pathOperation['action'],
-                                             $pathOperation['path']->getAsString(),
-                                             strrev($pathOperation['path']->getAsString()),
-                                             (array_key_exists('copyfromPath', $pathOperation))
-                                                     ? $pathOperation['copyfromPath']->getAsString() : '',
-                                             (array_key_exists('copyfromRev', $pathOperation))
-                                                     ? $pathOperation['copyfromRev']->getAsString() : 0));
+            $values = array($changeset->getRevision()->getAsString(),
+                            $pathOperation['action'],
+                            $pathOperation['path']->getAsString(),
+                            strrev($pathOperation['path']->getAsString()),
+                            (array_key_exists('copyfromPath', $pathOperation))
+                                    ? $pathOperation['copyfromPath']->getAsString() : '',
+                            (array_key_exists('copyfromRev', $pathOperation))
+                                    ? $pathOperation['copyfromRev']->getAsString() : 0);
+            $preparedStatement->execute($values);
+            
+            $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
         }
     }
     
     public function addRepoFile(RepoFile $file)
     {
         $preparedStatement = $this->dbHandler->prepare('INSERT INTO files (revision, path, content) VALUES (?, ?, ?)');
-        $successful = $preparedStatement->execute(array($file->getRevision()->getAsString(),
-                                                        $file->getPath()->getAsString(),
-                                                        $file->getContent()));
+        $values = array($file->getRevision()->getAsString(),
+                        $file->getPath()->getAsString(),
+                        $file->getContent());
+        $successful = $preparedStatement->execute($values);
+
+        $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
+
         if (!$successful) {
             throw new RepoCacheException('Couldn\'t insert file into cache: '.print_r($file, true));
         }
@@ -165,9 +194,12 @@ class RepoCache
     {
         $file = new RepoFile($revision, $path);
 
-        $preparedStatement = $this->dbHandler->prepare('SELECT content FROM files WHERE revision <= ? AND path = ? ORDER BY revision DESC');
-        $preparedStatement->execute(array($revision->getAsString(), $path->getAsString()));
-
+        $preparedStatement = $this->dbHandler->prepare('SELECT content FROM files WHERE revision <= ? AND path = ? ORDER BY revision DESC LIMIT 1');
+        $values = array($revision->getAsString(), $path->getAsString());
+        $preparedStatement->execute($values);
+        
+        $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
+        
         $rows = $preparedStatement->fetchAll();
         if (sizeof($rows) == 0) return null;
         foreach ($rows as $row) {
@@ -175,17 +207,53 @@ class RepoCache
             return $file;
         }
     }
+    
+    /**
+     * Get files for a given revision and list of paths
+     * 
+     * Gets the contents of the files from the last revision equal or below the given revision, for the given list of paths
+     * 
+     * @param Revision $revision
+     * @param Array $paths Array of RepoPath objects
+     * @return null|RepoFile
+     */
+    public function getRepoFilesForRevisionAndPaths(Revision $revision, Array $paths)
+    {
+        $pathWhereCondition = '(';
+        foreach ($paths as $path) {
+            $pathWhereCondition .= 'path = "'.sqlite_escape_string($path->getAsString()).'" OR ';
+        }
+        $pathWhereCondition .= '1=2)';
+
+        $preparedStatement = $this->dbHandler->prepare('SELECT path, content FROM files WHERE revision <= ? AND '.$pathWhereCondition.' GROUP BY path ORDER BY revision DESC');
+        $values = array($revision->getAsString());
+        $preparedStatement->execute($values);
+        
+        $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
+        
+        $rows = $preparedStatement->fetchAll();
+        if (sizeof($rows) == 0) return null;
+        $files = array();
+        foreach ($rows as $row) {
+            $file = new RepoFile($revision, new RepoPath($row['path']));
+            $file->setContent($row['content']);
+            $files[] = $file;
+        }
+        return $files;
+    }
 
     /**
      * @return bool|Revision false if the repository cache is empty, highest saved Revision otherwise
      */
     public function getHighestRevision()
     {
-        foreach ($this->dbHandler->query('SELECT revision
-                                    FROM revisions
-                                    ORDER BY revision DESC
-                                    LIMIT 1')
-            as $row) {
+        $query = 'SELECT revision
+                    FROM revisions
+                ORDER BY revision DESC
+                   LIMIT 1';
+                
+        foreach ($this->dbHandler->query($query) as $row) {
+            $this->log($query);
             return new Revision($row['revision']);
         }
         return false;
@@ -200,7 +268,10 @@ class RepoCache
         $changeset = new Changeset($revision);
 
         $preparedStatement = $this->dbHandler->prepare('SELECT author, datetime, message FROM revisions WHERE revision = ?');
-        $preparedStatement->execute(array($revision->getAsString()));
+        $values = array($revision->getAsString());
+        $preparedStatement->execute($values);
+        
+        $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
 
         $rows = $preparedStatement->fetchAll();
         if (sizeof($rows) == 0) return null;
@@ -259,7 +330,9 @@ class RepoCache
                                                          WHERE revision '.$revisionStartClause.' ?
                                                       ORDER BY revision '.$orderClause.'
                                                        '.$limitClause);
-        if ($preparedStatement->execute(array($startAtRevision))) {
+        $values = array($startAtRevision);
+        if ($preparedStatement->execute($values)) {
+            $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
             while ($row = $preparedStatement->fetch()) {
                 $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
             }
@@ -290,7 +363,9 @@ class RepoCache
                                                          WHERE revertedpath LIKE ?
                                                          GROUP BY revision
                                                          ORDER BY revision ' . $order . $limitClause);
-        if ($preparedStatement->execute(array(strrev($string) . '%'))) {
+        $values = array(strrev($string) . '%');
+        if ($preparedStatement->execute($values)) {
+            $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
             while ($row = $preparedStatement->fetch()) {
                 $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
             }
@@ -318,10 +393,12 @@ class RepoCache
         }
         $return = array();
         $preparedStatement = $this->dbHandler->prepare('SELECT revision
-                                             FROM revisions
-                                            WHERE message LIKE ?
-                                         ORDER BY revision ' . $order . $limitClause);
-        if ($preparedStatement->execute(array('%' . $text . '%'))) {
+                                                          FROM revisions
+                                                         WHERE message LIKE ?
+                                                      ORDER BY revision ' . $order . $limitClause);
+        $values = array('%' . $text . '%');
+        if ($preparedStatement->execute($values)) {
+            $this->log(print_r($preparedStatement->queryString, true).' -> '.json_encode($values));
             while ($row = $preparedStatement->fetch()) {
                 $return[] = $this->getChangesetForRevision(new Revision($row['revision']));
             }

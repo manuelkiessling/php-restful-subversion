@@ -32,91 +32,27 @@
  *
  * @category   VersionControl
  * @package    RestfulSubversion
- * @subpackage Core
+ * @subpackage Logger
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
 
-namespace RestfulSubversion\Core;
+namespace RestfulSubversion\Logger;
 
 /**
- * Class representing the path to a file or folder in a SVN repository
+ * Interface for classes a Logger can be attached to
  *
  * @category   VersionControl
  * @package    RestfulSubversion
- * @subpackage Core
+ * @subpackage Logger
  * @author     Manuel Kiessling <manuel@kiessling.net>
  * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- * @uses       RepoPathInvalidPathCoreException
  */
-class RepoPath
+interface LoggableInterface
 {
-    /**
-     * Internal string representation of the path
-     */
-    protected $path = null;
-
-    /**
-     * Creates the path object based on a given string
-     *
-     * @param string $path Path to create the object for
-     * @throws RepoPathInvalidPathCoreException if the given string doesn't have the correct format
-     */
-    public function __construct($path)
-    {
-        if (mb_substr($path, -1) === '/') throw new RepoPathInvalidPathCoreException($path);
-        if ($path[0] !== '/') throw new RepoPathInvalidPathCoreException($path);
-        if (mb_substr($path, -2) === '/.') throw new RepoPathInvalidPathCoreException($path);
-        if (mb_substr($path, -3) === '/..') throw new RepoPathInvalidPathCoreException($path);
-        if (mb_substr($path, -5) === '/.svn') throw new RepoPathInvalidPathCoreException($path);
-        if (mb_strstr($path, '/../')) throw new RepoPathInvalidPathCoreException($path);
-        if (mb_strstr($path, '/./')) throw new RepoPathInvalidPathCoreException($path);
-        $this->path = $path;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAsUriSafeString()
-    {
-        $convertedPathParts = array();
-        $pathParts = explode('/', $this->path);
-        foreach ($pathParts as $pathPart) {
-            $convertedPathParts[] = urlencode($pathPart);
-        }
-        return implode('/', $convertedPathParts);
-    }
-
-    /**
-     * @return string
-     */
-    public function getAsString()
-    {
-        return (string)$this->path;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->getAsString();
-    }
+    public function attachLogger(LoggerInterface $logger);
 }
-
-/**
- * Exception for errors in RepoPath
- *
- * @category   VersionControl
- * @package    RestfulSubversion
- * @subpackage Core
- * @author     Manuel Kiessling <manuel@kiessling.net>
- * @copyright  2011 Manuel Kiessling <manuel@kiessling.net>
- * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
- * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
- */
-class RepoPathInvalidPathCoreException extends \Exception {}

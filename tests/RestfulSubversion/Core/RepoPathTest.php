@@ -24,6 +24,13 @@ class RepoPathTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($repoPath->getAsString(), "$repoPath");
     }
+    
+    public function test_getAsUriSafeString()
+    {
+        $repoPath = new RepoPath('/branches/test/ö.php');
+
+        $this->assertSame($repoPath->getAsUriSafeString(), '/branches/test/%C3%B6.php');
+    }
 
     public function test_filenameWithTwoDotsWorks()
     {

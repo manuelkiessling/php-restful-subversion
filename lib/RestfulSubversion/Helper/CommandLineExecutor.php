@@ -40,9 +40,11 @@
  */
 
 namespace RestfulSubversion\Helper;
+use RestfulSubversion\Logger\LoggableInterface;
+use RestfulSubversion\Logger\LoggerInterface;
 
 /**
- * Singleton which represents the means to execute a command line on the shell
+ * Class which represents the means to execute a command line on the shell
  *
  * @category   VersionControl
  * @package    RestfulSubversion
@@ -52,8 +54,24 @@ namespace RestfulSubversion\Helper;
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link       http://manuelkiessling.github.com/PHPRestfulSubversion
  */
-class CommandLineExecutor
+class CommandLineExecutor implements LoggableInterface
 {
+    protected $logger = null;
+    
+    public function attachLogger(LoggerInterface $logger)
+    {
+         $this->logger = $logger;
+    }
+    
+    protected function log($message)
+    {
+        if (is_object($this->logger)) {
+            $this->logger->log($message);
+            return true;
+        }
+        return false;
+    }
+    
     /**
      * @param string $command
      * @return string
