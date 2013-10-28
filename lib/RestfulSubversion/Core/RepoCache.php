@@ -221,7 +221,7 @@ class RepoCache implements RepoCacheInterface, LoggableInterface
     {
         $pathWhereCondition = '(';
         foreach ($paths as $path) {
-            $pathWhereCondition .= 'path = "'.sqlite_escape_string($path->getAsString()).'" OR ';
+            $pathWhereCondition .= 'path = '.$this->dbHandler->quote($path->getAsString()).' OR ';
         }
         $pathWhereCondition .= '1=2)';
 
