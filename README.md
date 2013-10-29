@@ -67,14 +67,14 @@ main/default.txt").
 Getting PHPRestfulSubversion up and running usually takes around 10 minutes and
 is a process which can roughly be split into four parts:
 
-1. Preparing your system
+1. Prepare your system
 2. Deploy and configure PHPRestfulSubversion
 3. Build the Subversion cache
 4. Configure Apache to serve the RESTful JSON webservice
 
 The following process describes the detailed steps necessary for every part
 of the process. The description of this process is targeted at an installation
-on a Debian GNU/Linux 6.0 ("Squeeze") system with at least the "Standard system
+on a Debian GNU/Linux 7.0 ("Wheezy") system with at least the "Standard system
 utilities" collection installed.
 
 In order to keep things a bit simpler, I assume you do everything as root.
@@ -88,8 +88,8 @@ itself, you will need the following packages:
 * Git
 * Subversion
 * SQLite 3
-* PHP 5.3
-* PHPUnit 3
+* PHP 5
+* PHPUnit
 * Apache 2
 
 In order to achieve this, you just need to run these commands:
@@ -108,31 +108,30 @@ In order to achieve this, you just need to run these commands:
 Now we are going to download PHPRestfulSubversion and check if it works:
 
     cd /opt
-    git clone git://github.com/ManuelKiessling/PHPRestfulSubversion.git
+    git clone git://github.com/manuelkiessling/PHPRestfulSubversion.git
     cd PHPRestfulSubversion/tests
     bash ./runall.sh
 
 
 This should produce an output similar to
 
-    PHPUnit 3.5.0 by Sebastian Bergmann.
-
-    ............................................................ 60 / 74
-    ..............
-
-    Time: 0 seconds, Memory: 6.25Mb
-
-    OK (74 tests, 70 assertions)
-
+    PHPUnit 3.6.10 by Sebastian Bergmann.
+    
+    ................................................................. 65 / 85 ( 76%)
+    ....................
+    
+    Time: 6 seconds, Memory: 5.25Mb
+    
+    OK (85 tests, 84 assertions)
 
 The important thing is that there haven't been any failures, like this:
 
     FAILURES!
-    Tests: 91, Assertions: 92, Failures: 1.
+    Tests: 85, Assertions: 84, Failures: 1.
 
 
-If everything went fine, we can go on to configure our PHPRestfulSubversion
-configuration.
+If everything went fine, we can go on to configure your PHPRestfulSubversion
+installation.
 
 Basically, this means to tell PHPRestfulSubversion where your Subversion repository
 is and where your Subversion cache is going to be.
@@ -152,7 +151,6 @@ and fill in real values according to our environment.
 
     cp /opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.sample.conf /opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.conf
     vim /opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.conf
-
 
 (You can of course use any text editor you like for editing this file).
 
@@ -180,7 +178,7 @@ the changesets into the cache database:
 
 
 In order to ensure that your repository cache is always in sync with your
-repository cache, create a cronjob which will insert new revisions into the
+repository, create a cronjob which will insert new revisions into the
 cache regularly, like this:
 
     * * * * *    root    /opt/PHPRestfulSubversion/bin/buildCache.php /opt/PHPRestfulSubversion/etc/PHPRestfulSubversion.conf
@@ -272,4 +270,4 @@ PHPRestfulSubversion, here is how to integrate it into your code:
 ## Feedback
 
 Any feedback is highly appreciated. You can reach me at <manuel@kiessling.net>,
-or open a new issue at https://github.com/ManuelKiessling/PHPRestfulSubversion/issues
+or open a new issue at https://github.com/manuelkiessling/PHPRestfulSubversion/issues
