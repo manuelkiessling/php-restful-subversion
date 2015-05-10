@@ -1,6 +1,6 @@
 # PHPRestfulSubversion
 
-[![Build Status](https://travis-ci.org/manuelkiessling/PHPRestfulSubversion.png?branch=master)](https://travis-ci.org/manuelkiessling/PHPRestfulSubversion)
+[![Build Status](https://travis-ci.org/manuelkiessling/php-restful-subversion.png?branch=master)](https://travis-ci.org/manuelkiessling/php-restful-subversion)
 
 _Scroll down for detailed installation instructions._
 
